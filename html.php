@@ -31,6 +31,4 @@ function HTMLrenderWeb() {
     </html>
     HTML;
 }
-
-
 ?>

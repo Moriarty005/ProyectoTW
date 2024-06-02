@@ -10,8 +10,8 @@ function getAction($p) {
     if (!isset($p['p'])) {
       $r['controlador'] = 'bienvenida';
       //$r['metodo']='hello';
-    } else
-    switch ($p['p']) {
+    } else{
+      switch ($p['p']) {
         case 'bienvenida': $r['controlador'] = 'bienvenida';
                     //$r['metodo'] = 'hello';
                     break;
@@ -29,6 +29,7 @@ function getAction($p) {
                     break;
         default: $r['controlador'] = 'error';
                 //$r['metodo']='hello';
+      }
     }
     return $r;
 }

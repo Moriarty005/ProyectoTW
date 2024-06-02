@@ -16,8 +16,6 @@ function HTMLrenderWeb($data) {
       $main = datos();
     }else if($data['controlador'] == 'reservas'){
       $main = reservas();
-    }else if($data['controlador'] == 'error'){
-      $main = error();
     }
   }
 
@@ -32,7 +30,6 @@ function HTMLrenderWeb($data) {
 
     </head>
     <body>
-        <h1>minecraft 2</h1>
         <header>
             <img src="./img/icono.png" alt="Icon">
             <h1>HOTEL O</h1>
@@ -53,6 +50,31 @@ function HTMLrenderWeb($data) {
     </body>
     </html>
     HTML;
+}
+
+function bienvenida(){
+  
+  $ret = <<<HTML
+  <main>
+    <menu>
+        <img src="./img/hotel2.jpg" alt="Fotografía hotel O">
+        <img src="./img/hotel.jpg" alt="Fotografía festival Japón">
+        <p class="remarcar">En Hotel O encontrarás todas las comodidades para una feliz estancia en Japón, sea cual sea el motivo de su viaje: trabajo, turismo o 
+            simplemente despejarte de la rutina del día a día.
+        </p>
+    </menu>
+    <aside>
+        <p class="remarcar">Enlaces de interés: </p>
+            <p><a href="https://japonismo.com/blog/sapporo-yuki-matsuri-festival-de-la-nieve-de-sapporo">Festival de nieve de Sapporo</a></p>
+            <p><a href="https://www.japan.travel/es/spot/1466/">Festival de Ciruelos en Flor de Mito</a></p>
+            <p><a href="https://es.wikipedia.org/wiki/Tanabata">Festival de las estrellas (tanabata)</a></p>
+            <p><a href="https://youtu.be/OIAUBYb3ET4?si=F7qBS8sP0TstGY67&t=843">Más...</a></p>
+        
+    </aside>
+  </main>
+  HTML;
+  
+  return $ret;
 }
 
 function habitaciones(){
@@ -192,6 +214,7 @@ function datos(){
   </main>
   HTML;
   
+  return $ret;
 }
 
 function reservas(){
@@ -323,18 +346,8 @@ function reservas(){
       </div>
   </main>
   HTML;
-}
 
-function hihi(){
-
-  $ret = "hola wenas";
-
-  return null;
-}
-
-function hihi2(){
-
-  return null;
+  return $ret;
 }
 
 ?>

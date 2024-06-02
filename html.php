@@ -326,7 +326,7 @@ function reservas(){
 
 function hihi(){
 
-  $ret = "hello";
+  $ret = "hola wenas";
 
   return null;
 }

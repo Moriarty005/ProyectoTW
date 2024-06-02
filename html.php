@@ -326,6 +326,13 @@ function reservas(){
 
 function hihi(){
 
+  $ret = "hello";
+
+  return null;
+}
+
+function hihi2(){
+
   return null;
 }
 

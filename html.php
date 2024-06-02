@@ -33,4 +33,10 @@ function HTMLrenderWeb() {
 }
 
 
+function alvaro() {
+    return <<<HTML
+    <h1>arbaro</h1>
+    HTML;
+  }
+
 ?>

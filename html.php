@@ -43,4 +43,10 @@ function alex(){
   <h1>alex</h1>
   HTML;
 }
+
+function prueba2(){
+  return <<<HTML
+  <h1>prueba2</h1>
+  HTML;
+}
 ?>

@@ -31,6 +31,13 @@ function getAction($p) {
                 //$r['metodo']='hello';
       }
     }
+
+    if(!isset($_POST['iniciar_sesion'])){
+
+      $r['tipo_usuario'] = 'anonimo';
+    }
+
+
     return $r;
 }
 ?>

@@ -3,6 +3,8 @@
 // Es la única que debe utilizarse desde otras partes de la aplicación
 function HTMLrenderWeb($data) {
 
+  $ret = '';
+
   if($data['controlador'] == null){
     $main = bienvenida();
   }else{ //esto con un switch es más chulo
@@ -16,17 +18,21 @@ function HTMLrenderWeb($data) {
       $main = datos();
     }else if($data['controlador'] == 'reservas'){
       $main = reservas();
+    }else{
+      $main = '<main><h1>Por implementar</h1></main>';
     }
   }
 
-  return <<<HTML
+  $nav = nav($data['tipo_usuario']); 
+
+  $ret .= <<<HTML
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Hotel O</title>
-        <link rel="stylesheet" href="estilo.css" >
+        <link rel="stylesheet" href="estilo.css">
 
     </head>
     <body>
@@ -35,13 +41,7 @@ function HTMLrenderWeb($data) {
             <h1>HOTEL O</h1>
             <img src="./img/icono.png" alt="Icon">
         </header>
-        <nav>
-            <a href="index.php?p=bienvenida">Bienvenida</a>
-            <a href="index.php?p=habitaciones">Habitaciones</a>
-            <a href="index.php?p=servicios">Nuestros servicios</a>
-            <a href="index.php?p=datos">Introduzca sus datos</a>
-            <a href="index.php?p=reservas">Consultar reservas(para recepcionistas)</a>
-        </nav>
+        $nav
         $main
         <footer>
             <p>Tel:957333333 Correo:hotelo@o.com Cabra,Córdoba(España)Av/Góngora</p>
@@ -50,6 +50,33 @@ function HTMLrenderWeb($data) {
     </body>
     </html>
     HTML;
+}
+
+function nav($tipo_usuario){
+  $ret = <<<HTML
+  <nav>
+    <a href="index.php?p=bienvenida">Bienvenida</a>
+    <a href="index.php?p=servicios">Nuestros servicios</a>
+    <a href="index.php?p=datos">Introduzca sus datos</a>
+    <a href="index.php?p=habitaciones">Habitaciones</a>
+  HTML;
+  if($tipo_usuario == 'recepcionista'){
+    $ret .= <<<HTML
+      <a href="index.php?p=reservas">Consultar reservas(para recepcionistas)</a>
+      <a href="index.php?p=habitaciones-list">Listado de habitaciones (para recepcionistas)</a>
+    HTML;
+  }else if($tipo_usuario == 'admin'){
+    $ret .= <<<HTML
+      <a href="index.php?p=usuarios">Consultar usuarios (solo admins)</a>
+    HTML;
+  }
+  $ret .= <<<HTML
+    
+  </nav>
+  HTML;
+  
+  return $ret;
+
 }
 
 function bienvenida(){

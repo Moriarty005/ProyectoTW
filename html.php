@@ -32,6 +32,12 @@ function HTMLrenderWeb() {
     HTML;
 }
 
+function alvaro() {
+    return <<<HTML
+    <h1>arbaro</h1>
+    HTML;
+  }
+
 function alex(){
   return <<<HTML
   <h1>alex</h1>

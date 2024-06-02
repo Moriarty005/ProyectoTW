@@ -3,14 +3,22 @@
 // Es la única que debe utilizarse desde otras partes de la aplicación
 function HTMLrenderWeb($data) {
 
-  if($data == 'habitaciones'){
-    $main = habitaciones();
-  }else if($data == 'servicios'){
-    $main = servicios();
-  }else if($data == 'datos'){
-    $main = datos();
-  }else if($data == 'reservas'){
-    $main = reservas();
+  if($data['controlador'] == null){
+    $main = bienvenida();
+  }else{ //esto con un switch es más chulo
+    if($data['controlador'] == 'bienvenida'){
+      $main = bienvenida();
+    }else if($data['controlador'] == 'habitaciones'){
+      $main = habitaciones();
+    }else if($data['controlador'] == 'servicios'){
+      $main = servicios();
+    }else if($data['controlador'] == 'datos'){
+      $main = datos();
+    }else if($data['controlador'] == 'reservas'){
+      $main = reservas();
+    }else if($data['controlador'] == 'error'){
+      $main = error();
+    }
   }
 
   return <<<HTML
@@ -30,32 +38,57 @@ function HTMLrenderWeb($data) {
             <img src="./img/icono.png" alt="Icon">
         </header>
         <nav>
-            <a href="habitaciones.html">Habitaciones</a>
-            <a href="servicios.html">Nuestros servicios</a>
-            <a href="formulario.html">Introduzca sus datos</a>
-            <a href="reservas.html">Consultar reservas(para recepcionistas)</a>
+            <a href="index.php?p=bienvenida">Bienvenida</a>
+            <a href="index.php?p=habitaciones">Habitaciones</a>
+            <a href="index.php?p=servicios">Nuestros servicios</a>
+            <a href="index.php?p=datos">Introduzca sus datos</a>
+            <a href="index.php?p=reservas">Consultar reservas(para recepcionistas)</a>
         </nav>
         $main
         <footer>
             <p>Tel:957333333 Correo:hotelo@o.com Cabra,Córdoba(España)Av/Góngora</p>
-            <a href="caracteristicas_css.html">Comprobar características CSS (querys, responsive...)</a>
+            <a href="documentacion.php">Documentación</a>
         </footer>
     </body>
     </html>
     HTML;
 }
 
+function bienvenida(){
+  $result = <<< HTML
+    // hola uwu
+    HTML;
+  return $result;
+}
 function habitaciones(){
-  return "asdf";
+  $result = <<< HTML
+    // habitaciones
+    HTML;
+  return $result;
 }
 function servicios(){
-  return "asdf";
+  $result = <<< HTML
+    // servicios
+    HTML;
+  return $result;
 }
 function datos(){
-  return "asdf";
+  $result = <<< HTML
+    // datos
+    HTML;
+  return $result;
 }
 function reservas(){
-  return "asdf";
+  $result = <<< HTML
+    // reservas
+    HTML;
+  return $result;
+}
+function error(){
+  $result = <<< HTML
+    puta mierda
+    HTML;
+  return $result;
 }
 
 ?>

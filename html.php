@@ -31,7 +31,10 @@ function HTMLrenderWeb() {
     </html>
     HTML;
 }
+<<<<<<< HEAD
+=======
 
+<<<<<<< HEAD
 
 function alvaro() {
     return <<<HTML
@@ -39,4 +42,12 @@ function alvaro() {
     HTML;
   }
 
+=======
+function alex(){
+  return <<<HTML
+  <h1>alex</h1>
+  HTML;
+}
+>>>>>>> alex
+>>>>>>> e3bb49fee40c77518da682c932d87656cc2d8365
 ?>

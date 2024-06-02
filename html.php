@@ -3,14 +3,22 @@
 // Es la única que debe utilizarse desde otras partes de la aplicación
 function HTMLrenderWeb($data) {
 
-  if($data == 'habitaciones'){
-    $main = habitaciones();
-  }else if($data == 'servicios'){
-    $main = servicios();
-  }else if($data == 'datos'){
-    $main = datos();
-  }else if($data == 'reservas'){
-    $main = reservas();
+  if($data['controlador'] == null){
+    $main = bienvenida();
+  }else{ //esto con un switch es más chulo
+    if($data['controlador'] == 'bienvenida'){
+      $main = bienvenida();
+    }else if($data['controlador'] == 'habitaciones'){
+      $main = habitaciones();
+    }else if($data['controlador'] == 'servicios'){
+      $main = servicios();
+    }else if($data['controlador'] == 'datos'){
+      $main = datos();
+    }else if($data['controlador'] == 'reservas'){
+      $main = reservas();
+    }else if($data['controlador'] == 'error'){
+      $main = error();
+    }
   }
 
   return <<<HTML
@@ -30,17 +38,16 @@ function HTMLrenderWeb($data) {
             <img src="./img/icono.png" alt="Icon">
         </header>
         <nav>
-            <form action="" method="POST">
-                <input type="submit" name="habitaciones" value="Habitaciones">
-                <input type="submit" name="servicios" value="Servicios">
-                <input type="submit" name="datos" value="Datos">
-                <input type="submit" name="reservas" value="Reservas">
-            </form>
+            <a href="index.php?p=bienvenida">Bienvenida</a>
+            <a href="index.php?p=habitaciones">Habitaciones</a>
+            <a href="index.php?p=servicios">Nuestros servicios</a>
+            <a href="index.php?p=datos">Introduzca sus datos</a>
+            <a href="index.php?p=reservas">Consultar reservas(para recepcionistas)</a>
         </nav>
         $main
         <footer>
             <p>Tel:957333333 Correo:hotelo@o.com Cabra,Córdoba(España)Av/Góngora</p>
-            <a href="caracteristicas_css.html">Comprobar características CSS (querys, responsive...)</a>
+            <a href="documentacion.php">Documentación</a>
         </footer>
     </body>
     </html>

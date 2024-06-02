@@ -3,8 +3,8 @@ require_once('html.php');
 if (isset($_GET['controller'])) {
   $controller = $_GET['controller'];
 } else {
-  $controller = 'cindex';
+  $controller = 'habitaciones';
 }
 
-echo HTMLrenderWeb();
+echo HTMLrenderWeb($controller);
 ?>

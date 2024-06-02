@@ -31,13 +31,10 @@ function HTMLrenderWeb() {
     </html>
     HTML;
 }
-<<<<<<< HEAD
-=======
 
 function alex(){
   return <<<HTML
   <h1>alex</h1>
   HTML;
 }
->>>>>>> alex
 ?>

@@ -32,6 +32,7 @@ function HTMLrenderWeb($data) {
 
     </head>
     <body>
+        <h1>minecraft 2</h1>
         <header>
             <img src="./img/icono.png" alt="Icon">
             <h1>HOTEL O</h1>

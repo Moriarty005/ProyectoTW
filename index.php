@@ -6,7 +6,5 @@ if (isset($_GET['controller'])) {
   $controller = 'cindex';
 }
 
-if($controller)
-
-echo HTMLrenderWeb();
+echo HTMLrenderWeb($controller);
 ?>

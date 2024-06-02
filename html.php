@@ -1,12 +1,11 @@
 <?php
 // Esta función crea la web completa a partir de los datos que recibe en $data
 // Es la única que debe utilizarse desde otras partes de la aplicación
-function HTMLrenderWeb() {
+function HTMLrenderWeb($html) {
 
   return <<<HTML
     <!DOCTYPE html>
     <html>
-      casasdfasdf
       <body>
         <h1>Aplicación web con arquitectura MVC<span><a class="copyright" href="../copyright.html">&copy;</a></span></h1>
         
@@ -30,23 +29,5 @@ function HTMLrenderWeb() {
       </body>
     </html>
     HTML;
-}
-
-function alvaro() {
-    return <<<HTML
-    <h1>arbaro</h1>
-    HTML;
-  }
-
-function alex(){
-  return <<<HTML
-  <h1>alex</h1>
-  HTML;
-}
-
-function prueba2(){
-  return <<<HTML
-  <h1>prueba2</h1>
-  HTML;
 }
 ?>

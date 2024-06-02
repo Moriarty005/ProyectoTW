@@ -1,0 +1,250 @@
+
+*{
+    margin: 0;
+}
+body{
+    background-color: rgb(220, 220, 220);
+    display: flex;
+    flex-direction: column;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+header{
+    display: flex;
+    flex-direction: row;
+    border-style: solid;
+    border-width: 20px;
+    border-image: url(../hotel/img/patron.jpg) 40 40 repeat;
+    background-color:rgb(139, 0, 0);
+    align-items: center;
+    justify-content: center;
+}
+@media (max-width: 600px) {
+    
+    header{
+        border-width: 1px;
+    }
+
+}
+img[alt="Icon"]{
+    width: 100px;
+}
+nav{ /*ver si podemos hacerlo sticky*/
+    position: sticky;
+    top: 0;
+    z-index: 1; /*para que se vea por encima de elementos con más prioridad (h2 por ejemplo)*/
+    padding: 10px;
+    background-color: rgba(250, 130, 130, 0.5);
+}
+main{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+main.formulario{
+    display: block;
+    width: 95%;
+}
+@media (max-width: 900px) {
+    main {
+        flex-direction: column;
+    }
+}
+form{
+    display: flex;
+    flex-direction: column;
+}
+menu{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: center;
+    flex: 8;
+}
+menu>p{
+    border-width: 5px;
+    border-radius: 10px;
+    margin: 20px;
+    background-color: aliceblue;
+    text-align: center;
+}
+aside{
+    flex: 2;
+    background-image: url(../hotel/img/patronArcos.jpeg);
+    font-weight: bold;
+}
+p{
+    margin: 10px;
+    font-size: medium;
+}
+p.remarcar{
+    font-size: large;
+    font-weight: bold;
+}
+footer{
+    background-color: rgb(165,42,42,0.5);
+    display: flex;
+}
+footer p{
+    font-size: small;
+    align-self: flex-start;
+}
+a{
+    padding: 10px;
+    color: black;
+}
+a:hover{
+    color:gray;
+}
+nav>a:hover{
+    border-radius: 20px;
+    margin: 10px 0;
+    padding: 20px 30px;
+    background-color: brown;
+    box-shadow: 0px 0px 5px 0px black;
+}
+[href="caracteristicas_css.html"]{
+    border-radius: 5px;
+    display: inline-block;
+    background-color:rgb(255, 98, 0);
+    color: black;
+    padding: 20px;
+    align-self: center;
+    position: sticky;
+    bottom: 0;
+}
+nav>a{
+    border-radius: 5px;
+    display: inline-block;
+    background-color:rgb(139, 0, 0);
+    padding: 20px;
+    margin: 10px;
+    text-decoration: none;
+    color: white;
+}
+@media (max-width: 1050px) {
+    nav>a{
+        padding: 10px 10px;
+        margin: 10px 10px;
+    }
+    nav>a:hover{
+        padding: 10px 20px;
+        margin: 10px 0;
+    }
+}
+@media (max-width: 600px) {
+    nav>a{
+        padding: 5px 5px;
+        margin: 10px 10px;
+    }
+    nav>a:hover{
+        padding: 5px 15px;
+        margin: 10px 0;
+    }
+}
+section{
+    display: flex;
+    flex-direction: column;
+    background-color: brown;
+    border: 5px dotted rgb(139, 0, 0);
+    margin: 20px;
+    width: 100%;
+    align-items:flex-start;
+}
+section:hover{
+    border-style: solid;
+}
+div{
+    background-color: gainsboro ;
+    width: 30%;
+    text-align: center;
+    margin: 10px;
+}
+@media (max-width: 900px) {
+    
+    div{
+        width: 90%;
+    }
+
+}
+div.boton{
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+}
+div.table{
+    display: grid;
+    grid-template-columns: repeat(12 40px);
+    grid-template-rows: repeat(15 40px);
+}
+span{
+    border: 1px solid black;
+}
+section>div{
+    background-color: rgb(207, 25, 25);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+    width: 98%;
+    
+}
+section>div>div{
+    background-color: inherit;
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    text-align: left;
+}
+input[type="submit"]{
+    background-color: tomato;
+    font-size: medium;
+    padding: 10px;
+    align-self: center;
+}
+figure{
+    display: inline-block;
+    box-sizing: border-box;
+    border: 1px solid black;
+    padding: 5px;
+    margin: 10px;
+    background-color: beige;
+    width: 100%;
+}
+ul{
+    margin: 20px;
+    width: 40%;
+}
+li{
+    list-style: none;
+}
+h1{
+    padding: 10px;
+}
+form h2{
+    display: inline-block;
+    background-color: rgb(139, 0, 0);
+    border: 3px solid black;
+    border-radius: 5px;
+    position: relative;
+    bottom: 10px;
+    left: 10px;
+}
+img{
+    margin: 10px;
+}
+label{
+    width: 200px;
+    padding: 5px;
+}
+a.in{
+    background-color: chocolate;
+}
+.galeria{
+    height: 90%;
+    width: 90%;
+}
+main img{
+    height: 300px;
+}

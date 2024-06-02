@@ -324,4 +324,9 @@ function reservas(){
   HTML;
 }
 
+function hihi(){
+
+  return null;
+}
+
 ?>

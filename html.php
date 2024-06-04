@@ -1,11 +1,4 @@
 <?php
-
-$errores = array(null, null, null, null, null, null, null);
-
-$todo_correcto = array(false, false, false, false, false, false, false, false, false);
-
-$idiomas = array("es" => "Español", "en" => "Inglés", "de" => "Alemán");
-
 // Esta función crea la web completa a partir de los datos que recibe en $data
 // Es la única que debe utilizarse desde otras partes de la aplicación
 function HTMLrenderWeb($data) {

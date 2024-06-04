@@ -33,8 +33,6 @@ function HTMLrenderWeb($data) {
   //TODO: cambiar la barra de navegación en base al usuario
   $nav = nav('admin'); 
 
-
-
   $ret .= <<<HTML
     <!DOCTYPE html>
     <html lang="en">
@@ -46,13 +44,50 @@ function HTMLrenderWeb($data) {
     </head>
     <body>
         <header>
-            <img src="./img/icono.png" alt="Icon">
-            <h1>HOTEL O</h1>
-            <img src="./img/icono.png" alt="Icon">
+            <div class="logo">
+                <img src="./img/icono.png" alt="Icon">
+                <h1>HOTEL O</h1>
+                <img src="./img/icono.png" alt="Icon">
+            </div>
             <!--Aqui irian los botones de inicio de sesion-->
             <div class="contenedor-sesion">
-                <a href="">Iniciar sesion</a>
-                <a href="">Registrarse</a>
+                <a href="#" onclick="showPopup('login')">Iniciar sesión</a>
+                <a href="#" onclick="showPopup('register')">Registrarse</a>
+            </div>
+            <script>
+                function showPopup(type) {
+                    var popup = document.getElementById('popup');
+                    popup.style.display = 'block';
+
+                    if (type === 'login') {
+                        document.getElementById('login-form').style.display = 'block';
+                        document.getElementById('register-form').style.display = 'none';
+                    } else {
+                        document.getElementById('login-form').style.display = 'none';
+                        document.getElementById('register-form').style.display = 'block';
+                    }
+                }
+
+                function closePopup() {
+                    var popup = document.getElementById('popup');
+                    popup.style.display = 'none';
+                }
+            </script>
+            <div id="popup" class="popup">
+                <div class="popup-contenido">
+                    <span class="popup-cerrar" onclick="closePopup()">X</span>
+                    <h2>Iniciar sesión</h2>
+                    <form id="login-form">
+                    <label for="email">Correo electrónico:</label>
+                    <input type="email" id="email" name="email">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password">
+                    <button type="submit">Iniciar sesión</button>
+                    </form>
+                    <form id="register-form" style="display: none;">
+                    <button type="submit">Registrarse</button>
+                    </form>
+                </div>
             </div>
         </header>
         $nav

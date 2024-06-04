@@ -24,6 +24,7 @@ div.contenedor-sesion{
     display: flex;
     flex-direction: column;
     border: 1px solid black;
+    width: 15%;
 }
 
 div.contenedor-sesion a{
@@ -43,6 +44,16 @@ div.contenedor-sesion a{
         border-width: 1px;
     }
 
+}
+
+div.logo{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    background-color: rgb(139, 0, 0);
+    padding-left: 15%;
 }
 img[alt="Icon"]{
     width: 100px;

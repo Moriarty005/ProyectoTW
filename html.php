@@ -4,35 +4,37 @@
 function HTMLrenderWeb($data) {
 
   $ret = '';
-
-    $header = renderHeader();
+  $header = renderHeader();
 
     //TODO: cambiar la barra de navegación en base al usuario
-    $nav = nav('admin'); 
+    if(isset($data['tipo'])) $nav = nav($data['tipo']); 
 
 
   if($data['controlador'] == null){
     $main = bienvenida();
-  }else{ //esto con un switch es más chulo
-    
+  }else{
     switch ($data['controlador']) {
         case 'bienvenida':
             $main = bienvenida();
-          break;
+            break;
         case 'habitaciones':
             $main = habitaciones();
-          break;
+            break;
         case 'servicios':
             $main = servicios();
-        break;
+            break;
         case 'datos':
             $main = datos();
-          break;
-          case 'reservas':
+            break;
+        case 'reservas':
             $main = reservas();
-          break;
+            break;
+        case 'registro':
+            $main = registro();
+            break;
         default:
             $main = '<main><h1>Por implementar</h1></main>';
+            break;
     }
   }
 
@@ -49,28 +51,6 @@ function HTMLrenderWeb($data) {
     <body>
         $header
         $nav
-        <section>
-            <form novalidate>
-                <h2> Iniciar sesión</h2>
-                <label> Emale: </label> <input type="email" name="email" placeholder="Escribe tu email">
-                <label> Contraseña: </label> <input type="password" name="ctr" placeholder="Contraseña">
-                <input type="submit" name="inises" value="Enviar datos">
-            </form>
-        </section>
-        <section>
-            <form novalidate>
-                <h2> Registro</h2>
-                <label> Nombre: </label> <input type="text" name="nombre" placeholder="Escribe tu nombre">
-                <label> Apellido: </label> <input type="text" name="apellidos" placeholder="Escribe tu apellido">
-                <label> DNI: </label> <input type="text" name="dni" placeholder="Escribe tu DNI">
-                <label> Email: </label> <input type="email" name="email" placeholder="Escribe tu email">
-                <label> Nacionalidad: </label> <input type="text" name="nacionalidad" placeholder="Escribe tu nacionalidad">
-                <label> Contraseña: </label> <input type="password" name="passwd" placeholder="Escribe tu contraseña">
-                <label> Foto: </label> <input type="file" name="foto">
-                <label> Tarjeta: </label> <input type="text" name="tarjeta" placeholder="Escribe tu tarjeta">
-                <input type="submit" name="registro" value="Registrarse">
-            </form>
-        </section>
         $main
         <footer>
             <p>Tel:957333333 Correo:hotelo@o.com Cabra,Córdoba(España)Av/Góngora</p>
@@ -83,6 +63,7 @@ function HTMLrenderWeb($data) {
     return $ret;
 }
 
+//Funciones específicas de escritura en el HTML dependiendo de lo requerido
 function renderHeader(){
     $dev = <<<HTML
     <header>
@@ -91,41 +72,44 @@ function renderHeader(){
         <h1>HOTEL O</h1>
         <img src="./img/icono.png" alt="Icon">
     </div>
-    <div class="contenedor-sesion">
-        <a href="#" onclick="showPopup()">Iniciar sesión</a>
-        <a href="#">Registrarse</a>
-    </div>
-    <script>
-        function showPopup(type) {
-            var popup = document.getElementById('popup');
-            popup.style.display = 'flex';
-
-            document.getElementById('login-form').style.display = 'flex';
-        }
-
-        function closePopup() {
-            var popup = document.getElementById('popup');
-            popup.style.display = 'none';
-        }
-    </script>
-    <div id="popup" class="popup">
-        <div class="popup-contenido">
-            <span class="popup-cerrar" onclick="closePopup()">X</span>
-            <h2>Iniciar sesión</h2>
-            <form id="login-form">
-                <label for="email">Correo electrónico:</label>
-                <input type="email" id="email" name="email">
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password">
-                <button type="submit">Registrarse</button>
-            </form>
-            <form id="register-form" style="display: none;">
-                <button type="submit">Registrarse</button>
-            </form>
-        </div>
-    </div>
-    </header>
     HTML;
+    if(isset($data['tipo'])){
+
+    }else{
+        $dev .= <<<HTML
+        <div class="contenedor-sesion">
+            <a href="#" onclick="showPopup()">Iniciar sesión</a>
+            <a href="index.php?p=registro">Registro</a>
+        </div>
+        <script>
+            function showPopup(type) {
+                var popup = document.getElementById('popup');
+                popup.style.display = 'flex';
+
+                document.getElementById('login-form').style.display = 'flex';
+            }
+
+            function closePopup() {
+                var popup = document.getElementById('popup');
+                popup.style.display = 'none';
+            }
+        </script>
+        <div id="popup" class="popup">
+            <div class="popup-contenido">
+                <span class="popup-cerrar" onclick="closePopup()">X</span>
+                <h2>Iniciar sesión</h2>
+                <form id="login-form" method="post" novalidate>
+                    <label for="email">Correo electrónico:</label>
+                    <input type="email" id="email" name="email">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password">
+                    <input type="submit" name="submit" value="Iniciar sesión"> 
+                </form>
+            </div>
+        </div>
+        </header>
+        HTML;
+    }
 
     return $dev;
 }
@@ -326,6 +310,72 @@ function datos(){
   return $ret;
 }
 
+function registro(){
+    $ret = <<<HTML
+    <form method="post" novalidate>
+            
+            <section><h2>Datos de usuario</h2>
+                <div>
+                    <div>
+                        <label>Nombre: </label><input type="text" name="nombre" size="15" maxlength="20" required placeholder="Campo obligatorio" pattern="^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]*">
+                        <label>Apellidos: </label><input type="text" name="apellido" size="30" placeholder="Opcional" pattern="^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]*">               
+                    </div>
+                    <div>
+                        <label>Clave: </label><input type="password" name="ctr" placeholder="Introduzca su contraseña"> 
+                        <label>E-mail: </label><input type="email" name="email" placeholder="Con un formato correcto" required>
+                    </div>
+                    
+                </div>
+                    <div>
+                        <label>Nacionalidad: </label><input type="text" name="nacionalidad" value="España">
+                
+                        <label>Sexo:</label>
+                        <select name="sexo">
+                            <option>Masculino</option>
+                            <option>Femenino</option>
+                            <option selected>No deseo responder</option>
+                        </select>
+                    </div>
+            </section>
+        
+            <section><h2>Reserva</h2>
+                <p>Idioma para comunicaciones:</p>
+                    <div>
+                        <label> <input type="radio" name="idioma" value="Espaniol"> Español </label>
+                        <label> <input type="radio" name="idioma" value="Ingles"> Inglés </label>
+                        <label> <input type="radio" name="idioma" value="Frances"> Francés </label> 
+                        <label> <input type="radio" name="idioma" value="Japones"> Japonés </label>
+                    </div>
+        
+                <p>Habitación:</p>
+                    <div>
+                        <label> <input type="checkbox" name="habitacion[]" value="sanrio"> Modelo <em>Sanrio</em> </label>
+                        <label> <input type="checkbox" name="habitacion[]" value="tradicional"> Modelo tradicional </label>
+                        <label> <input type="checkbox" name="habitacion[]" value="pareja"> Habitación para parejas </label>
+                        <label> <input type="checkbox" name="habitacion[]" value="suite"> Habitación suite </label>
+                    </div>
+                <div>
+                    <div>
+                        <label>Fecha nacimiento: <input type="date" name="nacimiento"> </label>
+                    </div>
+                    <div>
+                        <label>Semana de visita: <input type="week" name="semanaEstancia"> </label>
+                    </div>
+                </div>
+            </section>
+        
+            <p>Tratamiento de datos: <select name="TyC">
+                <option value="TOTAL">Acepta el almacenamiento de mis datos y el envío a terceros.</option>
+                <option value="PARCIAL">Acepta el almacenamiento de mis datos pero no el envío a terceros.</option>
+                <option value="NINGUNO">No acepta el almacenamiento ni el envío de datos a terceros.</option>
+            </select></p>
+            
+            <input type="submit" value="Enviar datos">
+        </form>
+    HTML;
+    return $ret;
+}
+
 function reservas(){
   $ret = <<<HTML
   <main>
@@ -457,33 +507,6 @@ function reservas(){
   HTML;
 
   return $ret;
-}
-
-// Funciones auxiliares
-function esDNI($dni) {
-    return preg_match('/^[0-9]{8}[A-Z]$/i', $dni);
-}
-
-function letraValida($dni){
-    $numero = substr($dni, 0, 8); //devuelve los 8 primeros caracteres (los números)
-    $letra = strtoupper(substr($dni, -1)); //devuelve el último carácter introducido en el string (la letra)
-    $letras = 'TRWAGMYFPDXBNJZSQVHLCKE'; //letras usadas en el DNI en el orden estabecido por el algoritmo de obtención
-    $indice = intval($numero) % 23; //intentar simplificar sin la función intval
-    return $letra === $letras[$indice]; //devuelve si la letra del DNI coincide con la que debería ser aplicando el algoritmo al número
-}
-
-function mayoriaEdad($fnac) {
-    $fecha = new DateTime($fnac);
-    $hoy = new DateTime();
-    $edad = $hoy->diff($fecha)->y; //obtiene los años (y) de diferencia entre la fecha indicada y hoy
-    return $edad >= 18;
-}
-
-function hayInvalido($validos){ //para saber si existe algún valor inválido en nuestro array
-    foreach($validos as $campo){
-        if(!$campo) return true;
-    }
-    return false;
 }
 
 ?>

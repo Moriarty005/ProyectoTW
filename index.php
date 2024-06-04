@@ -2,9 +2,8 @@
 require_once('html.php');
 require_once('conexion.php');
 
-  session_start();
-  $db = Database::getInstance();
-
+session_start();
+$db = Database::getInstance();
 
 function getAction($p) {
     $r = [];
@@ -28,6 +27,9 @@ function getAction($p) {
         case 'reservas': $r['controlador'] = 'reservas';
                     //$r['metodo'] = 'hello';
                     break;
+        case 'registro': $r['controlador'] = 'registro';
+                    //$r['metodo'] = 'hello';
+                    break;
         default: $r['controlador'] = 'error';
                 //$r['metodo']='hello';
       }
@@ -36,47 +38,30 @@ function getAction($p) {
     return $r;
 }
 
-if(isset($_GET['submit']) && $_GET['submit'] == "Enviar datos"){
-  if(empty($_GET['email']) || emp($_GET['ctr'])){
-    echo "No se han introducido todos los datos";
-  }else{
-    $email = $_GET['email'];
-    $password = $_GET['ctr'];
-    $q = $db->query("SELECT tipo FROM Usuario WHERE mail = '$email' AND passwd = '$password'");
-    if(mysqli_num_rows($q) > 0){
-      $row = mysqli_fetch_assoc($q);
-      echo "El tipo de usuario es: " . $row['tipo'];
+//Iniciar sesión (comprobar que la sesión no está iniciada en el momento)
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+  if(isset($_POST['submit']) && $_POST['submit'] == "Iniciar sesión"){  
+    if(empty($_POST['email']) || empty($_POST['password'])){
+      echo "No se han introducido todos los datos";
     }else{
-      echo "El email o la contraseña son incorrectos";
+      $email = $_POST['email'];
+      $password = $_POST['password'];
+      $q = $db->query("SELECT tipo FROM Usuario WHERE mail = '$email' AND passwd = '$password'");
+      if(mysqli_num_rows($q) > 0){
+        $row = mysqli_fetch_assoc($q);
+        echo "El tipo de usuario es: " . $row['tipo'];
+        $_SESSION['tipo'] = $row['tipo'];
+      }else{
+        echo "El email o la contraseña son incorrectos";
+      }
     }
   }
 }
-
-if(isset($_GET['submit']) && $_GET['submit'] == "Registrarse"){
-  if(empty($_GET['email']) || empty($_GET['passwd']) || empty($_GET['nombre']) || empty($_GET['apellidos']) || empty($_GET['dni']) || empty($_GET['tarjeta']) || empty($_GET['nacionalidad'])){
-    echo "No se han introducido todos los datos";
-  }else{
-    $email = $_GET['email'];
-    $password = $_GET['passwd'];
-    $nombre = $_GET['nombre'];
-    $apellidos = $_GET['apellidos'];
-    $dni = $_GET['dni'];
-    $tarjeta = $_GET['tarjeta']; 
-    $nacionalidad = $_GET['nacionalidad']; 
-    $q = $db->query("INSERT INTO usuarios (nombre, apellido, dni, email, nacionalidad, tipo, passwd, tarjeta)
-                    VALUES ('$nombre', '$apellidos', '$dni', '$email', '$nacionalidad', 'cliente', '$passwd', '$tarjeta');");
-    if(mysqli_affected_rows($db) > 0){
-      echo "Usuario registrado";
-    }else{
-      echo "Error al registrar el usuario";
-    }
-  }
-}
-
 
 $data = getAction($_GET);
-
+$data['tipo'] = $_SESSION['tipo'];
 var_dump($data);
+
 
 echo HTMLrenderWeb($data);
 ?>

@@ -31,7 +31,7 @@ function HTMLrenderWeb($data) {
   }
 
   //TODO: cambiar la barra de navegación en base al usuario
-  $nav = nav('recepcionista'); 
+  $nav = nav('anonimo'); 
   $ret .= <<<HTML
     <!DOCTYPE html>
     <html lang="en">
@@ -73,6 +73,7 @@ function nav($tipo_usuario){
     $ret .= <<<HTML
       <a href="index.php?p=reservas">Consultar reservas(para recepcionistas)</a>
       <a href="index.php?p=habitaciones-list">Listado de habitaciones (para recepcionistas)</a>
+      <a href="index.php?p=usuarios-list">Listado de usuarios (para recepcionistas)</a>
     HTML;
   }else if($tipo_usuario == 'admin'){
     $ret .= <<<HTML

@@ -1,0 +1,5 @@
+#Ignoramos los ficheros .json que son los que contienen los datos de acceso
+*.json
+
+#Ignoramos la carpeta del SFTP al completo
+.vscode/

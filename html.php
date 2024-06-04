@@ -37,7 +37,7 @@ function HTMLrenderWeb($data) {
             $main = reservas();
             break;
         case 'registro':
-            $main = registro();
+            $main = registro($data['tipo']);
             break;
         default:
             $main = '<main><h1>Por implementar</h1></main>';
@@ -322,7 +322,7 @@ function datos(){
   return $ret;
 }
 
-function registro(){
+function registro($tipo_usuario){
 
     global $todo_correcto;
 
@@ -347,17 +347,33 @@ function registro(){
                         </label>
                     </p>
                 </section>
-                <div class="boton">
-                    
     HTML;
+
+    if($tipo_usuario == "admin"){
+        $ret .= <<<HTML
+            <section class="privilegios">
+                <p>
+                    <label>Privilegios del usuario:
+                        <select name="privileges" id="privileges">
+                            <option value="cliente">Cliente</option>
+                            <option value="recepcionista">Recepcionista</option>
+                            <option value="admin" selected>Administrador</option>
+                        </select>
+                    </label>
+                </p>
+            </section>
+        HTML;
+    }
 
     if($todo_correcto[8]){
 
         $ret .= <<<HTML
+            <div class="boton">
             <input type="submit" name='enviar' value="Confirmar datos" class="boton-enviar">
         HTML;
     }else{
         $ret .= <<<HTML
+            <div class="boton">
             <input type="submit" name='enviar' value="Enviar datos" class="boton-enviar">
         HTML;
     }

@@ -35,6 +35,9 @@ function HTMLrenderWeb($data) {
         case 'registro':
             $main = registro($data['tipo']);
             break;
+        case 'usuarios-list':
+            $main = listadoUsuarios($data['tipo']);
+            break;
         default:
             $main = '<main><h1>Por implementar</h1></main>';
             break;
@@ -316,6 +319,39 @@ function datos(){
   HTML;
   
   return $ret;
+}
+
+function listadoUsuarios($tipo_usuario){
+
+    $ret = <<<HTML
+    <main>
+        <h2>Listado de usuarios (Falta toda la interacción con la BD)</h2>
+        <table>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Email</th>
+                <th>Sexo</th>
+                <th>Nacionalidad</th>
+                <th>Fecha de nacimiento</th>
+                <th>Idioma</th>
+                <th>Reserva</th>
+                <th>Tratamiento de datos</th>
+            </tr>
+        </table>
+    HTML;
+
+    if($tipo_usuario == 'admin'){
+        $ret .= <<<HTML
+        <h2>Aqui deberia de aparecer el filtro para los admins</h2>
+        HTML;
+    }
+
+    $ret .= <<<HTML
+        </main>
+        HTML;
+
+    return $ret;
 }
 
 function reservas(){

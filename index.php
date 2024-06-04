@@ -30,6 +30,9 @@ function getAction($p) {
         case 'registro': $r['controlador'] = 'registro';
                     //$r['metodo'] = 'hello';
                     break;
+        case 'usuarios-list': $r['controlador'] = 'usuarios-list';
+                    //$r['metodo'] = 'hello';
+                    break;
         default: $r['controlador'] = 'error';
                 //$r['metodo']='hello';
       }

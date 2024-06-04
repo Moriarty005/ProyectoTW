@@ -49,6 +49,28 @@ function HTMLrenderWeb($data) {
             <img src="./img/icono.png" alt="Icon">
         </header>
         $nav
+        <section>
+            <form novalidate>
+                <h2> Iniciar sesión</h2>
+                <label> Emale: </label> <input type="email" name="email" placeholder="Escribe tu email">
+                <label> Contraseña: </label> <input type="password" name="ctr" placeholder="Contraseña">
+                <input type="submit" name="inises" value="Enviar datos">
+            </form>
+        </section>
+        <section>
+            <form novalidate>
+                <h2> Registro</h2>
+                <label> Nombre: </label> <input type="text" name="nombre" placeholder="Escribe tu nombre">
+                <label> Apellido: </label> <input type="text" name="apellidos" placeholder="Escribe tu apellido">
+                <label> DNI: </label> <input type="text" name="dni" placeholder="Escribe tu DNI">
+                <label> Email: </label> <input type="email" name="email" placeholder="Escribe tu email">
+                <label> Nacionalidad: </label> <input type="text" name="nacionalidad" placeholder="Escribe tu nacionalidad">
+                <label> Contraseña: </label> <input type="password" name="passwd" placeholder="Escribe tu contraseña">
+                <label> Foto: </label> <input type="file" name="foto">
+                <label> Tarjeta: </label> <input type="text" name="tarjeta" placeholder="Escribe tu tarjeta">
+                <input type="submit" name="registro" value="Registrarse">
+            </form>
+        </section>
         $main
         <footer>
             <p>Tel:957333333 Correo:hotelo@o.com Cabra,Córdoba(España)Av/Góngora</p>
@@ -383,6 +405,33 @@ function reservas(){
   HTML;
 
   return $ret;
+}
+
+// Funciones auxiliares
+function esDNI($dni) {
+    return preg_match('/^[0-9]{8}[A-Z]$/i', $dni);
+}
+
+function letraValida($dni){
+    $numero = substr($dni, 0, 8); //devuelve los 8 primeros caracteres (los números)
+    $letra = strtoupper(substr($dni, -1)); //devuelve el último carácter introducido en el string (la letra)
+    $letras = 'TRWAGMYFPDXBNJZSQVHLCKE'; //letras usadas en el DNI en el orden estabecido por el algoritmo de obtención
+    $indice = intval($numero) % 23; //intentar simplificar sin la función intval
+    return $letra === $letras[$indice]; //devuelve si la letra del DNI coincide con la que debería ser aplicando el algoritmo al número
+}
+
+function mayoriaEdad($fnac) {
+    $fecha = new DateTime($fnac);
+    $hoy = new DateTime();
+    $edad = $hoy->diff($fecha)->y; //obtiene los años (y) de diferencia entre la fecha indicada y hoy
+    return $edad >= 18;
+}
+
+function hayInvalido($validos){ //para saber si existe algún valor inválido en nuestro array
+    foreach($validos as $campo){
+        if(!$campo) return true;
+    }
+    return false;
 }
 
 ?>

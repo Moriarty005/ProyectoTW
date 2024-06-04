@@ -11,38 +11,37 @@ $idiomas = array("es" => "Español", "en" => "Inglés", "de" => "Alemán");
 function HTMLrenderWeb($data) {
 
   $ret = '';
-
-    $header = renderHeader();
+  $header = renderHeader($data);
 
     //TODO: cambiar la barra de navegación en base al usuario
-    $nav = nav('admin'); 
+    $nav = nav($data['tipo']);
 
 
   if($data['controlador'] == null){
     $main = bienvenida();
-  }else{ //esto con un switch es más chulo
-    
+  }else{
     switch ($data['controlador']) {
         case 'bienvenida':
             $main = bienvenida();
-          break;
+            break;
         case 'habitaciones':
             $main = habitaciones();
-          break;
+            break;
         case 'servicios':
             $main = servicios();
-        break;
+            break;
         case 'datos':
             $main = datos();
-          break;
+            break;
         case 'reservas':
             $main = reservas();
-        break;
-        case 'registrar-cliente':
-            $main = registroCliente();
-        break;
+            break;
+        case 'registro':
+            $main = registro();
+            break;
         default:
             $main = '<main><h1>Por implementar</h1></main>';
+            break;
     }
   }
 
@@ -71,48 +70,57 @@ function HTMLrenderWeb($data) {
     return $ret;
 }
 
-function renderHeader(){
+//Funciones específicas de escritura en el HTML dependiendo de lo requerido
+function renderHeader($data){
     $dev = <<<HTML
     <header>
-    <div class="logo">
-        <img src="./img/icono.png" alt="Icon">
-        <h1>HOTEL O</h1>
-        <img src="./img/icono.png" alt="Icon">
-    </div>
-    <div class="contenedor-sesion">
-        <a href="#" onclick="showPopup()">Iniciar sesión</a>
-        <a href="index.php?p=registrar-cliente">Registrarse</a>
-    </div>
-    <script>
-        function showPopup(type) {
-            var popup = document.getElementById('popup');
-            popup.style.display = 'flex';
-
-            document.getElementById('login-form').style.display = 'flex';
-        }
-
-        function closePopup() {
-            var popup = document.getElementById('popup');
-            popup.style.display = 'none';
-        }
-    </script>
-    <div id="popup" class="popup">
-        <div class="popup-contenido">
-            <span class="popup-cerrar" onclick="closePopup()">X</span>
-            <h2>Iniciar sesión</h2>
-            <form id="login-form">
-                <label for="email">Correo electrónico:</label>
-                <input type="email" id="email" name="email">
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password">
-                <button type="submit">Registrarse</button>
-            </form>
-            <form id="register-form" style="display: none;">
-                <button type="submit">Registrarse</button>
-            </form>
+        <div class="logo">
+            <img src="./img/icono.png" alt="Icon">
+            <h1>HOTEL O</h1>
+            <img src="./img/icono.png" alt="Icon">
         </div>
-    </div>
-    </header>
+        <div class="contenedor-sesion">
+            <a href="#" onclick="showPopup()">Iniciar sesión</a>
+            <a href="index.php?p=registro">Registro</a>
+    HTML;
+        
+        if($data['tipo'] != "anonimo"){
+            $dev .= <<<HTML
+            <form id="logout-form" method="post" novalidate>
+                <input type="submit" name="submit" value="Cerrar sesión">
+            </form>
+            HTML;
+        }
+
+    $dev .= <<<HTML
+        </div>
+        <script>
+            function showPopup(type) {
+                var popup = document.getElementById('popup');
+                popup.style.display = 'flex';
+
+                document.getElementById('login-form').style.display = 'flex';
+            }
+
+            function closePopup() {
+                var popup = document.getElementById('popup');
+                popup.style.display = 'none';
+            }
+        </script>
+        <div id="popup" class="popup">
+            <div class="popup-contenido">
+                <span class="popup-cerrar" onclick="closePopup()">X</span>
+                <h2>Iniciar sesión</h2>
+                <form id="login-form" method="post" novalidate>
+                    <label for="email">Correo electrónico:</label>
+                    <input type="email" id="email" name="email">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password">
+                    <input type="submit" name="submit" value="Iniciar sesión"> 
+                </form>
+            </div>
+        </div>
+        </header>
     HTML;
 
     return $dev;
@@ -314,571 +322,72 @@ function datos(){
   return $ret;
 }
 
-//TODO: implementar listado de usuarios
-/*function listadoUsuarios($data){
-
-    $ret = '';
-
-
-    if($data['tipo-usuario'] != 'anonimo' && $data['tipo-usuario'] != 'cliente'){
-
-        $ret = <<<HTML
-        <main>
-
-
-
-        </main>
-        HTML;
-    }
-    
-
-
-
-    return $ret;
-}*/
-
-function registroCliente(){
-
-    global $todo_correcto;
-
-    popErrores();
-
+function registro(){
     $ret = <<<HTML
-    <main>
-            <form action="" method="post">
-                 
-    HTML;
-
-    $dp = HTMLdatosPersonales();
-    $da = HTMLdatosAcceso();
-    $prefs = HTMLpreferencias();
-
-    if($todo_correcto[3] && $todo_correcto[6] && $todo_correcto[7]){
-        $todo_correcto[9] = true;
-    }
-
-    $ret .= $dp . $da . $prefs;
-
-    $ret .= <<<HTML
-        <section class="agreedments">
-            <p>
-                <label>Tratamiento de datos:
-                    <select name="agreeds" id="agreeds">
-                        <option value="TOTAL" selected>Acepta el almacenamiento de mis datos y el envío a terceros</option>
-                        <option value="PARCIAL">Acepta el almacenamiento de mis datos pero no el envío a terceros</option>
-                        <option value="NINGUNO">No acepta el almacenamiento ni el envío de datos a terceros responder</option>
-                    </select>
-                </label>
-            </p>
-        </section>
-        <div class="boton">
-    HTML;
-
-    if($todo_correcto[8]){
-
-        $ret .= <<<HTML
-            <input type="submit" name='enviar' value="Confirmar datos" class="boton-enviar">
-        HTML;
-    }else{
-        $ret .= <<<HTML
-            <input type="submit" name='enviar' value="Enviar datos" class="boton-enviar">
-        HTML;
-    }
-
-    $ret .= <<< HTML
-    
-                </div>
-            </form>
-        </main>
-    HTML;
-
-    return $ret;
-}
-
-function popErrores(){
-    global $errores;
-    global $todo_correcto;
-
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){ #Si se ha pulsado el boton de enviar
+    <form method="post" novalidate>
             
-        comprobarNombre();
-        comprobarDNI();
-        comprobarFecha();
-
-        #Si los tres campos de la seccion de datos personales estan correctos indicamos que esta seccion al completo esta correcta
-        if($todo_correcto[0] && $todo_correcto[1] && $todo_correcto[2]){
-            $todo_correcto[3] = true;
-        }
+            <section><h2>Datos de usuario</h2>
+                <div>
+                    <div>
+                        <label>Nombre: </label><input type="text" name="nombre" size="15" maxlength="20" required placeholder="Campo obligatorio" pattern="^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]*">
+                        <label>Apellidos: </label><input type="text" name="apellido" size="30" placeholder="Opcional" pattern="^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]*">               
+                    </div>
+                    <div>
+                        <label>Clave: </label><input type="password" name="ctr" placeholder="Introduzca su contraseña"> 
+                        <label>E-mail: </label><input type="email" name="email" placeholder="Con un formato correcto" required>
+                    </div>
+                    
+                </div>
+                    <div>
+                        <label>Nacionalidad: </label><input type="text" name="nacionalidad" value="España">
+                
+                        <label>Sexo:</label>
+                        <select name="sexo">
+                            <option>Masculino</option>
+                            <option>Femenino</option>
+                            <option selected>No deseo responder</option>
+                        </select>
+                    </div>
+            </section>
         
-        comprobarMail();
-        comprobarPasswd();
-
-        #Si los dos campos de la seccion de datos de acceso estan correctos indicamos que esta seccion al completo esta correcta
-        if($todo_correcto[4] && $todo_correcto[5]){
-            $todo_correcto[6] = true;
-        }
-
-        #Esta funcion calcula internamente si el bloque del idioma esta corrrecto
-        comprobarPrefs();
-
-        #En caso de que los tres bloques esten correctos cambiamos lo que habíamos almacenado en la variable global errores 
-        #por sentencias HTML que no sean modificables
-        if($todo_correcto[3] && $todo_correcto[6] && $todo_correcto[7]){
-            $todo_correcto[8] = true;
-            todo_correctoHTML();
-        }
+            <section><h2>Reserva</h2>
+                <p>Idioma para comunicaciones:</p>
+                    <div>
+                        <label> <input type="radio" name="idioma" value="Espaniol"> Español </label>
+                        <label> <input type="radio" name="idioma" value="Ingles"> Inglés </label>
+                        <label> <input type="radio" name="idioma" value="Frances"> Francés </label> 
+                        <label> <input type="radio" name="idioma" value="Japones"> Japonés </label>
+                    </div>
         
-    }else{ #en caso de que se acabe de acceder a la pagina
-        defaultHTML();
-    }
-}
-
-function todo_correctoHTML(){
-
-    global $errores;
-    global $idiomas;
-
-    $valor = $_POST['nombre'];
-    $errores[0] = <<< HTML
-        <input type="text" name="nombre" value="$valor" readonly>
-    HTML;
-
-    $valor = $_POST['dni'];
-    $errores[1] = <<< HTML
-        <input type="text" name="dni" value="$valor" readonly>
-    HTML;
-
-    $valor = $_POST['fecha-nacimiento'];
-    $errores[2] = <<< HTML
-        <input type="date" name="fecha-nacimiento" value="$valor" readonly>
-    HTML;
-
-    $valor = $_POST['mail'];
-    $errores[3] = <<< HTML
-        <input type="email" name='mail' value="$valor" novalidate readonly>
-    HTML;
-
-    $valor = $_POST['passwd'];
-    $errores[4] = <<< HTML
-        <input type="password" value="$valor" name='passwd' readonly>
-    HTML;
-    $errores[5] = <<< HTML
-        <input type="password" value="$valor" name='passwdRepeat' readonly>
-    HTML;
-
-    $post = $_POST['language'];
-    $errores[6] = <<< HTML
-    HTML;
-    foreach ($idiomas as $clave => $valor) {
-        if($post == $clave){
-            $errores[6] .= <<< HTML
-                <label><input type="radio" name="language" value="$clave" checked>$valor</label>
-            HTML;
-        }else{
-            $errores[6] .= <<< HTML
-                <label><input type="radio" name="language" value="$clave">$valor</label>
-            HTML;
-        }
-    }
-}
-
-function defaultHTML(){
-
-    global $errores;
-    global $idiomas;
-
-    $errores[0] = <<< HTML
-        <input type="text" name="nombre">
-    HTML;
-    $errores[1] = <<< HTML
-        <input type="text" name="dni">
-    HTML;
-    $errores[2] = <<< HTML
-        <input type="date" name="fecha-nacimiento">
-    HTML;
-    $errores[3] = <<< HTML
-    <input type="email" id="mail" name='mail' novalidate>
-    HTML;
-    $errores[4] = <<< HTML
-    <input type="password" placeholder="Escriba la clave" name='passwd'>
-    HTML;
-    $errores[5] = <<< HTML
-    <input type="password" placeholder="Escriba la misma clave" name='passwdRepeat'>
-    HTML;
-    foreach ($idiomas as $clave => $valor) {
-        $errores[6] .= <<< HTML
-        <label><input type="radio" name="language" value="$clave">$valor</label>
-        HTML;
-    }
-}
-
-function comprobarNombre(){
-
-    global $errores;
-    global $todo_correcto;
-
-    if(empty($_POST['nombre'])){
-        $errores[0] = <<< HTML
-            <input type="text" name="nombre">
-            <p class="errorNombre">Error en el nombre</p>
-        HTML;
-    }else{
-        $valor = $_POST['nombre'];
-        $errores[0] = <<< HTML
-            <input type="text" name="nombre" value="$valor">
-        HTML;
-        $todo_correcto[0] = true;
-    }
-}
-
-function comprobarDNI(){
-
-    global $errores;
-    global $todo_correcto;
-
-    if(empty($_POST['dni'])){
-        $errores[1] = <<< HTML
-        <input type="text" name="dni">
-        <p class="errorDNI">Error en el DNI</p>
-        HTML;
-    }else{
-        $valor = $_POST['dni'];
-        if(!esDniValido($valor)){
-            $errores[1] = <<< HTML
-            <input type="text" name="dni">
-            <p class="errorDNI">El DNI no es válido</p>
-            HTML;
-        }else{
-            $errores[1] = <<< HTML
-            <input type="text" name="dni" value="$valor">
-            HTML;
-            $todo_correcto[1] = true;
-        }   
-    }
-}
-
-function comprobarFecha(){
-
-    global $errores;
-    global $todo_correcto;
-
-    if(empty($_POST['fecha-nacimiento'])){
-        $errores[2] = <<< HTML
-        <input type="date" name="fecha-nacimiento">
-        <p class="errorEdad">Debe rellenar el campo</p>
-        HTML;
-    }else{
-
-        $fecha = $_POST['fecha-nacimiento'];
-        if(!esMayorDeEdad($fecha)){
-            $errores[2] = <<< HTML
-            <input type="date" name="fecha-nacimiento">
-            <p class="errorEdad">Debe ser mayor de edad</p>
-            HTML;
-        }else{
-            $errores[2] = <<< HTML
-            <input type="date" name="fecha-nacimiento" value="$fecha">
-            HTML;
-            $todo_correcto[2] = true;
-        }
-    }
-}
-
-function comprobarMail(){
-
-    global $errores;
-    global $todo_correcto;
-
-    #Aunque ponga novalidate el navegador lo comprueba igual
-    if(empty($_POST['mail'])){
-        $errores[3] = <<< HTML
-        <input type="email" id="mail" name='mail' novalidate>
-        <p class="errorMail">Error en el mail</p>
-        HTML;
+                <p>Habitación:</p>
+                    <div>
+                        <label> <input type="checkbox" name="habitacion[]" value="sanrio"> Modelo <em>Sanrio</em> </label>
+                        <label> <input type="checkbox" name="habitacion[]" value="tradicional"> Modelo tradicional </label>
+                        <label> <input type="checkbox" name="habitacion[]" value="pareja"> Habitación para parejas </label>
+                        <label> <input type="checkbox" name="habitacion[]" value="suite"> Habitación suite </label>
+                    </div>
+                <div>
+                    <div>
+                        <label>Fecha nacimiento: <input type="date" name="nacimiento"> </label>
+                    </div>
+                    <div>
+                        <label>Semana de visita: <input type="week" name="semanaEstancia"> </label>
+                    </div>
+                </div>
+            </section>
         
-    }else {
-        if(!filter_var($_POST['mail'], FILTER_VALIDATE_EMAIL)){
-            $errores[3] = <<< HTML
-            <input type="email" id="mail" name='mail' novalidate>
-            <p class="errorMail">El email no tiene un formato correcto</p>
-            HTML;
-        }else{
-            $valor = $_POST['mail'];
-            $errores[3] = <<< HTML
-            <input type="email" name='mail' value="$valor" novalidate>
-            HTML;
-            $todo_correcto[4] = true;
-        }
-    }
-}
-
-function comprobarPasswd(){
-
-    global $errores;
-    global $todo_correcto;
-
-    if(empty($_POST['passwd'])){
-    
-        $errores[4] = <<< HTML
-        <input type="password" placeholder="Escriba la clave" name='passwd'>
-        <p class="errorPasswd">Rellene la contraseña</p>
-        HTML;
-        $errores[5] = <<< HTML
-        <input type="password" placeholder="Escriba la misma clave" name='passwdRepeat'>
-        HTML;
-    }else{
-        if($_POST['passwd'] != $_POST['passwdRepeat']){
-            $errores[4] = <<< HTML
-            <input type="password" placeholder="Escriba la clave" name='passwd'>
-            <p class="errorPasswd">Las contraseñas con coinciden</p>
-            HTML;
-            $errores[5] = <<< HTML
-            <input type="password" placeholder="Escriba la misma clave" name='passwdRepeat'>
-            HTML;
-        }else{
-            $valor = $_POST['passwd'];
-            $errores[4] = <<< HTML
-            <input type="password" value="$valor" name='passwd'>
-            HTML;
-            $errores[5] = <<< HTML
-            <input type="password" value="$valor" name='passwdRepeat'>
-            HTML;
-            $todo_correcto[5] = true;
-        }
-    }
-}
-
-function comprobarPrefs(){
-
-    global $idiomas;
-    global $errores;
-    global $todo_correcto;
-
-    if(!isset($_POST['language'])){
-        foreach ($idiomas as $clave => $valor) {
+            <p>Tratamiento de datos: <select name="TyC">
+                <option value="TOTAL">Acepta el almacenamiento de mis datos y el envío a terceros.</option>
+                <option value="PARCIAL">Acepta el almacenamiento de mis datos pero no el envío a terceros.</option>
+                <option value="NINGUNO">No acepta el almacenamiento ni el envío de datos a terceros.</option>
+            </select></p>
             
-            $errores[6] .= <<< HTML
-            <label><input type="radio" name="language" value="$clave">$valor</label>
-            HTML;
-        }
-        $errores[6] .= <<< HTML
-        <p class="errorPrefs">Error en el idioma</p>
-        HTML;
-    }else{
-        $post = $_POST['language'];
-        $errores[6] = <<< HTML
-        HTML;
-        foreach ($idiomas as $clave => $valor) {
-            if($post == $clave){
-                $errores[6] .= <<< HTML
-                <label><input type="radio" name="language" value="$clave" checked>$valor</label>
-                HTML;
-            }else{
-                $errores[6] .= <<< HTML
-                <label><input type="radio" name="language" value="$clave">$valor</label>
-                HTML;
-            }
-        }
-        $todo_correcto[7] = true;
-    }
-}
-
-function esDniValido($dni) {
-
-    if (!preg_match('/^[0-9]{8}[A-Z]$/', $dni)) {
-        return false;
-    }
-
-    $numero = substr($dni, 0, 8);
-    $letra = substr($dni, -1);
-
-    $letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
-
-    $letraCalculada = $letras[intval($numero) % 23];
-
-    return $letraCalculada === $letra;
-}
-
-function esMayorDeEdad($fechaNacimiento) {
-
-    $ret = false;
-
-    $fechaActual = new DateTime();
-    $fechaNacimiento = new DateTime($fechaNacimiento); 
-    $diferencia = $fechaActual->diff($fechaNacimiento);
-
-    if ($diferencia->y >= 18) {
-        $ret = true;
-    }
-
+            <input type="submit" value="Enviar datos">
+        </form>
+    HTML;
     return $ret;
 }
 
-function HTMLdatosPersonales() {
-    global $errores;
-
-    $ret = <<<HTML
-        <section class="registro">
-            <h2 class="registro">Datos personales</h2>
-            <div class="pers-cont">
-                <div class="upper-cont">
-                    <div id="nombre-apellidos">
-                        <div id="nombre">
-                            <div class="uno"><label>Nombre:</label></div>
-                            <div class="dos">
-    HTML;
-    if (isset($errores[0])) {
-        $ret .= $errores[0];
-    }
-    $ret .= <<<HTML
-                            </div>
-                        </div>
-                        <div id="apellidos">
-                            <div class="uno"><label>Apellidos:</label></div>
-                            <div class="dos"><input type="text" name="apellidos"></div>
-                        </div>
-                    </div>
-                    <div id="foto">
-                        <label>Fotografía: <p><input type="file" name="fotografia"></p></label>
-                    </div>
-                </div>
-                <div class="lower-cont">
-                    <div class="left-cont">
-                        <div id="dni">
-                            <div class="uno"><label>DNI:</label></div>
-                            <div class="dos">
-    HTML;
-    if (isset($errores[1])) {
-        $ret .= $errores[1];
-    }
-    $ret .= <<<HTML
-                            </div>
-                        </div>
-                        <div id="fnac">
-                            <div class="uno"><label>F. nacimiento:</label></div>
-                            <div class="dos">
-    HTML;
-    if (isset($errores[2])) {
-        $ret .= $errores[2];
-    }
-    $ret .= <<<HTML
-                            </div>
-                        </div>
-                    </div>
-                    <div class="right-cont">
-                        <div id="etiquetas">
-                            <p><label>Nacionalidad:</label></p>
-                            <p><label>Sexo:</label></p>
-                        </div>
-                        <div id="entradas">
-                            <p><input type="text" value="España"></p>
-                            <p><select name="genero" id="genero">
-                                <option value="MASC">Masculino</option>
-                                <option value="FEM">Femenino</option>
-                                <option selected value="N/S">No deseo responder</option>
-                            </select></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    HTML;
-
-    return $ret;
-}
-
-
-function HTMLdatosAcceso() {
-
-    global $errores;
-
-    $ret = <<<HTML
-    <section class="registro">
-        <h2 class="registro">Datos de acceso</h2>
-        <div class="access">
-            <div class="upper-cont">
-                <div class="uno"><label>Email:</label></div>
-                <div class="dos">
-HTML;
-    if (isset($errores[3])) {
-        $ret .= $errores[3];
-    }
-    $ret .= <<<HTML
-                </div>
-            </div>
-            <div class="lower-cont">
-                <div class="uno">
-                    <div class="uno-arriba"><label>Clave:</label></div>
-                    <div class="uno-abajo">
-HTML;
-    if (isset($errores[4])) {
-        $ret .= $errores[4];
-    }
-    $ret .= <<<HTML
-                    </div>
-                </div>
-                <div class="dos">
-                    <div class="dos-arriba"><label>Repita la clave:</label></div>
-                    <div class="dos-abajo">
-    HTML;
-    if (isset($errores[5])) {
-        $ret .= $errores[5];
-    }
-    $ret .= <<<HTML
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-HTML;
-
-    return $ret;
-}
-
-function HTMLpreferencias() {
-
-    global $errores;
-
-    $ret = <<<HTML
-    <section class="registro">
-        <h2 class="registro">Preferencias</h2>
-        <div class="prefs">
-            <div class="left-cont">
-                <label>Idioma para comunicaciones:</label>
-HTML;
-        
-    if (isset($errores[6])) {
-        $ret .= $errores[6];
-    }
-    $ret .= <<<HTML
-            </div>
-            <div class="right-cont">
-                <label>Preferencias de habitación:</label>
-                <label><input type="checkbox" name="preference[]" value="smoking">Para fumadores</label>
-                <label><input type="checkbox" name="preference[]" value="pets">Que permita mascotas</label>
-                <label><input type="checkbox" name="preference[]" value="view">Con vistas</label>
-                <label><input type="checkbox" name="preference[]" value="carpet">Con moqueta</label>
-            </div>
-        </div>
-    </section>
-HTML;
-
-    return $ret;
-}
-
-function HTMLhead(){
-
-    $style = HTMLstyle();
-
-    $ret = <<< HTML
-        $style
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ejercicio 7 práctica 5</title>
-    HTML;
-
-    return $ret;
-}
 function reservas(){
   $ret = <<<HTML
   <main>

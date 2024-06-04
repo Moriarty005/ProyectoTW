@@ -1,5 +1,9 @@
 <?php
 require_once('html.php');
+require_once('conexion.php');
+
+session_start();
+$db = Database::getInstance();
 
 function getAction($p) {
     $r = [];
@@ -23,23 +27,48 @@ function getAction($p) {
         case 'reservas': $r['controlador'] = 'reservas';
                     //$r['metodo'] = 'hello';
                     break;
-        case 'registrar-cliente': $r['controlador'] = 'registrar-cliente';
-        //$r['metodo'] = 'hello';
-        break;
+        case 'registro': $r['controlador'] = 'registro';
+                    //$r['metodo'] = 'hello';
+                    break;
         default: $r['controlador'] = 'error';
                 //$r['metodo']='hello';
       }
     }
 
-    if(!isset($_POST['iniciar_sesion'])){
-
-      $r['tipo_usuario'] = 'anonimo';
-    }
-
     return $r;
 }
 
+//Iniciar sesión (comprobar que la sesión no está iniciada en el momento)
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+  if(isset($_POST['submit']) && $_POST['submit'] == "Iniciar sesión"){  
+    if(empty($_POST['email']) || empty($_POST['password'])){
+      echo "No se han introducido todos los datos";
+    }else{
+      $email = $_POST['email'];
+      $password = $_POST['password'];
+      $q = $db->query("SELECT tipo FROM Usuario WHERE mail = '$email' AND passwd = '$password'");
+      if(mysqli_num_rows($q) > 0){
+        $row = mysqli_fetch_assoc($q);
+        echo "El tipo de usuario es: " . $row['tipo'];
+        $_SESSION['tipo'] = $row['tipo'];
+      }else{
+        echo "El email o la contraseña son incorrectos";
+      }
+    }
+  }
+  if(isset($_POST['submit']) && $_POST['submit'] == "Cerrar sesión"){
+    echo "Sesión cerrada correctamente";
+    unset($_SESSION['tipo']);
+  }
+}
+
 $data = getAction($_GET);
+if(!isset($_SESSION['tipo'])){
+  $data['tipo'] = "anonimo"; //por defecto el usuario es anonimo
+}else{
+  $data['tipo'] = $_SESSION['tipo'];
+}
+var_dump($data);
 
 echo HTMLrenderWeb($data);
 ?>

@@ -56,12 +56,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
       }
     }
   }
+  if(isset($_POST['submit']) && $_POST['submit'] == "Cerrar sesión"){
+    echo "Sesión cerrada correctamente";
+    unset($_SESSION['tipo']);
+  }
 }
 
 $data = getAction($_GET);
-$data['tipo'] = $_SESSION['tipo'];
+if(!isset($_SESSION['tipo'])){
+  $data['tipo'] = "anonimo"; //por defecto el usuario es anonimo
+}else{
+  $data['tipo'] = $_SESSION['tipo'];
+}
 var_dump($data);
-
 
 echo HTMLrenderWeb($data);
 ?>

@@ -4,10 +4,10 @@
 function HTMLrenderWeb($data) {
 
   $ret = '';
-  $header = renderHeader();
+  $header = renderHeader($data);
 
     //TODO: cambiar la barra de navegación en base al usuario
-    if(isset($data['tipo'])) $nav = nav($data['tipo']); 
+    $nav = nav($data['tipo']);
 
 
   if($data['controlador'] == null){
@@ -64,22 +64,28 @@ function HTMLrenderWeb($data) {
 }
 
 //Funciones específicas de escritura en el HTML dependiendo de lo requerido
-function renderHeader(){
+function renderHeader($data){
     $dev = <<<HTML
     <header>
-    <div class="logo">
-        <img src="./img/icono.png" alt="Icon">
-        <h1>HOTEL O</h1>
-        <img src="./img/icono.png" alt="Icon">
-    </div>
-    HTML;
-    if(isset($data['tipo'])){
-
-    }else{
-        $dev .= <<<HTML
+        <div class="logo">
+            <img src="./img/icono.png" alt="Icon">
+            <h1>HOTEL O</h1>
+            <img src="./img/icono.png" alt="Icon">
+        </div>
         <div class="contenedor-sesion">
             <a href="#" onclick="showPopup()">Iniciar sesión</a>
             <a href="index.php?p=registro">Registro</a>
+    HTML;
+        
+        if($data['tipo'] != "anonimo"){
+            $dev .= <<<HTML
+            <form id="logout-form" method="post" novalidate>
+                <input type="submit" name="submit" value="Cerrar sesión">
+            </form>
+            HTML;
+        }
+
+    $dev .= <<<HTML
         </div>
         <script>
             function showPopup(type) {
@@ -108,8 +114,7 @@ function renderHeader(){
             </div>
         </div>
         </header>
-        HTML;
-    }
+    HTML;
 
     return $dev;
 }

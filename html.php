@@ -31,7 +31,10 @@ function HTMLrenderWeb($data) {
   }
 
   //TODO: cambiar la barra de navegación en base al usuario
-  $nav = nav('anonimo'); 
+  $nav = nav('admin'); 
+
+
+
   $ret .= <<<HTML
     <!DOCTYPE html>
     <html lang="en">
@@ -40,13 +43,17 @@ function HTMLrenderWeb($data) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Hotel O</title>
         <link rel="stylesheet" href="estilo.css">
-
     </head>
     <body>
         <header>
             <img src="./img/icono.png" alt="Icon">
             <h1>HOTEL O</h1>
             <img src="./img/icono.png" alt="Icon">
+            <!--Aqui irian los botones de inicio de sesion-->
+            <div class="contenedor-sesion">
+                <a href="">Iniciar sesion</a>
+                <a href="">Registrarse</a>
+            </div>
         </header>
         $nav
         $main
@@ -66,18 +73,22 @@ function nav($tipo_usuario){
   <nav>
     <a href="index.php?p=bienvenida">Bienvenida</a>
     <a href="index.php?p=servicios">Nuestros servicios</a>
-    <a href="index.php?p=datos">Introduzca sus datos</a>
     <a href="index.php?p=habitaciones">Habitaciones</a>
   HTML;
+  if($tipo_usuario == 'cliente'){
+    $ret .= <<<HTML
+      <a href="index.php?p=consultar-reservas">Consultar reservas</a>
+    HTML;
+  }
   if($tipo_usuario == 'recepcionista'){
     $ret .= <<<HTML
-      <a href="index.php?p=reservas">Consultar reservas(para recepcionistas)</a>
-      <a href="index.php?p=habitaciones-list">Listado de habitaciones (para recepcionistas)</a>
-      <a href="index.php?p=usuarios-list">Listado de usuarios (para recepcionistas)</a>
+      <a href="index.php?p=consultar-reservas">Consultar reservas(para recepcionistas)</a>
+      <a href="index.php?p=habitaciones-list">Consultar habitaciones (para recepcionistas)</a>
+      <a href="index.php?p=usuarios-list">Administrar clientes (para recepcionistas)</a>
     HTML;
   }else if($tipo_usuario == 'admin'){
     $ret .= <<<HTML
-      <a href="index.php?p=usuarios">Consultar usuarios (solo admins)</a>
+      <a href="index.php?p=usuarios-list">Administrar usuarios (solo admins)</a>
     HTML;
   }
   $ret .= <<<HTML

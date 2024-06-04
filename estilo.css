@@ -16,8 +16,26 @@ header{
     border-image: url(../hotel/img/patron.jpg) 40 40 repeat;
     background-color:rgb(139, 0, 0);
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
 }
+
+div.contenedor-sesion{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+}
+
+div.contenedor-sesion a{
+    border-radius: 5px;
+    display: inline-block;
+    background-color: rgb(139, 0, 0);
+    padding: 20px;
+    margin: 10px;
+    text-decoration: none;
+    color: white;
+}
+
+
 @media (max-width: 600px) {
     
     header{

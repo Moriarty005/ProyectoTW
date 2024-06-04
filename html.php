@@ -30,6 +30,7 @@ function HTMLrenderWeb($data) {
     }
   }
 
+  //TODO: cambiar la barra de navegación en base al usuario
   $nav = nav('recepcionista'); 
   $ret .= <<<HTML
     <!DOCTYPE html>

@@ -715,7 +715,7 @@ function HTMLdatosPersonales() {
     global $errores;
 
     $ret = <<<HTML
-        <section class="registro">
+        <section class="pers-cont">
             <h2 class="registro">Datos personales</h2>
             <div class="pers-cont">
                 <div class="upper-cont">
@@ -790,7 +790,7 @@ function HTMLdatosAcceso() {
     global $errores;
 
     $ret = <<<HTML
-    <section class="registro">
+    <section class="access">
         <h2 class="registro">Datos de acceso</h2>
         <div class="access">
             <div class="upper-cont">
@@ -837,7 +837,7 @@ function HTMLpreferencias() {
     global $errores;
 
     $ret = <<<HTML
-    <section class="registro">
+    <section class="prefs">
         <h2 class="registro">Preferencias</h2>
         <div class="prefs">
             <div class="left-cont">

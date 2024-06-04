@@ -299,6 +299,8 @@ main img{
 /*Bloque de CSS desdicado al formulario*/
 form.registro *{
     display: inline-block;
+    margin: 0;
+    text-align: left;
 }
 
 div.upper-cont{
@@ -309,13 +311,33 @@ div.lower-cont{
     width: 100%;
 }
 
-section.registro {
+section.pers-cont {
     margin: 3% 1%;
     padding: 0% 0.5%;
     border: 1px solid black;
 }
 
-section.registro div{
+section.pers-cont div{
+    background-color: rgb(129, 0, 0);
+}
+
+section.access {
+    margin: 3% 1%;
+    padding: 0% 0.5%;
+    border: 1px solid black;
+}
+
+section.access div{
+    background-color: rgb(129, 0, 0);
+}
+
+section.prefs {
+    margin: 3% 1%;
+    padding: 0% 0.5%;
+    border: 1px solid black;
+}
+
+section.prefs div{
     background-color: rgb(129, 0, 0);
 }
 

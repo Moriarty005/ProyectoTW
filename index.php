@@ -23,6 +23,9 @@ function getAction($p) {
         case 'reservas': $r['controlador'] = 'reservas';
                     //$r['metodo'] = 'hello';
                     break;
+        case 'registrar-cliente': $r['controlador'] = 'registrar-cliente';
+        //$r['metodo'] = 'hello';
+        break;
         default: $r['controlador'] = 'error';
                 //$r['metodo']='hello';
       }

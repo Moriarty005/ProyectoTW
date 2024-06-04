@@ -296,3 +296,274 @@ a.in{
 main img{
     height: 300px;
 }
+
+/*Bloque de CSS desdicado al formulario*/
+section.registro {
+    margin: 3% 1%;
+    padding: 0% 0.5%;
+    border: 1px solid black;
+}
+
+section.registro div{
+    background-color: rgb(129, 0, 0);
+}
+
+h2.registro {
+    padding: 2px;
+    top: -15px;
+    left: 20px;
+    position: relative;
+    border: 1px solid black;
+    display: inline;
+}
+
+/*Propiedades concretar de elementos*/
+div.prefs div {
+    display: block;
+    width: 40%;
+    float: left;
+    padding: 1% 1% 0% 1%;
+    margin-bottom: 1%;
+}
+div.prefs div label {
+    display: block;
+}
+div.prefs div.right-cont {
+    border-left: 2px solid rgb(23, 177, 197);
+}
+div.prefs::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+div.access div {
+    padding: 0.5% 0.5%;
+    margin: 0% 0% 0.5% 0%;
+}
+div.access div.upper-cont {
+    width: 100%;
+    padding-left: 6%;
+}
+div.access div.upper-cont div.uno {
+    width: auto;
+    float: left;
+    text-align: right;
+}
+div.access div.upper-cont div.dos {
+    width: 75%;
+    float: left;
+}
+div.access div.upper-cont div.dos .error {
+    margin: 0;
+}
+div.access div.upper-cont::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+div.access div.lower-cont {
+    width: 100%;
+    padding-left: 6%;
+}
+div.access div.lower-cont div.uno {
+    display: inline-block;
+    padding: 0;
+    width: 40%;
+}
+div.access div.lower-cont div.uno div.uno-arriba {
+    width: auto;
+    float: left;
+    text-align: right;
+}
+div.access div.lower-cont div.uno div.uno-abajo {
+    width: 75%;
+    float: left;
+}
+div.access div.lower-cont div.dos {
+    display: inline-block;
+    padding: 0;
+    width: 50%;
+}
+div.access div.lower-cont div.dos div.dos-arriba {
+    width: auto;
+    float: left;
+    text-align: right;
+}
+div.access div.lower-cont div.dos div.dos-abajo {
+    width: 75%;
+    float: left;
+}
+div.access #mail {
+    width: 50%;
+}
+
+div.pers-cont div.upper-cont {
+    display: inline-block;
+}
+div.pers-cont div.upper-cont div {
+    padding: 0.5% 0.5%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos {
+    width: 50%;
+    float: left;
+    margin-left: 6%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#nombre {
+    display: inline-block;
+    width: 100%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#nombre div {
+    float: left;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#nombre div.uno {
+    width: 15%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#nombre div.uno p {
+    margin: 0%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#nombre div.dos {
+    width: 40%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#nombre div.dos p {
+    margin: 0%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#apellidos {
+    display: inline-block;
+    width: 100%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#apellidos div {
+    float: left;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#apellidos div.uno {
+    width: 15%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#apellidos div.uno p {
+    margin: 0%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#apellidos div.dos {
+    width: 40%;
+}
+div.pers-cont div.upper-cont #nombre-apellidos div#apellidos div.dos p {
+    margin: 0%;
+}
+div.pers-cont div.upper-cont #foto {
+    width: 40%;
+    float: left;
+    border-left: 2px solid rgb(23, 177, 197);
+}
+div.pers-cont div.lower-cont {
+    display: inline-block;
+}
+div.pers-cont div.lower-cont .left-cont {
+    margin-left: 6%;
+    width: 40%;
+    float: left;
+}
+div.pers-cont div.lower-cont .left-cont div {
+    margin-top: 2%;
+}
+div.pers-cont div.lower-cont .left-cont #dni {
+    display: inline-block;
+    width: 100%;
+}
+div.pers-cont div.lower-cont .left-cont #dni div.uno {
+    width: 40%;
+    float: left;
+    text-align: right;
+}
+div.pers-cont div.lower-cont .left-cont #dni div.dos {
+    margin-left: 1%;
+    width: 40%;
+    float: left;
+    text-align: left;
+}
+div.pers-cont div.lower-cont .left-cont p {
+    margin-left: 6%;
+    margin: 0;
+}
+div.pers-cont div.lower-cont .left-cont #fnac {
+    display: inline-block;
+    margin-left: 1%;
+    width: 100%;
+}
+div.pers-cont div.lower-cont .left-cont #fnac div.uno {
+    width: 40%;
+    float: left;
+    text-align: right;
+}
+div.pers-cont div.lower-cont .left-cont #fnac div.dos {
+    margin-left: 1%;
+    width: 50%;
+    float: left;
+    text-align: left;
+}
+div.pers-cont div.lower-cont .right-cont {
+    margin-left: 6%;
+    width: 40%;
+    float: left;
+}
+div.pers-cont div.lower-cont .right-cont #etiquetas {
+    float: left;
+    width: 40%;
+    text-align: right;
+}
+div.pers-cont div.lower-cont .right-cont #entradas {
+    margin-left: 1%;
+    float: left;
+    width: 40%;
+    text-align: left;
+}
+
+.agreedments {
+    border: 0px;
+}
+
+.agreedments:hover {
+    border: 0px;
+}
+
+div.boton {
+    text-align: center;
+}
+
+input.boton-enviar {
+    text-align: center;
+    padding: 2% 10%;
+}
+
+p.errorNombre{
+    display: block;
+    color: red;
+    margin: 0;
+}
+p.errorDNI{
+    display: block;
+    color: red;
+    margin: 0;
+}
+p.errorEdad{
+    display: block;
+    color: red;
+    margin: 0;
+}
+p.errorMail{
+    display: block;
+    color: red;
+    margin: 0;
+}
+p.errorPasswd{
+    display: block;
+    color: red;
+    margin: 0;
+}
+p.errorPrefs{
+    display: block;
+    color: red;
+    margin: 0;
+}
+h1.todo-correcto{
+    width: 100%;
+    text-align: center;
+    color: Aquamarine;
+}

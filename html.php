@@ -43,53 +43,74 @@ function HTMLrenderWeb($data) {
         <link rel="stylesheet" href="estilo.css">
     </head>
     <body>
-        <header>
-            <div class="logo">
-                <img src="./img/icono.png" alt="Icon">
-                <h1>HOTEL O</h1>
-                <img src="./img/icono.png" alt="Icon">
-            </div>
-            <!--Aqui irian los botones de inicio de sesion-->
-            <div class="contenedor-sesion">
-                <a href="#" onclick="showPopup('login')">Iniciar sesión</a>
-                <a href="#" onclick="showPopup('register')">Registrarse</a>
-            </div>
-            <script>
-                function showPopup(type) {
-                    var popup = document.getElementById('popup');
-                    popup.style.display = 'block';
+    <header>
+        <div class="logo">
+            <img src="./img/icono.png" alt="Icon">
+            <h1>HOTEL O</h1>
+            <img src="./img/icono.png" alt="Icon">
+        </div>
+        <div class="contenedor-sesion">
+            <a href="#" onclick="showPopup('login')">Iniciar sesión</a>
+            <a href="#" onclick="showPopup('register')">Registrarse</a>
+        </div>
+        <script>
+            function showPopup(type) {
+            var popup = document.getElementById('popup');
+            popup.style.display = 'block';
 
-                    if (type === 'login') {
-                        document.getElementById('login-form').style.display = 'block';
-                        document.getElementById('register-form').style.display = 'none';
-                    } else {
-                        document.getElementById('login-form').style.display = 'none';
-                        document.getElementById('register-form').style.display = 'block';
-                    }
-                }
+            // Center the popup horizontally and vertically
+            centerPopup(popup);
 
-                function closePopup() {
-                    var popup = document.getElementById('popup');
-                    popup.style.display = 'none';
-                }
-            </script>
-            <div id="popup" class="popup">
-                <div class="popup-contenido">
-                    <span class="popup-cerrar" onclick="closePopup()">X</span>
-                    <h2>Iniciar sesión</h2>
-                    <form id="login-form">
-                    <label for="email">Correo electrónico:</label>
-                    <input type="email" id="email" name="email">
-                    <label for="password">Contraseña:</label>
-                    <input type="password" id="password" name="password">
-                    <button type="submit">Iniciar sesión</button>
-                    </form>
-                    <form id="register-form" style="display: none;">
-                    <button type="submit">Registrarse</button>
-                    </form>
-                </div>
+            if (type === 'login') {
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('register-form').style.display = 'none';
+            } else {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('register-form').style.display = 'block';
+            }
+            }
+
+            function closePopup() {
+            var popup = document.getElementById('popup');
+            popup.style.display = 'none';
+            }
+
+            // Function to center the popup
+            function centerPopup(popup) {
+            var windowWidth = window.innerWidth;
+            var windowHeight = window.innerHeight;
+
+            var popupWidth = popup.offsetWidth;
+            var popupHeight = popup.offsetHeight;
+
+            var left = (windowWidth / 2) - (popupWidth / 2);
+            var top = (windowHeight / 2) - (popupHeight / 2);
+
+            // Ensure the popup doesn't go off-screen
+            left = Math.max(0, left); // Clamp to 0 on the left side
+            top = Math.max(0, top);  // Clamp to 0 on the top side
+
+            popup.style.left = left + 'px';
+            popup.style.top = top + 'px';
+            }
+        </script>
+        <div id="popup" class="popup">
+            <div class="popup-contenido">
+            <span class="popup-cerrar" onclick="closePopup()">X</span>
+            <h2>Iniciar sesión</h2>
+            <form id="login-form">
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="email">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password">
+                <button type="submit">Iniciar sesión</button>
+            </form>
+            <form id="register-form" style="display: none;">
+                <button type="submit">Registrarse</button>
+            </form>
             </div>
-        </header>
+        </div>
+    </header>
         $nav
         $main
         <footer>

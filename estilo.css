@@ -297,6 +297,18 @@ main img{
 }
 
 /*Bloque de CSS desdicado al formulario*/
+form.registro *{
+    display: inline-block;
+}
+
+div.upper-cont{
+    width: 100%;
+}
+
+div.lower-cont{
+    width: 100%;
+}
+
 section.registro {
     margin: 3% 1%;
     padding: 0% 0.5%;

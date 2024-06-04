@@ -14,9 +14,10 @@ header{
     border-style: solid;
     border-width: 20px;
     border-image: url(../hotel/img/patron.jpg) 40 40 repeat;
-    background-color:rgb(139, 0, 0);
+    
     align-items: center;
     justify-content: flex-end;
+    background-color: rgb(139, 0, 0);
 }
 
 div.contenedor-sesion{

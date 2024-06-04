@@ -1,10 +1,6 @@
 <?php
 require_once('html.php');
 
-$data = getAction($_GET);
-
-echo HTMLrenderWeb($data);
-
 function getAction($p) {
     $r = [];
     if (!isset($p['p'])) {
@@ -37,7 +33,10 @@ function getAction($p) {
       $r['tipo_usuario'] = 'anonimo';
     }
 
-
     return $r;
 }
+
+$data = getAction($_GET);
+
+echo HTMLrenderWeb($data);
 ?>

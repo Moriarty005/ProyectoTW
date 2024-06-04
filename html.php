@@ -8,23 +8,29 @@ function HTMLrenderWeb($data) {
   if($data['controlador'] == null){
     $main = bienvenida();
   }else{ //esto con un switch es más chulo
-    if($data['controlador'] == 'bienvenida'){
-      $main = bienvenida();
-    }else if($data['controlador'] == 'habitaciones'){
-      $main = habitaciones();
-    }else if($data['controlador'] == 'servicios'){
-      $main = servicios();
-    }else if($data['controlador'] == 'datos'){
-      $main = datos();
-    }else if($data['controlador'] == 'reservas'){
-      $main = reservas();
-    }else{
-      $main = '<main><h1>Por implementar</h1></main>';
+    
+    switch ($data['controlador']) {
+        case 'bienvenida':
+            $main = bienvenida();
+          break;
+        case 'habitaciones':
+            $main = habitaciones();
+          break;
+        case 'servicios':
+            $main = servicios();
+        break;
+        case 'datos':
+            $main = datos();
+          break;
+          case 'reservas':
+            $main = reservas();
+          break;
+        default:
+            $main = '<main><h1>Por implementar</h1></main>';
     }
   }
 
-  $nav = nav($data['tipo_usuario']); 
-
+  $nav = nav('recepcionista'); 
   $ret .= <<<HTML
     <!DOCTYPE html>
     <html lang="en">
@@ -50,6 +56,8 @@ function HTMLrenderWeb($data) {
     </body>
     </html>
     HTML;
+
+    return $ret;
 }
 
 function nav($tipo_usuario){
@@ -71,7 +79,6 @@ function nav($tipo_usuario){
     HTML;
   }
   $ret .= <<<HTML
-    
   </nav>
   HTML;
   

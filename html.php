@@ -5,6 +5,12 @@ function HTMLrenderWeb($data) {
 
   $ret = '';
 
+    $header = renderHeader();
+
+    //TODO: cambiar la barra de navegación en base al usuario
+    $nav = nav('admin'); 
+
+
   if($data['controlador'] == null){
     $main = bienvenida();
   }else{ //esto con un switch es más chulo
@@ -30,9 +36,7 @@ function HTMLrenderWeb($data) {
     }
   }
 
-  //TODO: cambiar la barra de navegación en base al usuario
-  $nav = nav('admin'); 
-
+  
   $ret .= <<<HTML
     <!DOCTYPE html>
     <html lang="en">
@@ -43,46 +47,7 @@ function HTMLrenderWeb($data) {
         <link rel="stylesheet" href="estilo.css">
     </head>
     <body>
-    <header>
-        <div class="logo">
-            <img src="./img/icono.png" alt="Icon">
-            <h1>HOTEL O</h1>
-            <img src="./img/icono.png" alt="Icon">
-        </div>
-        <div class="contenedor-sesion">
-            <a href="#" onclick="showPopup()">Iniciar sesión</a>
-            <a href="#">Registrarse</a>
-        </div>
-        <script>
-            function showPopup(type) {
-                var popup = document.getElementById('popup');
-                popup.style.display = 'flex';
-
-                document.getElementById('login-form').style.display = 'flex';
-            }
-
-            function closePopup() {
-                var popup = document.getElementById('popup');
-                popup.style.display = 'none';
-            }
-        </script>
-        <div id="popup" class="popup">
-            <div class="popup-contenido">
-                <span class="popup-cerrar" onclick="closePopup()">X</span>
-                <h2>Iniciar sesión</h2>
-                <form id="login-form">
-                    <label for="email">Correo electrónico:</label>
-                    <input type="email" id="email" name="email">
-                    <label for="password">Contraseña:</label>
-                    <input type="password" id="password" name="password">
-                    <button type="submit">Registrarse</button>
-                </form>
-                <form id="register-form" style="display: none;">
-                    <button type="submit">Registrarse</button>
-                </form>
-            </div>
-        </div>
-    </header>
+        $header
         $nav
         <section>
             <form novalidate>
@@ -116,6 +81,53 @@ function HTMLrenderWeb($data) {
     HTML;
 
     return $ret;
+}
+
+function renderHeader(){
+    $dev = <<<HTML
+    <header>
+    <div class="logo">
+        <img src="./img/icono.png" alt="Icon">
+        <h1>HOTEL O</h1>
+        <img src="./img/icono.png" alt="Icon">
+    </div>
+    <div class="contenedor-sesion">
+        <a href="#" onclick="showPopup()">Iniciar sesión</a>
+        <a href="#">Registrarse</a>
+    </div>
+    <script>
+        function showPopup(type) {
+            var popup = document.getElementById('popup');
+            popup.style.display = 'flex';
+
+            document.getElementById('login-form').style.display = 'flex';
+        }
+
+        function closePopup() {
+            var popup = document.getElementById('popup');
+            popup.style.display = 'none';
+        }
+    </script>
+    <div id="popup" class="popup">
+        <div class="popup-contenido">
+            <span class="popup-cerrar" onclick="closePopup()">X</span>
+            <h2>Iniciar sesión</h2>
+            <form id="login-form">
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="email">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password">
+                <button type="submit">Registrarse</button>
+            </form>
+            <form id="register-form" style="display: none;">
+                <button type="submit">Registrarse</button>
+            </form>
+        </div>
+    </div>
+    </header>
+    HTML;
+
+    return $dev;
 }
 
 function nav($tipo_usuario){

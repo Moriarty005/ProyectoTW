@@ -52,11 +52,24 @@ class CRUD {
     $this->db = null;
   }
 
-  public function read($table, $fields = "*", $condition = "") {
-    $sql = "SELECT $fields FROM $table";
-    if ($condition != "")
-      $sql .= " WHERE $condition";
-    return $this->db->query($sql);
+  public function requestUserList($filtros = null) {
+    
+    if($filtros == null){
+      $sql = "SELECT * FROM Usuario";
+      return $this->db->query($sql);
+    }else{
+      $sql = "SELECT * FROM Usuario WHERE ";
+      $conditions = [];
+      
+      foreach($filtros as $key) {
+          $conditions[] = "tipo = '$key'";
+      }
+      
+      $sql .= implode(' OR ', $conditions);
+      
+      //echo "DEBUG QUERY BD:: $sql";
+      return $this->db->query($sql);
+    }
   }
 
   public function update($table, $data, $condition) {
@@ -70,7 +83,11 @@ class CRUD {
 
   public function delete($table, $condition) {
     $sql = "DELETE FROM $table WHERE $condition";
-    return $this->db->query($sql);
+    if(mysqli_num_rows($sql)){
+      return $this->db->query($sql);
+    }else{
+      return null;
+    }
   }
 
   public function login(){
@@ -82,7 +99,7 @@ class CRUD {
         }else{
           $email = $_POST['email'];
           $password = $_POST['password'];
-          $q = $db->query("SELECT tipo FROM Usuario WHERE mail = '$email' AND passwd = '$password'");
+          $q = $this->db->query("SELECT tipo FROM Usuario WHERE mail = '$email' AND passwd = '$password'");
           if(mysqli_num_rows($q) > 0){
             $row = mysqli_fetch_assoc($q);
             echo "El tipo de usuario es: " . $row['tipo'];

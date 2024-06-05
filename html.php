@@ -12,7 +12,6 @@ function HTMLrenderWeb($data) {
     //TODO: cambiar la barra de navegación en base al usuario
     $nav = nav($data['tipo']);
 
-
   if($data['controlador'] == null){
     $main = bienvenida();
   }else{
@@ -26,9 +25,6 @@ function HTMLrenderWeb($data) {
         case 'servicios':
             $main = servicios();
             break;
-        case 'datos':
-            $main = datos();
-            break;
         case 'reservas':
             $main = reservas();
             break;
@@ -36,7 +32,7 @@ function HTMLrenderWeb($data) {
             $main = registro($data['tipo']);
             break;
         case 'usuarios-list':
-            $main = listadoUsuarios($data['tipo']);
+            $main = listadoUsuarios($data['tipo'], $data['usuarios']);
             break;
         default:
             $main = '<main><h1>Por implementar</h1></main>';
@@ -251,121 +247,93 @@ function servicios(){
   return $ret;
 }
 
-function datos(){
-  
-  $ret = <<<HTML
-  <main class="formulario">
-    <form action="procesar.php" method="get">
+function listadoUsuarios($tipo_usuario, $lista_usuarios){
+
+    $ret = '';
+
+    if($tipo_usuario != 'admin' && $tipo_usuario != 'recepcionista'){
+        $ret = <<<HTML
+            <main>
+                <p>Esta sección no debería de aparecer. En este caso porque el usuario es un cliente o un usuario anónimo</p>
+            </main>
+        HTML;
+    }else{
+        if($lista_usuarios == null){
+
+            $ret = <<<HTML
+                <main>
+                    <p>Actualmente no hay usuarios en la base de datos</p>
+                </main>
+            HTML;
+        }else{
+            $ret = <<<HTML
+            <main class="lista">
+            HTML;
         
-        <section><h2>Datos de usuario</h2>
-            <div>
+            $ret .= <<<HTML
                 <div>
-                    <label>Nombre: </label><input type="text" name="nombre" size="15" maxlength="20" required placeholder="Campo obligatorio" pattern="^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]*">
-                    <label>Apellidos: </label><input type="text" name="apellido" size="30" placeholder="Opcional" pattern="^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]*">               
-                </div>
-                <div>
-                    <label>Clave: </label><input type="password" name="ctr" placeholder="Introduzca su contraseña"> 
-                    <label>E-mail: </label><input type="email" name="email" placeholder="Con un formato correcto" required>
-                </div>
-                
-            </div>
-                <div>
-                    <label>Nacionalidad: </label><input type="text" name="nacionalidad" value="España">
-            
-                    <label>Sexo:</label>
-                    <select name="sexo">
-                        <option>Masculino</option>
-                        <option>Femenino</option>
-                        <option selected>No deseo responder</option>
-                    </select>
-                </div>
-        </section>
+                    <table>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                            <th>DNI</th>
+                            <th>Email</th>
+                            <th>Nacionalidad</th>
+                            <th>Tarjeta</th>
+                        </tr>
+            HTML;
     
-        <section><h2>Reserva</h2>
-            <p>Idioma para comunicaciones:</p>
-                <div>
-                    <label> <input type="radio" name="idioma" value="Espaniol"> Español </label>
-                    <label> <input type="radio" name="idioma" value="Ingles"> Inglés </label>
-                    <label> <input type="radio" name="idioma" value="Frances"> Francés </label> 
-                    <label> <input type="radio" name="idioma" value="Japones"> Japonés </label>
-                </div>
-    
-            <p>Habitación:</p>
-                <div>
-                    <label> <input type="checkbox" name="habitacion[]" value="sanrio"> Modelo <em>Sanrio</em> </label>
-                    <label> <input type="checkbox" name="habitacion[]" value="tradicional"> Modelo tradicional </label>
-                    <label> <input type="checkbox" name="habitacion[]" value="pareja"> Habitación para parejas </label>
-                    <label> <input type="checkbox" name="habitacion[]" value="suite"> Habitación suite </label>
-                </div>
-            <div>
-                <div>
-                    <label>Fecha nacimiento: <input type="date" name="nacimiento"> </label>
-                </div>
-                <div>
-                    <label>Semana de visita: <input type="week" name="semanaEstancia"> </label>
-                </div>
-            </div>
-        </section>
-    
-        <p>Tratamiento de datos: <select name="TyC">
-            <option value="TOTAL">Acepta el almacenamiento de mis datos y el envío a terceros.</option>
-            <option value="PARCIAL">Acepta el almacenamiento de mis datos pero no el envío a terceros.</option>
-            <option value="NINGUNO">No acepta el almacenamiento ni el envío de datos a terceros.</option>
-        </select></p>
+            if($tipo_usuario == 'recepcionista'){
+                foreach ($lista_usuarios as $tupla){ 
+                    if($tupla['tipo'] == 'cliente'){
+                        $ret .= <<<HTML
+                            <tr><th>{$tupla['nombre']}</th>
+                                <th>{$tupla['apellidos']}</th>
+                                <th>{$tupla['DNI']}</th>
+                                <th>{$tupla['mail']}</th>
+                                <th>{$tupla['nacionalidad']}</th>
+                                <th>{$tupla['tarjeta']}</th>
+                            </tr>
+                        HTML;
+                    }
+                }
+            }else if($tipo_usuario == 'admin'){
+                foreach ($lista_usuarios as $tupla){ 
+                    $ret .= <<<HTML
+                        <tr><th>{$tupla['nombre']}</th>
+                            <th>{$tupla['apellidos']}</th>
+                            <th>{$tupla['DNI']}</th>
+                            <th>{$tupla['mail']}</th>
+                            <th>{$tupla['nacionalidad']}</th>
+                            <th>{$tupla['tarjeta']}</th>
+                        </tr>
+                    HTML;
+                }
+            }
         
-        <input type="submit" value="Enviar datos">
-    </form>
-  </main>
-  HTML;
-  
-  return $ret;
-}
-
-function listadoUsuarios($tipo_usuario){
-
-    $ret = <<<HTML
-    <main>
-        <p>Listado de usuarios (Falta toda la interacción con la BD)</p>
-    HTML;
-
-    if($tipo_usuario == 'admin'){
-        $ret .= <<<HTML
-            <form style>
-        HTML;
+            $ret .= <<<HTML
+                    </table>
+                </div>
+            HTML;
+        
+            if($tipo_usuario == 'admin'){
+                $ret .= <<<HTML
+                    <form method="post" action="">
+                        <div>
+                            <label> <input type="checkbox" name="userType[]" value="cliente"> Cliente </label>
+                            <label> <input type="checkbox" name="userType[]" value="recepcionista"> Recepcionista </label>
+                            <label> <input type="checkbox" name="userType[]" value="admin"> Administrador </label>
+                        </div>
+                        <input type="submit" name='userFilterListApply' value="Aplicar filtro">
+                    </form>
+                HTML;
+            }
+        
+            $ret .= <<<HTML
+                </main>
+            HTML;
+        }
     }
-
-    $ret .= <<<HTML
-        <div>
-            <table>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Apellidos</th>
-                    <th>DNI</th>
-                    <th>Email</th>
-                    <th>Nacionalidad</th>
-                    <th>Tarjeta</th>
-                </tr>
-                <tr>
-                    <th>Ejemplo a mano</th>
-                    <th>Ejemplo a mano</th>
-                    <th>Ejemplo a mano</th>
-                    <th>Ejemplo a mano</th>
-                    <th>Ejemplo a mano</th>
-                    <th>Ejemplo a mano</th>
-                </tr>
-            </table>
-        </div>
-    HTML;
-
-    if($tipo_usuario == 'admin'){
-        $ret .= <<<HTML
-        <h2>Aqui deberia de aparecer el filtro para los admins</h2>
-        HTML;
-    }
-
-    $ret .= <<<HTML
-        </main>
-        HTML;
 
     return $ret;
 }

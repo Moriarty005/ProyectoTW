@@ -30,10 +30,24 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   }
 }
 
+$data = getAction($_GET);
+
+
+if(!isset($_SESSION['tipo'])){
+  $data['tipo'] = "anonimo"; //por defecto el usuario es anonimo
+}else{
+  $data['tipo'] = $_SESSION['tipo'];
+}
+var_dump($data);
+
 function getAction($p) {
+
     $r = [];
+    
     if (!isset($p['p'])) {
       $r['controlador'] = 'bienvenida';
+      
+      
       //$r['metodo']='hello';
     } else{
       switch ($p['p']) {
@@ -52,7 +66,7 @@ function getAction($p) {
         case 'registro': $r['controlador'] = 'registro';
                     //$r['metodo'] = 'hello';
                     break;
-        case 'usuarios-list': $r['controlador'] = 'usuarios-list';
+        case 'usuarios-list': $r['controlador'] = 'usuarios-list'; $r['usuarios'] = requestUserListFiltered();
                     //$r['metodo'] = 'hello';
                     break;
         default: $r['controlador'] = 'error';
@@ -63,15 +77,19 @@ function getAction($p) {
     return $r;
 }
 
+function requestUserListFiltered(){
 
+  global $db;
+  $selectedTypes = null;
 
-$data = getAction($_GET);
-if(!isset($_SESSION['tipo'])){
-  $data['tipo'] = "anonimo"; //por defecto el usuario es anonimo
-}else{
-  $data['tipo'] = $_SESSION['tipo'];
+  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userFilterListApply'])) {
+    if (!empty($_POST['userType'])) {
+        $selectedTypes = $_POST['userType'];
+    }
+  }
+
+  return $db->requestUserList($selectedTypes);
 }
-var_dump($data);
 
 echo HTMLrenderWeb($data);
 ?>

@@ -12,7 +12,6 @@ function HTMLrenderWeb($data) {
     //TODO: cambiar la barra de navegación en base al usuario
     $nav = nav($data['tipo']);
 
-
   if($data['controlador'] == null){
     $main = bienvenida();
   }else{
@@ -33,7 +32,7 @@ function HTMLrenderWeb($data) {
             $main = registro($data['tipo']);
             break;
         case 'usuarios-list':
-            $main = listadoUsuarios($data['tipo']);
+            $main = listadoUsuarios($data['tipo'], $data['usuarios']);
             break;
         default:
             $main = '<main><h1>Por implementar</h1></main>';
@@ -252,51 +251,93 @@ function servicios(){
   return $ret;
 }
 
-function listadoUsuarios($tipo_usuario){
+function listadoUsuarios($tipo_usuario, $lista_usuarios){
 
-    $ret = <<<HTML
-    <main>
-        <p>Listado de usuarios (Falta toda la interacción con la BD)</p>
-    HTML;
+    $ret = '';
 
-    if($tipo_usuario == 'admin'){
-        $ret .= <<<HTML
-            <form style>
+    if($tipo_usuario != 'admin' && $tipo_usuario != 'recepcionista'){
+        $ret = <<<HTML
+            <main>
+                <p>Esta sección no debería de aparecer. En este caso porque el usuario es un cliente o un usuario anónimo</p>
+            </main>
         HTML;
+    }else{
+        if($lista_usuarios == null){
+
+            $ret = <<<HTML
+                <main>
+                    <p>Actualmente no hay usuarios en la base de datos</p>
+                </main>
+            HTML;
+        }else{
+            $ret = <<<HTML
+            <main class="lista">
+            HTML;
+        
+            $ret .= <<<HTML
+                <div>
+                    <table>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                            <th>DNI</th>
+                            <th>Email</th>
+                            <th>Nacionalidad</th>
+                            <th>Tarjeta</th>
+                        </tr>
+            HTML;
+    
+            if($tipo_usuario == 'recepcionista'){
+                foreach ($lista_usuarios as $tupla){ 
+                    if($tupla['tipo'] == 'cliente'){
+                        $ret .= <<<HTML
+                            <tr><th>{$tupla['nombre']}</th>
+                                <th>{$tupla['apellidos']}</th>
+                                <th>{$tupla['DNI']}</th>
+                                <th>{$tupla['mail']}</th>
+                                <th>{$tupla['nacionalidad']}</th>
+                                <th>{$tupla['tarjeta']}</th>
+                            </tr>
+                        HTML;
+                    }
+                }
+            }else if($tipo_usuario == 'admin'){
+                foreach ($lista_usuarios as $tupla){ 
+                    $ret .= <<<HTML
+                        <tr><th>{$tupla['nombre']}</th>
+                            <th>{$tupla['apellidos']}</th>
+                            <th>{$tupla['DNI']}</th>
+                            <th>{$tupla['mail']}</th>
+                            <th>{$tupla['nacionalidad']}</th>
+                            <th>{$tupla['tarjeta']}</th>
+                        </tr>
+                    HTML;
+                }
+            }
+        
+            $ret .= <<<HTML
+                    </table>
+                </div>
+            HTML;
+        
+            if($tipo_usuario == 'admin'){
+                $ret .= <<<HTML
+                    <form method="post" action="">
+                        <div>
+                            <label> <input type="checkbox" name="userType[]" value="cliente"> Cliente </label>
+                            <label> <input type="checkbox" name="userType[]" value="recepcionista"> Recepcionista </label>
+                            <label> <input type="checkbox" name="userType[]" value="admin"> Administrador </label>
+                        </div>
+                        <input type="submit" name='userFilterListApply' value="Aplicar filtro">
+                    </form>
+                HTML;
+            }
+        
+            $ret .= <<<HTML
+                </main>
+            HTML;
+        }
     }
-
-    $ret .= <<<HTML
-        <div>
-            <table>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Apellidos</th>
-                    <th>DNI</th>
-                    <th>Email</th>
-                    <th>Nacionalidad</th>
-                    <th>Tarjeta</th>
-                </tr>
-                <tr>
-                    <th>Ejemplo a mano</th>
-                    <th>Ejemplo a mano</th>
-                    <th>Ejemplo a mano</th>
-                    <th>Ejemplo a mano</th>
-                    <th>Ejemplo a mano</th>
-                    <th>Ejemplo a mano</th>
-                </tr>
-            </table>
-        </div>
-    HTML;
-
-    if($tipo_usuario == 'admin'){
-        $ret .= <<<HTML
-        <h2>Aqui deberia de aparecer el filtro para los admins</h2>
-        HTML;
-    }
-
-    $ret .= <<<HTML
-        </main>
-        HTML;
 
     return $ret;
 }

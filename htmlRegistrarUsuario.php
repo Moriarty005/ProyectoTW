@@ -13,12 +13,17 @@ function registro($tipo_usuario){
 
     $main = HTMLmain();
 
+    if(isset($_POST['submit']) && $_POST['submit'] == 'Confirmar datos'){
+        $action = 'index.php?p=bienvenida';
+        echo "alePACASA";
+    }else{
+        $action='';
+    }
+
     $ret = <<<HTML
 
-
     <main>
-            <form action="" method="post" class="registro">
-
+            <form action='$action' method="post" class="registro" novalidate>
                 $main
                 
                 <section class="agreedments">
@@ -54,12 +59,12 @@ function registro($tipo_usuario){
 
         $ret .= <<<HTML
             <div class="boton">
-            <input type="submit" name='enviar' value="Confirmar datos" class="boton-enviar">
+            <input type="submit" name='submit' value="Confirmar datos" class="boton-enviar">
         HTML;
     }else{
         $ret .= <<<HTML
             <div class="boton">
-            <input type="submit" name='enviar' value="Enviar datos" class="boton-enviar">
+            <input type="submit" name='submit' value="Enviar datos" class="boton-enviar">
         HTML;
     }
 
@@ -195,7 +200,7 @@ function defaultHTML(){
         <input type="date" name="fecha-nacimiento">
     HTML;
     $errores[3] = <<< HTML
-    <input type="email" id="mail" name='mail' novalidate>
+    <input type="email" id="mail" name='mail'>
     HTML;
     $errores[4] = <<< HTML
     <input type="password" placeholder="Escriba la clave" name='passwd'>
@@ -290,20 +295,20 @@ function comprobarMail(){
     #Aunque ponga novalidate el navegador lo comprueba igual
     if(empty($_POST['mail'])){
         $errores[3] = <<< HTML
-        <input type="email" id="mail" name='mail' novalidate>
+        <input type="email" id="mail" name='mail'>
         <p class="errorMail">Error en el mail</p>
         HTML;
         
     }else {
         if(!filter_var($_POST['mail'], FILTER_VALIDATE_EMAIL)){
             $errores[3] = <<< HTML
-            <input type="email" id="mail" name='mail' novalidate>
+            <input type="email" id="mail" name='mail'>
             <p class="errorMail">El email no tiene un formato correcto</p>
             HTML;
         }else{
             $valor = $_POST['mail'];
             $errores[3] = <<< HTML
-            <input type="email" name='mail' value="$valor" novalidate>
+            <input type="email" name='mail' value="$valor">
             HTML;
             $todo_correcto[4] = true;
         }
@@ -469,7 +474,7 @@ function HTMLdatosPersonales() {
                             <p><label>Sexo:</label></p>
                         </div>
                         <div id="entradas">
-                            <p><input type="text" value="España"></p>
+                            <p><input type="text" name="nacionalidad" value="España"></p>
                             <p><select name="genero" id="genero">
                                 <option value="MASC">Masculino</option>
                                 <option value="FEM">Femenino</option>

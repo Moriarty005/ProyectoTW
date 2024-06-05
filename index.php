@@ -3,8 +3,33 @@ require_once('html.php');
 require_once('conexion.php');
 
 session_start();
-$db = new CRUD();
-$db->login();
+
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+  if(isset($_POST['submit']) && $_POST['submit'] == "Iniciar sesión"){  
+    $db = new CRUD();
+    $q = $db->login();
+    if($q){
+      echo "El tipo de usuario es: " . $_SESSION['tipo'];
+    }
+  }
+  if(isset($_POST['submit']) && $_POST['submit'] == "Confirmar datos"){ //he cambiado los botones enviar por submit
+    echo "Registrando datos";
+    $db = new CRUD();
+    $q = $db->register();
+    if($q){
+      if(!isset($_SESSION['tipo'])){
+        $_SESSION['tipo'] = "cliente";
+      }
+      echo "Datos registrados correctamente";
+    }else{
+      echo "Error al registrar los datos";
+    }
+  }
+  if(isset($_POST['submit']) && $_POST['submit'] == "Cerrar sesión"){
+    echo "Sesión cerrada correctamente";
+    unset($_SESSION['tipo']);
+  }
+}
 
 function getAction($p) {
     $r = [];
@@ -20,9 +45,6 @@ function getAction($p) {
                     //$r['metodo'] = 'hello';
                     break;
         case 'servicios': $r['controlador'] = 'servicios';
-                    //$r['metodo'] = 'hello';
-                    break;
-        case 'datos': $r['controlador'] = 'datos';
                     //$r['metodo'] = 'hello';
                     break;
         case 'reservas': $r['controlador'] = 'reservas';

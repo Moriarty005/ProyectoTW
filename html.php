@@ -26,9 +26,6 @@ function HTMLrenderWeb($data) {
         case 'servicios':
             $main = servicios();
             break;
-        case 'datos':
-            $main = datos();
-            break;
         case 'reservas':
             $main = reservas();
             break;
@@ -78,12 +75,16 @@ function renderHeader($data){
             <h1>HOTEL O</h1>
             <img src="./img/icono.png" alt="Icon">
         </div>
-        <div class="contenedor-sesion">
-            <a href="#" onclick="showPopup()">Iniciar sesión</a>
-            <a href="index.php?p=registro">Registro</a>
+        
     HTML;
         
-        if($data['tipo'] != "anonimo"){
+        if($data['tipo'] == "anonimo"){
+            $dev .= <<<HTML
+            <div class="contenedor-sesion">
+            <a href="#" onclick="showPopup()">Iniciar sesión</a>
+            <a href="index.php?p=registro">Registro</a>
+            HTML;
+        }else{
             $dev .= <<<HTML
             <form id="logout-form" method="post" novalidate>
                 <input type="submit" name="submit" value="Cerrar sesión">
@@ -248,76 +249,6 @@ function servicios(){
   </main>
   HTML;
 
-  return $ret;
-}
-
-function datos(){
-  
-  $ret = <<<HTML
-  <main class="formulario">
-    <form action="procesar.php" method="get">
-        
-        <section><h2>Datos de usuario</h2>
-            <div>
-                <div>
-                    <label>Nombre: </label><input type="text" name="nombre" size="15" maxlength="20" required placeholder="Campo obligatorio" pattern="^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]*">
-                    <label>Apellidos: </label><input type="text" name="apellido" size="30" placeholder="Opcional" pattern="^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]*">               
-                </div>
-                <div>
-                    <label>Clave: </label><input type="password" name="ctr" placeholder="Introduzca su contraseña"> 
-                    <label>E-mail: </label><input type="email" name="email" placeholder="Con un formato correcto" required>
-                </div>
-                
-            </div>
-                <div>
-                    <label>Nacionalidad: </label><input type="text" name="nacionalidad" value="España">
-            
-                    <label>Sexo:</label>
-                    <select name="sexo">
-                        <option>Masculino</option>
-                        <option>Femenino</option>
-                        <option selected>No deseo responder</option>
-                    </select>
-                </div>
-        </section>
-    
-        <section><h2>Reserva</h2>
-            <p>Idioma para comunicaciones:</p>
-                <div>
-                    <label> <input type="radio" name="idioma" value="Espaniol"> Español </label>
-                    <label> <input type="radio" name="idioma" value="Ingles"> Inglés </label>
-                    <label> <input type="radio" name="idioma" value="Frances"> Francés </label> 
-                    <label> <input type="radio" name="idioma" value="Japones"> Japonés </label>
-                </div>
-    
-            <p>Habitación:</p>
-                <div>
-                    <label> <input type="checkbox" name="habitacion[]" value="sanrio"> Modelo <em>Sanrio</em> </label>
-                    <label> <input type="checkbox" name="habitacion[]" value="tradicional"> Modelo tradicional </label>
-                    <label> <input type="checkbox" name="habitacion[]" value="pareja"> Habitación para parejas </label>
-                    <label> <input type="checkbox" name="habitacion[]" value="suite"> Habitación suite </label>
-                </div>
-            <div>
-                <div>
-                    <label>Fecha nacimiento: <input type="date" name="nacimiento"> </label>
-                </div>
-                <div>
-                    <label>Semana de visita: <input type="week" name="semanaEstancia"> </label>
-                </div>
-            </div>
-        </section>
-    
-        <p>Tratamiento de datos: <select name="TyC">
-            <option value="TOTAL">Acepta el almacenamiento de mis datos y el envío a terceros.</option>
-            <option value="PARCIAL">Acepta el almacenamiento de mis datos pero no el envío a terceros.</option>
-            <option value="NINGUNO">No acepta el almacenamiento ni el envío de datos a terceros.</option>
-        </select></p>
-        
-        <input type="submit" value="Enviar datos">
-    </form>
-  </main>
-  HTML;
-  
   return $ret;
 }
 

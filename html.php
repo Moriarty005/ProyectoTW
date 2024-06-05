@@ -325,7 +325,7 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
 
     $ret = '';
 
-    if($tipo_usuario != 'admin' || $tipo_usuario != 'recepcionista'){
+    if($tipo_usuario != 'admin' && $tipo_usuario != 'recepcionista'){
         $ret = <<<HTML
             <main>
                 <p>Esta sección no debería de aparecer. En este caso porque el usuario es un cliente o un usuario anónimo</p>
@@ -362,18 +362,25 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
                             <th>Nacionalidad</th>
                             <th>Tarjeta</th>
                         </tr>
-                        <tr>
-                            <th>Ejemplo a mano</th>
-                            <th>Ejemplo a mano</th>
-                            <th>Ejemplo a mano</th>
-                            <th>Ejemplo a mano</th>
-                            <th>Ejemplo a mano</th>
-                            <th>Ejemplo a mano</th>
-                        </tr>
             HTML;
     
-            foreach ($lista_usuarios as $tupla){ 
-                $ret .= <<<HTML
+            if($tipo_usuario == 'recepcionista'){
+                foreach ($lista_usuarios as $tupla){ 
+                    if($tupla['tipo'] == 'cliente'){
+                        $ret .= <<<HTML
+                            <tr><th>{$tupla['nombre']}</th>
+                                <th>{$tupla['apellidos']}</th>
+                                <th>{$tupla['DNI']}</th>
+                                <th>{$tupla['mail']}</th>
+                                <th>{$tupla['nacionalidad']}</th>
+                                <th>{$tupla['tarjeta']}</th>
+                            </tr>
+                        HTML;
+                    }
+                }
+            }else if($tipo_usuario == 'admin'){
+                foreach ($lista_usuarios as $tupla){ 
+                    $ret .= <<<HTML
                         <tr><th>{$tupla['nombre']}</th>
                             <th>{$tupla['apellidos']}</th>
                             <th>{$tupla['DNI']}</th>
@@ -381,8 +388,10 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
                             <th>{$tupla['nacionalidad']}</th>
                             <th>{$tupla['tarjeta']}</th>
                         </tr>
-                HTML;
+                    HTML;
+                }
             }
+            
         
             $ret .= <<<HTML
                     </table>
@@ -400,8 +409,6 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
             HTML;
         }
     }
-
-    
 
     return $ret;
 }

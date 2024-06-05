@@ -6,7 +6,16 @@ session_start();
 $db = new CRUD();
 $db->login();
 
-function getAction($p) {
+$data = getAction($_GET, $db);
+if(!isset($_SESSION['tipo'])){
+  $data['tipo'] = "anonimo"; //por defecto el usuario es anonimo
+}else{
+  $data['tipo'] = $_SESSION['tipo'];
+}
+var_dump($data);
+
+function getAction($p, $db) {
+
     $r = [];
     if (!isset($p['p'])) {
       $r['controlador'] = 'bienvenida';
@@ -31,7 +40,7 @@ function getAction($p) {
         case 'registro': $r['controlador'] = 'registro';
                     //$r['metodo'] = 'hello';
                     break;
-        case 'usuarios-list': $r['controlador'] = 'usuarios-list';
+        case 'usuarios-list': $r['controlador'] = 'usuarios-list'; $r['usuarios'] = $db->requestUserList();
                     //$r['metodo'] = 'hello';
                     break;
         default: $r['controlador'] = 'error';
@@ -41,16 +50,6 @@ function getAction($p) {
 
     return $r;
 }
-
-
-
-$data = getAction($_GET);
-if(!isset($_SESSION['tipo'])){
-  $data['tipo'] = "anonimo"; //por defecto el usuario es anonimo
-}else{
-  $data['tipo'] = $_SESSION['tipo'];
-}
-var_dump($data);
 
 echo HTMLrenderWeb($data);
 ?>

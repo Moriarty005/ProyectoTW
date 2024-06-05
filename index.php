@@ -79,7 +79,7 @@ function getAction($p) {
 
 function requestUserListFiltered(){
 
-  global $db;
+  $db = new CRUD();
   $selectedTypes = null;
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userFilterListApply'])) {

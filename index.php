@@ -3,7 +3,6 @@ require_once('html.php');
 require_once('conexion.php');
 
 session_start();
-
 if($_SERVER["REQUEST_METHOD"] == "POST"){
   if(isset($_POST['submit']) && $_POST['submit'] == "Iniciar sesión"){  
     $db = new CRUD();

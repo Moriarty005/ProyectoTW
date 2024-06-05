@@ -6,7 +6,7 @@ final class Database {
   private static $instance;
   private static $lasterr = null;
 
-  private function __construct() { }
+  private function __construct() {  }
 
   function __destruct() {
     if (self::$instance != null)
@@ -92,31 +92,31 @@ class CRUD {
   }
 
   public function register(){ //IMPORTANTE pasar los elementos del posts saneados en el index
-      $nombre = strip_tags($_POST['nombre']);
-      //apellido no es obligatorio, por lo que tenemos que revisar que exista
-      if(isset($_POST['apellidos'])){
-          $apellidos = strip_tags($_POST['apellidos']);
-      }else{
-          $apellidos = '';
-      }
-      $dni = strip_tags($_POST['dni']); //en vez de strip_tags, en mysql debemos usar esta función para controlar caracteres especiales
-      $mail = strip_tags($_POST['mail']);
-      $nacionalidad = strip_tags($_POST['nacionalidad']);
-      if(isset($_POST['tipo'])){
-        $tipo = strip_tags($_POST['tipo']);
-      }else{
-        $tipo = 'cliente';
-      }
-      $passwd = strip_tags($_POST['passwd']);//IMPORTANTE password_hash($_POST['ctr'],PASSWORD_DEFAULT)
-      if(isset($_POST['foto'])){
-        $foto = $_POST['foto'];
-      }else{
-        $foto = '1'; //porque es un int
-      }
-      $tarjeta = "1234";  //IMPORTANTE: poner campo tarjeta, cifrar tarjeta
-      
-      $q = $this->db->query("INSERT INTO Usuario (nombre, apellidos, DNI, mail, nacionalidad, tipo, passwd, foto, tarjeta) VALUES ('$nombre', '$apellidos', '$dni', '$mail', '$nacionalidad', '$tipo', '$passwd', '$foto', '$tarjeta')");        
-      return $q;
+    $nombre = strip_tags($_POST['nombre']);
+    //apellido no es obligatorio, por lo que tenemos que revisar que exista
+    if(isset($_POST['apellidos'])){
+        $apellidos = strip_tags($_POST['apellidos']);
+    }else{
+        $apellidos = '';
+    }
+    $dni = strip_tags($_POST['dni']); //en vez de strip_tags, en mysql debemos usar esta función para controlar caracteres especiales
+    $mail = strip_tags($_POST['mail']);
+    $nacionalidad = strip_tags($_POST['nacionalidad']);
+    if(isset($_POST['tipo'])){
+      $tipo = strip_tags($_POST['tipo']);
+    }else{
+      $tipo = 'cliente';
+    }
+    $passwd = strip_tags($_POST['passwd']);//IMPORTANTE password_hash($_POST['ctr'],PASSWORD_DEFAULT)
+    if(isset($_POST['foto'])){
+      $foto = $_POST['foto'];
+    }else{
+      $foto = '1'; //porque es un int
+    }
+    $tarjeta = "1234";  //IMPORTANTE: poner campo tarjeta, cifrar tarjeta
+    
+    $q = $this->db->query("INSERT INTO Usuario (nombre, apellidos, DNI, mail, nacionalidad, tipo, passwd, foto, tarjeta) VALUES ('$nombre', '$apellidos', '$dni', '$mail', '$nacionalidad', '$tipo', '$passwd', '$foto', '$tarjeta')");        
+    return $q;
   }
 }
 ?>

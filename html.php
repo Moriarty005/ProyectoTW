@@ -75,9 +75,8 @@ function renderHeader($data){
             <h1>HOTEL O</h1>
             <img src="./img/icono.png" alt="Icon">
         </div>
-        
     HTML;
-        
+        //Si el usuario estña registrado, podrá ver su perfil o cerrar sesión, si no, tendrá la posibilidad de iniciar sesión o registrarse
         if($data['tipo'] == "anonimo"){
             $dev .= <<<HTML
             <div class="contenedor-sesion">
@@ -85,6 +84,7 @@ function renderHeader($data){
             <a href="index.php?p=registro">Registro</a>
             HTML;
         }else{
+            //necesita decir el nombre del usuario y permitir abrir una ventana de edición de sus datos 
             $dev .= <<<HTML
             <form id="logout-form" method="post" novalidate>
                 <input type="submit" name="submit" value="Cerrar sesión">

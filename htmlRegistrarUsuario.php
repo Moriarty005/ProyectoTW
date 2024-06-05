@@ -13,17 +13,16 @@ function registro($tipo_usuario){
 
     $main = HTMLmain();
 
-    if(isset($_POST['submit']) && $_POST['submit'] == 'Confirmar datos'){
-        $action = 'index.php?p=bienvenida';
-        echo "alePACASA";
-    }else{
-        $action='';
+    $action='';
+    if(isset($_POST['submit']) && $_POST['submit'] == 'Enviar datos'){
+        $action = $_SERVER['PHP_SELF'];
     }
 
     $ret = <<<HTML
 
     <main>
-            <form action='$action' method="post" class="registro" novalidate>
+            <form action="$action" method="post" class="registro" nonvalidate>
+
                 $main
                 
                 <section class="agreedments">
@@ -200,7 +199,7 @@ function defaultHTML(){
         <input type="date" name="fecha-nacimiento">
     HTML;
     $errores[3] = <<< HTML
-    <input type="email" id="mail" name='mail'>
+    <input type="email" id="mail" name='mail' novalidate>
     HTML;
     $errores[4] = <<< HTML
     <input type="password" placeholder="Escriba la clave" name='passwd'>
@@ -295,20 +294,20 @@ function comprobarMail(){
     #Aunque ponga novalidate el navegador lo comprueba igual
     if(empty($_POST['mail'])){
         $errores[3] = <<< HTML
-        <input type="email" id="mail" name='mail'>
+        <input type="email" id="mail" name='mail' novalidate>
         <p class="errorMail">Error en el mail</p>
         HTML;
         
     }else {
         if(!filter_var($_POST['mail'], FILTER_VALIDATE_EMAIL)){
             $errores[3] = <<< HTML
-            <input type="email" id="mail" name='mail'>
+            <input type="email" id="mail" name='mail' novalidate>
             <p class="errorMail">El email no tiene un formato correcto</p>
             HTML;
         }else{
             $valor = $_POST['mail'];
             $errores[3] = <<< HTML
-            <input type="email" name='mail' value="$valor">
+            <input type="email" name='mail' value="$valor" novalidate>
             HTML;
             $todo_correcto[4] = true;
         }
@@ -471,15 +470,9 @@ function HTMLdatosPersonales() {
                     <div class="right-cont">
                         <div id="etiquetas">
                             <p><label>Nacionalidad:</label></p>
-                            <p><label>Sexo:</label></p>
                         </div>
                         <div id="entradas">
                             <p><input type="text" name="nacionalidad" value="España"></p>
-                            <p><select name="genero" id="genero">
-                                <option value="MASC">Masculino</option>
-                                <option value="FEM">Femenino</option>
-                                <option selected value="N/S">No deseo responder</option>
-                            </select></p>
                         </div>
                     </div>
                 </div>

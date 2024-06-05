@@ -325,20 +325,36 @@ function listadoUsuarios($tipo_usuario){
 
     $ret = <<<HTML
     <main>
-        <h2>Listado de usuarios (Falta toda la interacción con la BD)</h2>
-        <table>
-            <tr>
-                <th>Nombre</th>
-                <th>Apellidos</th>
-                <th>Email</th>
-                <th>Sexo</th>
-                <th>Nacionalidad</th>
-                <th>Fecha de nacimiento</th>
-                <th>Idioma</th>
-                <th>Reserva</th>
-                <th>Tratamiento de datos</th>
-            </tr>
-        </table>
+        <p>Listado de usuarios (Falta toda la interacción con la BD)</p>
+    HTML;
+
+    if($tipo_usuario == 'admin'){
+        $ret .= <<<HTML
+            <form style>
+        HTML;
+    }
+
+    $ret .= <<<HTML
+        <div>
+            <table>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>DNI</th>
+                    <th>Email</th>
+                    <th>Nacionalidad</th>
+                    <th>Tarjeta</th>
+                </tr>
+                <tr>
+                    <th>Ejemplo a mano</th>
+                    <th>Ejemplo a mano</th>
+                    <th>Ejemplo a mano</th>
+                    <th>Ejemplo a mano</th>
+                    <th>Ejemplo a mano</th>
+                    <th>Ejemplo a mano</th>
+                </tr>
+            </table>
+        </div>
     HTML;
 
     if($tipo_usuario == 'admin'){

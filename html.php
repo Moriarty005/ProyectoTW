@@ -79,7 +79,7 @@ function renderHeader($data){
         if($data['tipo'] == "anonimo"){
             $dev .= <<<HTML
             <div class="contenedor-sesion">
-            <a href="#" onclick="showPopup()">Iniciar sesión</a>
+            <a href="#" onclick="show()">Iniciar sesión</a>
             <a href="index.php?p=registro">Registro</a>
             HTML;
         }else{
@@ -254,6 +254,7 @@ function servicios(){
 function listadoUsuarios($tipo_usuario, $lista_usuarios){
 
     $ret = '';
+    $datosModificar = null;
 
     if($tipo_usuario != 'admin' && $tipo_usuario != 'recepcionista'){
         $ret = <<<HTML
@@ -300,8 +301,8 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
                                 <td>{$tupla['tarjeta']}</td>
                                 <td><form action="" method="POST">
                                         <input type="hidden" name="id" value="{$tupla['DNI']}">
-                                        <input type="submit" name="editar" value="Editar">
-                                        <input type="submit" name="borrar" value="Borrar">
+                                        <input type="button" name="submit" value="Modificar Usuario" onclick="showPopupModificarUsuario()">
+                                        <input type="submit" name="submit" value="Borrar Usuario">
                                     </form>
                                 </td>
                             </tr>
@@ -319,7 +320,7 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
                             <td>{$tupla['tarjeta']}</td>
                             <td><form action="" method="POST">
                                     <input type="hidden" name="id" value="{$tupla['DNI']}">
-                                    <input type="submit" name="submit" value="Editar Usuario">
+                                    <input type="button" name="submit" value="Modificar Usuario" onclick="showPopupModificarUsuario()">
                                     <input type="submit" name="submit" value="Borrar Usuario">
                                 </form>
                             </td>
@@ -347,6 +348,47 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
             }
         
             $ret .= <<<HTML
+                    <script>
+                    function showPopupModificarUsuario(type) {
+                        var popup = document.getElementById('popupModificarUsuario');
+                        popup.style.display = 'flex';
+
+                        document.getElementById('login-form').style.display = 'flex';
+                    }
+
+                    function closePopupModificarUsuario() {
+                        var popup = document.getElementById('popupModificarUsuario');
+                        popup.style.display = 'none';
+                    }
+                    </script>
+                    <div id="popupModificarUsuario" class="popupModificarUsuario">
+                        <div class="popup-contenido">
+                            <span class="popup-cerrar" onclick="closePopupModificarUsuario()">X</span>
+                            <h2>Modificar Usuario</h2>
+            HTML;
+
+            if($datosModificar == null){
+                $ret .= <<<HTML
+                    <p>Error al traer el usuario de la base de datos</p>
+                HTML;
+            }else{
+                $ret .= <<<HTML
+                    <form id="modificar-usuario-form" method="post" novalidate>
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="modificarNombre" name="nombre">
+                        <label for="apellidos">Apellidos:</label>
+                        <input type="text" id="modificarApellidos" name="apellidos">
+                        <label for="email">Correo electrónico:</label>
+                        <input type="email" id="modificarEmail" name="email">
+                        <input type="submit" name="submit" value="Modificar usuario"> 
+                    </form>
+                HTML;
+            }
+
+            $ret .= <<<HTML
+                            
+                        </div>
+                    </div>
                 </main>
             HTML;
         }

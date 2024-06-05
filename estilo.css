@@ -295,8 +295,70 @@ a.in{
 main img{
     height: 300px;
 }
+/**/
+/**/
+/**/
+/**/
+/*Bloque de CSS dedicado a las listas*/
+/**/
+/**/
+/**/
+/**/
+/**/
+main.lista{
+    flex-direction: column;
+    justify-content: center;
+}
+main.lista>*{
+    width: 100%;
+}
 
+main.lista>form{
+    flex-direction: row;
+    justify-content: center;
+}
+table {
+	--color-titulo : lightskyblue;
+	--color-fila1 : lightcyan;
+	--color-fila2 : azure;
+	--color-resalte : lavender;
+	border: 2px solid var(--color-titulo);
+	margin: 10px auto;
+	border-spacing: 0;
+}
+table td, table th {
+	padding: 5px;
+}
+table tr:nth-child(odd) {
+	background-color:var(--color-fila1);
+}
+table tr:nth-child(even) {
+	background-color:var(--color-fila2);
+}
+table tr:nth-child(1) {
+	background-color:var(--color-titulo);
+}
+table tr:hover {
+	background-color: var(--color-resalte);
+	font-weight: bold;
+}
+table [type="submit"] {
+    display: inline-block;
+	margin: 0;
+	padding: 0;
+}
+
+/**/
+/**/
+/**/
+/**/
+/**/
 /*Bloque de CSS desdicado al formulario*/
+/**/
+/**/
+/**/
+/**/
+/**/
 form.registro *{
     display: inline-block;
     margin: 0;

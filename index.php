@@ -6,7 +6,9 @@ session_start();
 $db = new CRUD();
 $db->login();
 
-$data = getAction($_GET, $db);
+$data = getAction($_GET);
+
+
 if(!isset($_SESSION['tipo'])){
   $data['tipo'] = "anonimo"; //por defecto el usuario es anonimo
 }else{
@@ -14,11 +16,14 @@ if(!isset($_SESSION['tipo'])){
 }
 var_dump($data);
 
-function getAction($p, $db) {
+function getAction($p) {
 
     $r = [];
+    
     if (!isset($p['p'])) {
       $r['controlador'] = 'bienvenida';
+      
+      
       //$r['metodo']='hello';
     } else{
       switch ($p['p']) {
@@ -40,7 +45,7 @@ function getAction($p, $db) {
         case 'registro': $r['controlador'] = 'registro';
                     //$r['metodo'] = 'hello';
                     break;
-        case 'usuarios-list': $r['controlador'] = 'usuarios-list'; $r['usuarios'] = $db->requestUserList();
+        case 'usuarios-list': $r['controlador'] = 'usuarios-list'; $r['usuarios'] = requestUserListFiltered();
                     //$r['metodo'] = 'hello';
                     break;
         default: $r['controlador'] = 'error';
@@ -49,6 +54,20 @@ function getAction($p, $db) {
     }
 
     return $r;
+}
+
+function requestUserListFiltered(){
+
+  global $db;
+  $selectedTypes = null;
+
+  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['userFilterListApply'])) {
+    if (!empty($_POST['userType'])) {
+        $selectedTypes = $_POST['userType'];
+    }
+  }
+
+  return $db->requestUserList($selectedTypes);
 }
 
 echo HTMLrenderWeb($data);

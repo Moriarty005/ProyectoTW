@@ -98,6 +98,14 @@ class CRUD {
     }
   }
 
+  public function deleteUser($dni) {
+    try {
+      $this->db->query("DELETE FROM Usuario WHERE DNI='$dni'");
+    } catch (PDOException $e) {
+      throw $e;
+    }
+  }
+
   public function login($email, $password){ //IMPORTANTE pasar los elementos del posts saneados en el index
     //Iniciar sesión (comprobar que la sesión no está iniciada en el momento)
     $q = $this->db->query("SELECT tipo, nombre, passwd FROM Usuario WHERE mail = '$email'");

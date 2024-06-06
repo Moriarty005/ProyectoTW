@@ -19,6 +19,19 @@
     background-color: purple;
 }
 
+#popupModificarUsuario {
+    display: none;
+    position: fixed; /* Position the popup using fixed positioning */
+    top: 50%; /* Vertical centering: 50% from the top */
+    left: 50%; /* Horizontal centering: 50% from the left */
+    transform: translate(-50%, -50%); /* Adjusts the position based on the popup's size */
+    z-index: 1000; /* Ensure the popup is on top of other elements */
+    background-color: purple;
+    border-radius: 15px;
+    text-align: center;
+    justify-content: center;
+}
+
 body{
     background-color: rgb(220, 220, 220);
     display: flex;

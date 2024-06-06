@@ -43,7 +43,7 @@ header{
     flex-direction: row;
     border-style: solid;
     border-width: 20px;
-    border-image: url(../hotel/img/patron.jpg) 40 40 repeat;
+    border-image: url(img/patron.jpg) 40 40 repeat;
     
     align-items: center;
     justify-content: flex-end;
@@ -130,7 +130,7 @@ menu>p{
 }
 aside{
     flex: 2;
-    background-image: url(../hotel/img/patronArcos.jpeg);
+    background-image: url(img/patronArcos.jpeg);
     font-weight: bold;
 }
 p{

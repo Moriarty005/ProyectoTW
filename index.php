@@ -33,10 +33,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     unset($_SESSION['tipo']);
   }
 
-  echo <<<HTML
-    <p>Que se ha pulsado: {$_POST['submit']}</p>
-  HTML;
-
   /*Aqui controlamos si se ha eliminado un usuario desde la lista del administrador*/
   if(isset($_POST['submit']) && $_POST['submit'] == "Borrar Usuario"){
     echo "Vamos a borrar un usuario";

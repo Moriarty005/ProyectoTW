@@ -3,3 +3,6 @@
 
 #Ignoramos la carpeta del SFTP al completo
 .vscode/
+
+#Ignoramos la carpeta de PHPStorm
+.idea/

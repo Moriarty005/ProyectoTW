@@ -90,6 +90,14 @@ class CRUD {
     }
   }
 
+  public function deleteUser($dni) {
+    try {
+      $this->db->query("DELETE FROM Usuario WHERE DNI='$dni'");
+    } catch (PDOException $e) {
+      throw $e;
+    }
+  }
+
   public function login(){ //IMPORTANTE pasar los elementos del posts saneados en el index
     //Iniciar sesión (comprobar que la sesión no está iniciada en el momento)
     if(empty($_POST['email']) || empty($_POST['password'])){
@@ -97,10 +105,13 @@ class CRUD {
     }else{
       $email = $_POST['email'];
       $password = $_POST['password']; //IMPORTANTE al cifrar la contraseña, se debe cifrar también aquí
-      $q = $this->db->query("SELECT tipo FROM Usuario WHERE mail = '$email' AND passwd = '$password'");
+      $q = $this->db->query("SELECT tipo, nombre FROM Usuario WHERE mail = '$email' AND passwd = '$password'");
+
+      //guardar variables de sesión del ingresado
       if($q){
         $row = mysqli_fetch_assoc($q);
         $_SESSION['tipo'] = $row['tipo'];
+        $_SESSION['nombre'] = $row['nombre'];
       }else{
         echo "El email o la contraseña son incorrectos";
       }
@@ -133,6 +144,15 @@ class CRUD {
     $tarjeta = "1234";  //IMPORTANTE: poner campo tarjeta, cifrar tarjeta
     
     $q = $this->db->query("INSERT INTO Usuario (nombre, apellidos, DNI, mail, nacionalidad, tipo, passwd, foto, tarjeta) VALUES ('$nombre', '$apellidos', '$dni', '$mail', '$nacionalidad', '$tipo', '$passwd', '$foto', '$tarjeta')");        
+    
+    //guardar variables de sesión del ingresado
+    if($q){
+      $_SESSION['tipo'] = $tipo;
+      $_SESSION['nombre'] = $nombre;
+    }else{
+      echo "No se ha podido registrar el usuario";
+    }
+
     return $q;
   }
 }

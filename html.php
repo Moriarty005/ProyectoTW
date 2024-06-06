@@ -57,6 +57,7 @@ function HTMLrenderWeb($data) {
         <footer>
             <p>Tel:957333333 Correo:hotelo@o.com Cabra,Córdoba(España)Av/Góngora</p>
             <a href="documentacion.php">Documentación</a>
+            <a href="">Restauración BD</a>
         </footer>
     </body>
     </html>
@@ -85,7 +86,9 @@ function renderHeader($data){
         }else{
             //necesita decir el nombre del usuario y permitir abrir una ventana de edición de sus datos 
             $dev .= <<<HTML
-            <form id="logout-form" method="post" novalidate>
+            <p>Bienvenido, {$data['nombre']}</p>
+            <form id="logout-form" method="post" action="{$_SERVER['PHP_SELF']}" novalidate> 
+                <input type="submit" name="submit" value="Editar perfil"> 
                 <input type="submit" name="submit" value="Cerrar sesión">
             </form>
             HTML;
@@ -284,6 +287,7 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
                             <th>Email</th>
                             <th>Nacionalidad</th>
                             <th>Tarjeta</th>
+                            <th>Acción</th>
                         </tr>
             HTML;
     
@@ -291,12 +295,18 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
                 foreach ($lista_usuarios as $tupla){ 
                     if($tupla['tipo'] == 'cliente'){
                         $ret .= <<<HTML
-                            <tr><th>{$tupla['nombre']}</th>
-                                <th>{$tupla['apellidos']}</th>
-                                <th>{$tupla['DNI']}</th>
-                                <th>{$tupla['mail']}</th>
-                                <th>{$tupla['nacionalidad']}</th>
-                                <th>{$tupla['tarjeta']}</th>
+                            <tr><td>{$tupla['nombre']}</td>
+                                <td>{$tupla['apellidos']}</td>
+                                <td>{$tupla['DNI']}</td>
+                                <td>{$tupla['mail']}</td>
+                                <td>{$tupla['nacionalidad']}</td>
+                                <td>{$tupla['tarjeta']}</td>
+                                <td><form action="" method="POST">
+                                        <input type="hidden" name="id" value="{$tupla['DNI']}">
+                                        <input type="submit" name="editar" value="Editar">
+                                        <input type="submit" name="borrar" value="Borrar">
+                                    </form>
+                                </td>
                             </tr>
                         HTML;
                     }
@@ -304,12 +314,18 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
             }else if($tipo_usuario == 'admin'){
                 foreach ($lista_usuarios as $tupla){ 
                     $ret .= <<<HTML
-                        <tr><th>{$tupla['nombre']}</th>
-                            <th>{$tupla['apellidos']}</th>
-                            <th>{$tupla['DNI']}</th>
-                            <th>{$tupla['mail']}</th>
-                            <th>{$tupla['nacionalidad']}</th>
-                            <th>{$tupla['tarjeta']}</th>
+                        <tr><td>{$tupla['nombre']}</td>
+                            <td>{$tupla['apellidos']}</td>
+                            <td>{$tupla['DNI']}</td>
+                            <td>{$tupla['mail']}</td>
+                            <td>{$tupla['nacionalidad']}</td>
+                            <td>{$tupla['tarjeta']}</td>
+                            <td><form action="" method="POST">
+                                    <input type="hidden" name="id" value="{$tupla['DNI']}">
+                                    <input type="submit" name="submit" value="Editar Usuario">
+                                    <input type="submit" name="submit" value="Borrar Usuario">
+                                </form>
+                            </td>
                         </tr>
                     HTML;
                 }

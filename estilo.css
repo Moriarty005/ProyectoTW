@@ -308,9 +308,12 @@ main img{
 main.lista{
     flex-direction: column;
     justify-content: center;
+    border-radius: 15px;
 }
+
 main.lista>*{
     width: 100%;
+    border-radius: 4px;
 }
 
 main.lista>form{
@@ -363,6 +366,7 @@ form.registro *{
     display: inline-block;
     margin: 0;
     text-align: left;
+    border-radius: 3px;
 }
 
 div.upper-cont{

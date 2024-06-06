@@ -7,26 +7,36 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   if(isset($_POST['submit']) && $_POST['submit'] == "Iniciar sesión"){  
     $db = new CRUD();
     $q = $db->login();
-    if($q){
+    $db->__destruct();
+
+    /*Perdon Alvaro es que me estoy liando con los debug */
+    /*if($q){
       echo "El tipo de usuario es: " . $_SESSION['tipo'];
-    }
+    }*/
   }
   if(isset($_POST['submit']) && $_POST['submit'] == "Confirmar datos"){ //he cambiado los botones enviar por submit
     echo "Registrando datos";
     $db = new CRUD();
     $q = $db->register();
+    $db->__destruct();
     if($q){
-      if(!isset($_SESSION['tipo'])){
-        $_SESSION['tipo'] = "cliente";
-      }
-      echo "Datos registrados correctamente";
-    }else{
-      echo "Error al registrar los datos";
+      echo "Registrado correctamente";
     }
   }
   if(isset($_POST['submit']) && $_POST['submit'] == "Cerrar sesión"){
     echo "Sesión cerrada correctamente";
     unset($_SESSION['tipo']);
+  }
+  echo <<<HTML
+    <p>Que se ha pulsado: {$_POST['submit']}</p>
+  HTML;
+
+  /*Aqui controlamos si se ha eliminado un usuario desde la lista del administrador*/
+  if(isset($_POST['submit']) && $_POST['submit'] == "Borrar Usuario"){
+    echo "Vamos a borrar un usuario";
+    $db = new CRUD();
+    $db->deleteUser($_POST['id']);
+    $db->__destruct();
   }
 }
 
@@ -37,6 +47,7 @@ if(!isset($_SESSION['tipo'])){
   $data['tipo'] = "anonimo"; //por defecto el usuario es anonimo
 }else{
   $data['tipo'] = $_SESSION['tipo'];
+  $data['nombre'] = $_SESSION['nombre'];
 }
 var_dump($data);
 
@@ -88,7 +99,10 @@ function requestUserListFiltered(){
     }
   }
 
-  return $db->requestUserList($selectedTypes);
+  $ret = $db->requestUserList($selectedTypes);
+  $db->__destruct();
+
+  return $ret;
 }
 
 echo HTMLrenderWeb($data);

@@ -52,6 +52,36 @@ class CRUD {
     $this->db = null;
   }
 
+  public function requestUser($dni) {
+
+    if($dni === null){
+      return null;
+    }else{
+      try {
+
+        $sql = "SELECT * FROM Usuario WHERE DNI='$dni'";
+        return $this->db->query($sql);
+      }catch (\mysql_xdevapi\Exception $exception){
+        echo "Exception: ".$exception->getMessage();
+      }
+    }
+  }
+
+  public function requestRoom($id) {
+
+    if($id === null){
+      return null;
+    }else{
+      try {
+
+        $sql = "SELECT * FROM Habitacion WHERE id='$id'";
+        return $this->db->query($sql);
+      }catch (\mysql_xdevapi\Exception $exception){
+        echo "Exception: ".$exception->getMessage();
+      }
+    }
+  }
+
   public function requestUserList($filtros = null) {
     
     if($filtros == null){
@@ -72,6 +102,26 @@ class CRUD {
     }
   }
 
+  public function requestRoomList($filtros = null) {
+
+    if($filtros == null){
+      $sql = "SELECT * FROM Habitacion";
+      return $this->db->query($sql);
+    }else{
+      $sql = "SELECT * FROM Habitacion WHERE ";
+      $conditions = [];
+
+      foreach($filtros as $key) {
+        $conditions[] = "estado = '$key'";
+      }
+
+      $sql .= implode(' OR ', $conditions);
+
+      //echo "DEBUG QUERY BD:: $sql";
+      return $this->db->query($sql);
+    }
+  }
+
   public function update($table, $data, $condition) {
     $fields = "";
     foreach ($data as $key => $value)
@@ -79,6 +129,32 @@ class CRUD {
     $fields = substr($fields, 0, -2);
     $sql = "UPDATE $table SET $fields WHERE $condition";
     return $this->db->query($sql);
+  }
+
+  public function updateUser($data) {
+    $fields = "";
+    foreach ($data as $key => $value)
+      $fields .= "$key = '$value', ";
+    $fields = substr($fields, 0, -2);
+    $sql = "UPDATE Usuario SET $fields WHERE DNI='{$data['DNI']}'";
+    try {
+      $this->db->query($sql);
+    }catch (\mysql_xdevapi\Exception $exception){
+      echo "Exception: ".$exception->getMessage();
+    }
+  }
+
+  public function updateRoom($data) {
+    $fields = "";
+    foreach ($data as $key => $value)
+      $fields .= "$key = '$value', ";
+    $fields = substr($fields, 0, -2);
+    $sql = "UPDATE Habitacion SET $fields WHERE id='{$data['id']}'";
+    try {
+      $this->db->query($sql);
+    }catch (\mysql_xdevapi\Exception $exception){
+      echo "Exception: ".$exception->getMessage();
+    }
   }
 
   public function delete($table, $condition) {
@@ -93,55 +169,64 @@ class CRUD {
   public function deleteUser($dni) {
     try {
       $this->db->query("DELETE FROM Usuario WHERE DNI='$dni'");
+      //esto es una nota para que si está esto funcionando pongas los siguientes logs (poniendo un comentario tipo "usuario borrado" y tal)
+      //inserción en la tabla de logs
+      //      $this->log("Registro del usuario " .$email);
     } catch (PDOException $e) {
       throw $e;
     }
   }
 
-  public function login(){ //IMPORTANTE pasar los elementos del posts saneados en el index
-    //Iniciar sesión (comprobar que la sesión no está iniciada en el momento)
-    if(empty($_POST['email']) || empty($_POST['password'])){
-      echo "No se han introducido todos los datos";
-    }else{
-      $email = $_POST['email'];
-      $password = $_POST['password']; //IMPORTANTE al cifrar la contraseña, se debe cifrar también aquí
-      $q = $this->db->query("SELECT tipo FROM Usuario WHERE mail = '$email' AND passwd = '$password'");
-      if($q){
+  public function login($email, $password){ //IMPORTANTE pasar los elementos del posts saneados en el index
+    try{
+      $q = $this->db->query("SELECT tipo, nombre, passwd FROM Usuario WHERE mail = '$email'"); //revisar que en la base de datos email sea unique
+      if ($q) {
         $row = mysqli_fetch_assoc($q);
-        $_SESSION['tipo'] = $row['tipo'];
-      }else{
-        echo "El email o la contraseña son incorrectos";
+        //if(password_verify($password, $row['passwd'])){ //para cuando esté cifrada la contraseña
+        if ($password == $row['passwd']) {
+          $_SESSION['tipo'] = $row['tipo'];
+          $_SESSION['nombre'] = $row['nombre'];
+          //inserción en la tabla de logs
+          $this->log("Inicio sesión del usuario " . $email);
+        } else {
+          echo "La contraseña es incorrecta";
+          $this->log("Fallo al ingresar clave de " . $email);
+        }
+      } else {
+        echo "El email es incorrecto o no existe en la base de datos";
+        $this->log("Fallo al iniciar sesión, " . $email . "no reconocido");
       }
+      return $q;
+    }catch(mysqli_sql_exception $e){
+      echo "Error: ".$e->getMessage();
+      return $q;
     }
+  }
+
+  public function register($nombre, $apellidos, $dni, $email, $nacionalidad, $tipo, $passwd, $foto, $tarjeta){ //IMPORTANTE pasar los elementos del posts saneados en el index
+
+    try{
+      $q = $this->db->query("INSERT INTO Usuario (nombre, apellidos, DNI, mail, nacionalidad, tipo, passwd, foto, tarjeta) VALUES ('$nombre', '$apellidos', '$dni', '$email', '$nacionalidad', '$tipo', '$passwd', '$foto', '$tarjeta')");
+      if ($q) {
+        $_SESSION['tipo'] = $tipo;
+        $_SESSION['nombre'] = $nombre;
+        //inserción en la tabla de logs
+        $this->log("Registro del usuario " . $email);
+      } else {
+        echo "No se ha podido registrar el usuario";
+      }
+      return $q;
+    }catch(mysqli_sql_exception $e){
+      echo "Error: ".$e->getMessage();
+      return $q;
+    }
+  }
+
+  public function log($comentario){
+    $fecha = date('Y-m-d H:i:s');
+    $q = $this->db->query("INSERT INTO logs (fecha, accion) VALUES ('$fecha', '$comentario')");
     return $q;
   }
 
-  public function register(){ //IMPORTANTE pasar los elementos del posts saneados en el index
-    $nombre = strip_tags($_POST['nombre']);
-    //apellido no es obligatorio, por lo que tenemos que revisar que exista
-    if(isset($_POST['apellidos'])){
-        $apellidos = strip_tags($_POST['apellidos']);
-    }else{
-        $apellidos = '';
-    }
-    $dni = strip_tags($_POST['dni']); //en vez de strip_tags, en mysql debemos usar esta función para controlar caracteres especiales
-    $mail = strip_tags($_POST['mail']);
-    $nacionalidad = strip_tags($_POST['nacionalidad']);
-    if(isset($_POST['tipo'])){
-      $tipo = strip_tags($_POST['tipo']);
-    }else{
-      $tipo = 'cliente';
-    }
-    $passwd = strip_tags($_POST['passwd']);//IMPORTANTE password_hash($_POST['ctr'],PASSWORD_DEFAULT)
-    if(isset($_POST['foto'])){
-      $foto = $_POST['foto'];
-    }else{
-      $foto = '1'; //porque es un int
-    }
-    $tarjeta = "1234";  //IMPORTANTE: poner campo tarjeta, cifrar tarjeta
-    
-    $q = $this->db->query("INSERT INTO Usuario (nombre, apellidos, DNI, mail, nacionalidad, tipo, passwd, foto, tarjeta) VALUES ('$nombre', '$apellidos', '$dni', '$mail', '$nacionalidad', '$tipo', '$passwd', '$foto', '$tarjeta')");        
-    return $q;
-  }
 }
 ?>

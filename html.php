@@ -32,8 +32,11 @@ function HTMLrenderWeb($data) {
             $main = registro($data['tipo']);
             break;
         case 'usuarios-list':
-            $main = listadoUsuarios($data['tipo'], $data['usuarios']);
+          $main = listadoUsuarios($data['tipo'], $data['usuarios'], (isset($data['infoUsuarioEditable']) ? $data['infoUsuarioEditable'] : null));
             break;
+        case 'habitaciones-list':
+          $main = listadoHabitaciones($data['tipo'], $data['habitaciones'], (isset($data['infoHabEditable']) ? $data['infoHabEditable'] : null));
+          break;
         default:
             $main = '<main><h1>Por implementar</h1></main>';
             break;
@@ -79,22 +82,25 @@ function renderHeader($data){
         if($data['tipo'] == "anonimo"){
             $dev .= <<<HTML
             <div class="contenedor-sesion">
-            <a href="#" onclick="show()">Iniciar sesión</a>
+            <a href="#" onclick="showPopup()">Iniciar sesión</a>
             <a href="index.php?p=registro">Registro</a>
             HTML;
         }else{
             //necesita decir el nombre del usuario y permitir abrir una ventana de edición de sus datos 
             $dev .= <<<HTML
-            <form id="logout-form" method="post" novalidate>
-                <input type="submit" name="submit" value="Cerrar sesión">
-            </form>
+            <div class="contenedor-sesion">
+              <form action="{$_SERVER['PHP_SELF']}" id="logout-form" method="post" novalidate>
+                  <p> Bienvenido, {$data['nombre']}</p>
+                  <a href="index.php?p=ed-perf">Editar perfil</a>
+                  <input  type="submit" name="submit" value="Cerrar sesión">
+              </form>
             HTML;
         }
 
     $dev .= <<<HTML
         </div>
         <script>
-            function showPopup(type) {
+            function showPopup() {
                 var popup = document.getElementById('popup');
                 popup.style.display = 'flex';
 
@@ -251,14 +257,14 @@ function servicios(){
   return $ret;
 }
 
-function listadoUsuarios($tipo_usuario, $lista_usuarios){
+function listadoUsuarios($tipo_usuario, $lista_usuarios, $usuarioModificar){
 
     $ret = '';
 
     if($tipo_usuario != 'admin' && $tipo_usuario != 'recepcionista'){
         $ret = <<<HTML
             <main>
-                <p>Esta sección no debería de aparecer. En este caso porque el usuario es un cliente o un usuario anónimo</p>
+                <p>Esta sección no debería de aparecer. En este caso porque el usuario no es un recepcionista</p>
             </main>
         HTML;
     }else{
@@ -266,14 +272,34 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
 
             $ret = <<<HTML
                 <main>
-                    <p>Actualmente no hay usuarios en la base de datos</p>
+                    <p>Actualmente no hay habitaciones en la base de datos</p>
                 </main>
             HTML;
         }else{
             $ret = <<<HTML
             <main class="lista">
+            <h2>Usuarios del sistema</h2>
             HTML;
-        
+
+            if($usuarioModificar != null){
+
+              $ret .= <<<HTML
+                <div class="editar">
+                     <h2>Editar Usuario</h2>
+                    <form action="index.php?p=usuarios-list" method="POST" novalidate class="editar">
+                      <label>Nombre:<input type="text" name="nombre" value="{$usuarioModificar["nombre"]}"></label>
+                      <label>Apellidos:<input type="text" name="apellidos" value="{$usuarioModificar["apellidos"]}"></label>
+                      <label>DNI (no editable):<input type="text" name="DNI" value="{$usuarioModificar["DNI"]}" readonly></label>
+                      <label>E-mail:<input type="email" name="mail" value="{$usuarioModificar["mail"]}"></label>
+                      <label>Nacionalidad:<input type="text" name="nacionalidad" value="{$usuarioModificar["nacionalidad"]}"></label>
+                      <label>Tarjeta:<input type="text" name="tarjeta" value="{$usuarioModificar["tarjeta"]}"></label>
+                      <input type="submit" name="submit" value="Confirmar Edición Usuario">
+                    </form>
+                </div>
+              HTML;
+
+            }
+
             $ret .= <<<HTML
                 <div>
                     <table>
@@ -353,6 +379,107 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios){
     }
 
     return $ret;
+}
+
+function listadoHabitaciones($tipo_usuario, $lista_habitaciones, $habitacionModificar){
+
+  $ret = '';
+  echo "DEBUG:: cuales son las habitaciones que nos traemos de la BD: ";
+  var_dump($lista_habitaciones);
+  if($tipo_usuario != 'recepcionista'){
+    $ret = <<<HTML
+            <main>
+                <p>Esta sección no debería de aparecer. En este caso porque el usuario es un cliente o un usuario anónimo</p>
+            </main>
+        HTML;
+  }else{
+    if($lista_habitaciones == null && !isset($lista_habitaciones)){
+
+      $ret = <<<HTML
+                <main>
+                    <p>Actualmente no hay habitaciones en la base de datos</p>
+                </main>
+            HTML;
+    }else{
+      $ret = <<<HTML
+            <main class="lista">
+            <h2>Habitaciones</h2>
+            HTML;
+
+      if($habitacionModificar != null){
+
+        $ret .= <<<HTML
+                <div class="editar">
+                     <h2>Editar Habitación</h2>
+                    <form action="index.php?p=habitaciones-list" method="POST" novalidate class="editar">
+                      <label>Número de habitación (no editable):<input type="text" name="id" value="{$habitacionModificar["id"]}" readonly></label>
+                      <label>Estado:<select name="estado" id="estado">
+                                <option value="libre" selected>Libre</option>
+                                <option value="reservada">Reservada</option>
+                                <option selected value="en proceso">En proceso</option>
+                                </select></label>
+                      <label>Capacidad:<input type="number" name="capacidad" value="{$habitacionModificar["capacidad"]}"></label>
+                      <label>Precio:<input type="number" name="precio" value="{$habitacionModificar["precio"]}"></label>
+                      <label>Numero de fotos:<input type="number" name="numero_fotografias" value="{$habitacionModificar["fotos"]}"></label>
+                      <label>Descripción:<input type="text" name="descripcion" value="{$habitacionModificar["descripcion"]}"></label>
+                      
+                      <input type="submit" name="submit" value="Confirmar Edición Habitación">
+                    </form>
+                </div>
+        HTML;
+
+      }
+
+      $ret .= <<<HTML
+                <div>
+                    <table>
+                        <tr>
+                            <th>Número de habitacion</th>
+                            <th>Estado</th>
+                            <th>Capacidad</th>
+                            <th>Precio</th>
+                            <th>Número de fotos</th>
+                            <th>Descripción</th>
+                            <th>Acción</th>
+                        </tr>
+            HTML;
+
+      foreach ($lista_habitaciones as $tupla){
+        $ret .= <<<HTML
+                      <tr><td>{$tupla['id']}</td>
+                          <td>{$tupla['estado']}</td>
+                          <td>{$tupla['capacidad']}</td>
+                          <td>{$tupla['precio']}</td>
+                          <td>{$tupla['numero_fotografias']}</td>
+                          <td>{$tupla['descripcion']}</td>
+                          <td><form action="" method="POST">
+                                  <input type="hidden" name="id" value="{$tupla['id']}">
+                                  <input type="submit" name="submit" value="Editar Habitación">
+                                  <input type="submit" name="submit" value="Borrar Habitación">
+                              </form>
+                          </td>
+                      </tr>
+      HTML;
+      }
+
+
+      $ret .= <<<HTML
+                    </table>
+                    <form method="post" action="">
+                        <div>
+                            <label> <input type="checkbox" name="roomType[]" value="libre"> Libre </label>
+                            <label> <input type="checkbox" name="roomType[]" value="reservada"> Reservada </label>
+                            <label> <input type="checkbox" name="roomType[]" value="en proceso"> En proceso </label>
+                        </div>
+                        <input type="submit" name='roomFilterListApply' value="Aplicar filtro">
+                    </form>
+                </div>
+            </main>
+            HTML;
+    }
+
+  return $ret;
+  }
 }
 
 

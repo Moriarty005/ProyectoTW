@@ -24,18 +24,6 @@ function registro($tipo_usuario){
             <form action="$action" method="post" class="registro" nonvalidate>
 
                 $main
-                
-                <section class="agreedments">
-                    <p>
-                        <label>Tratamiento de datos:
-                            <select name="agreeds" id="agreeds">
-                                <option value="TOTAL" selected>Acepta el almacenamiento de mis datos y el envío a terceros</option>
-                                <option value="PARCIAL">Acepta el almacenamiento de mis datos pero no el envío a terceros</option>
-                                <option value="NINGUNO">No acepta el almacenamiento ni el envío de datos a terceros responder</option>
-                            </select>
-                        </label>
-                    </p>
-                </section>
     HTML;
 
     if($tipo_usuario == "admin"){
@@ -157,7 +145,7 @@ function todo_correctoHTML(){
 
     $valor = $_POST['mail'];
     $errores[3] = <<< HTML
-        <input type="email" name='mail' value="$valor" novalidate readonly>
+        <input type="email" name='mail' value="$valor" readonly>
     HTML;
 
     $valor = $_POST['passwd'];
@@ -170,7 +158,7 @@ function todo_correctoHTML(){
 
     $post = $_POST['language'];
     $errores[6] = <<< HTML
-    HTML;
+HTML;
     foreach ($idiomas as $clave => $valor) {
         if($post == $clave){
             $errores[6] .= <<< HTML
@@ -199,7 +187,7 @@ function defaultHTML(){
         <input type="date" name="fecha-nacimiento">
     HTML;
     $errores[3] = <<< HTML
-    <input type="email" id="mail" name='mail' novalidate>
+    <input type="email" id="mail" name='mail'>
     HTML;
     $errores[4] = <<< HTML
     <input type="password" placeholder="Escriba la clave" name='passwd'>
@@ -294,20 +282,20 @@ function comprobarMail(){
     #Aunque ponga novalidate el navegador lo comprueba igual
     if(empty($_POST['mail'])){
         $errores[3] = <<< HTML
-        <input type="email" id="mail" name='mail' novalidate>
+        <input type="email" id="mail" name='mail'>
         <p class="errorMail">Error en el mail</p>
         HTML;
         
     }else {
         if(!filter_var($_POST['mail'], FILTER_VALIDATE_EMAIL)){
             $errores[3] = <<< HTML
-            <input type="email" id="mail" name='mail' novalidate>
+            <input type="email" id="mail" name='mail'>
             <p class="errorMail">El email no tiene un formato correcto</p>
             HTML;
         }else{
             $valor = $_POST['mail'];
             $errores[3] = <<< HTML
-            <input type="email" name='mail' value="$valor" novalidate>
+            <input type="email" name='mail' value="$valor">
             HTML;
             $todo_correcto[4] = true;
         }
@@ -369,7 +357,7 @@ function comprobarPrefs(){
     }else{
         $post = $_POST['language'];
         $errores[6] = <<< HTML
-        HTML;
+HTML;
         foreach ($idiomas as $clave => $valor) {
             if($post == $clave){
                 $errores[6] .= <<< HTML

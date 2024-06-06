@@ -43,7 +43,7 @@ header{
     flex-direction: row;
     border-style: solid;
     border-width: 20px;
-    border-image: url(../hotel/img/patron.jpg) 40 40 repeat;
+    border-image: url(img/patron.jpg) 40 40 repeat;
     
     align-items: center;
     justify-content: flex-end;
@@ -130,7 +130,7 @@ menu>p{
 }
 aside{
     flex: 2;
-    background-image: url(../hotel/img/patronArcos.jpeg);
+    background-image: url(img/patronArcos.jpeg);
     font-weight: bold;
 }
 p{
@@ -162,6 +162,9 @@ nav>a:hover{
     padding: 20px 30px;
     background-color: brown;
     box-shadow: 0px 0px 5px 0px black;
+}
+header p{
+    background-color: white;
 }
 [href="documentacion.php"]{
     border-radius: 5px;
@@ -302,11 +305,7 @@ a.in{
     background-color: chocolate;
 }
 .galeria{
-    height: 90%;
     width: 90%;
-}
-main img{
-    height: 300px;
 }
 /**/
 /**/
@@ -363,6 +362,19 @@ table [type="submit"] {
 	padding: 0;
 }
 
+/*Seccion de las listas dedicada a editar los datos (Cambiamos el aspecto del formulario donde veremos el formulario)*/
+div.editar{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+div.editar form.editar{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
 /**/
 /**/
 /**/
@@ -382,17 +394,17 @@ form.registro *{
 }
 
 div.upper-cont{
-    width: 100%;
+    width: 95%;
 }
 
 div.lower-cont{
-    width: 100%;
+    width: 95%;
 }
 
 section.pers-cont {
     margin: 3% 1%;
     padding: 0% 0.5%;
-    border: 1px solid black;
+    width: 95%;
 }
 
 section.pers-cont div{
@@ -402,7 +414,7 @@ section.pers-cont div{
 section.access {
     margin: 3% 1%;
     padding: 0% 0.5%;
-    border: 1px solid black;
+    width: 95%;
 }
 
 section.access div{
@@ -412,7 +424,7 @@ section.access div{
 section.prefs {
     margin: 3% 1%;
     padding: 0% 0.5%;
-    border: 1px solid black;
+    width: 95%;
 }
 
 section.prefs div{
@@ -453,7 +465,7 @@ div.access div {
     margin: 0% 0% 0.5% 0%;
 }
 div.access div.upper-cont {
-    width: 100%;
+    width: 90%;
     padding-left: 6%;
 }
 div.access div.upper-cont div.uno {
@@ -474,7 +486,7 @@ div.access div.upper-cont::after {
     clear: both;
 }
 div.access div.lower-cont {
-    width: 100%;
+    width: 90%;
     padding-left: 6%;
 }
 div.access div.lower-cont div.uno {

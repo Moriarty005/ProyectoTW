@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="8801ab7c-f09a-416d-be1a-476cae6cc995" name="Void Alex" url="http://void.ugr.es">
+        <fileTransfer accessType="SFTP" host="void.ugr.es" port="22" sshConfigId="3eec449f-fb18-410f-9a8b-b182f7144355" sshConfig="alejandromg002324@void.ugr.es:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="46e7a009-731b-4e3d-b794-b6e397fe450c" name="Void Alvaro" url="http://void.ugr.es">
+        <fileTransfer accessType="SFTP" host="void.ugr.es" port="22" sshConfigId="00089dc3-7e1b-4b84-b94f-4b7ed7650351" sshConfig="alvarogonluq2324@void.ugr.es:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

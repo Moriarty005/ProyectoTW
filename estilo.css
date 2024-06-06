@@ -30,7 +30,7 @@ header{
     flex-direction: row;
     border-style: solid;
     border-width: 20px;
-    border-image: url(../hotel/img/patron.jpg) 40 40 repeat;
+    border-image: url(./img/patron.jpg) 40 40 repeat;
     
     align-items: center;
     justify-content: flex-end;
@@ -56,11 +56,9 @@ div.contenedor-sesion a{
 
 
 @media (max-width: 600px) {
-    
     header{
         border-width: 1px;
     }
-
 }
 
 div.logo{
@@ -75,7 +73,7 @@ div.logo{
 img[alt="Icon"]{
     width: 100px;
 }
-nav{ /*ver si podemos hacerlo sticky*/
+nav{
     position: sticky;
     top: 0;
     z-index: 1; /*para que se vea por encima de elementos con más prioridad (h2 por ejemplo)*/
@@ -117,7 +115,7 @@ menu>p{
 }
 aside{
     flex: 2;
-    background-image: url(../hotel/img/patronArcos.jpeg);
+    background-image: url(./img/patronArcos.jpeg);
     font-weight: bold;
 }
 p{
@@ -195,7 +193,7 @@ section{
     background-color: brown;
     border: 5px dotted rgb(139, 0, 0);
     margin: 20px;
-    width: 100%;
+    width: 95%;
     align-items:flex-start;
 }
 section:hover{
@@ -289,11 +287,7 @@ a.in{
     background-color: chocolate;
 }
 .galeria{
-    height: 90%;
     width: 90%;
-}
-main img{
-    height: 300px;
 }
 /**/
 /**/
@@ -378,9 +372,9 @@ div.lower-cont{
 }
 
 section.pers-cont {
-    margin: 3% 1%;
+    margin: 3% 0 0 0;
     padding: 0% 0.5%;
-    border: 1px solid black;
+    align-self: center;
 }
 
 section.pers-cont div{
@@ -388,9 +382,9 @@ section.pers-cont div{
 }
 
 section.access {
-    margin: 3% 1%;
+    margin: 3% 0 0 0;
     padding: 0% 0.5%;
-    border: 1px solid black;
+    align-self: center;
 }
 
 section.access div{
@@ -398,9 +392,9 @@ section.access div{
 }
 
 section.prefs {
-    margin: 3% 1%;
+    margin: 3% 0 0 0;
     padding: 0% 0.5%;
-    border: 1px solid black;
+    align-self: center;
 }
 
 section.prefs div{
@@ -441,7 +435,7 @@ div.access div {
     margin: 0% 0% 0.5% 0%;
 }
 div.access div.upper-cont {
-    width: 100%;
+    width: 90%;
     padding-left: 6%;
 }
 div.access div.upper-cont div.uno {
@@ -462,7 +456,7 @@ div.access div.upper-cont::after {
     clear: both;
 }
 div.access div.lower-cont {
-    width: 100%;
+    width: 90%;
     padding-left: 6%;
 }
 div.access div.lower-cont div.uno {
@@ -560,7 +554,7 @@ div.pers-cont div.lower-cont .left-cont {
     float: left;
 }
 div.pers-cont div.lower-cont .left-cont div {
-    margin-top: 2%;
+    margin: 1%;
 }
 div.pers-cont div.lower-cont .left-cont #dni {
     display: inline-block;
@@ -583,7 +577,7 @@ div.pers-cont div.lower-cont .left-cont p {
 }
 div.pers-cont div.lower-cont .left-cont #fnac {
     display: inline-block;
-    margin-left: 1%;
+    margin: 1%;
     width: 100%;
 }
 div.pers-cont div.lower-cont .left-cont #fnac div.uno {
@@ -616,10 +610,8 @@ div.pers-cont div.lower-cont .right-cont #entradas {
 
 .agreedments {
     border: 0px;
-}
-
-.agreedments:hover {
-    border: 0px;
+    margin: 20px;
+    align-self: center;
 }
 
 div.boton {

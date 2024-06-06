@@ -98,53 +98,28 @@ class CRUD {
     }
   }
 
-  public function login(){ //IMPORTANTE pasar los elementos del posts saneados en el index
+  public function login($email, $password){ //IMPORTANTE pasar los elementos del posts saneados en el index
     //Iniciar sesión (comprobar que la sesión no está iniciada en el momento)
-    if(empty($_POST['email']) || empty($_POST['password'])){
-      echo "No se han introducido todos los datos";
-    }else{
-      $email = $_POST['email'];
-      $password = $_POST['password']; //IMPORTANTE al cifrar la contraseña, se debe cifrar también aquí
-      $q = $this->db->query("SELECT tipo, nombre FROM Usuario WHERE mail = '$email' AND passwd = '$password'");
+    $q = $this->db->query("SELECT tipo, nombre, passwd FROM Usuario WHERE mail = '$email'");
 
-      //guardar variables de sesión del ingresado
-      if($q){
-        $row = mysqli_fetch_assoc($q);
+    //guardar variables de sesión del ingresado
+    if($q){
+      $row = mysqli_fetch_assoc($q);
+      //if(password_verify($password, $row['passwd'])){
+      if($password == $row['passwd']){
         $_SESSION['tipo'] = $row['tipo'];
         $_SESSION['nombre'] = $row['nombre'];
       }else{
-        echo "El email o la contraseña son incorrectos";
+        echo "Contraseña incorrecta";
       }
+    }else{
+      echo "Email incorrecto";
     }
     return $q;
   }
 
-  public function register(){ //IMPORTANTE pasar los elementos del posts saneados en el index
-    $nombre = strip_tags($_POST['nombre']);
-    //apellido no es obligatorio, por lo que tenemos que revisar que exista
-    if(isset($_POST['apellidos'])){
-        $apellidos = strip_tags($_POST['apellidos']);
-    }else{
-        $apellidos = '';
-    }
-    $dni = strip_tags($_POST['dni']); //en vez de strip_tags, en mysql debemos usar esta función para controlar caracteres especiales
-    $mail = strip_tags($_POST['mail']);
-    $nacionalidad = strip_tags($_POST['nacionalidad']);
-    if(isset($_POST['tipo'])){
-      $tipo = strip_tags($_POST['tipo']);
-    }else{
-      $tipo = 'cliente';
-    }
-    $passwd = strip_tags($_POST['passwd']);//IMPORTANTE password_hash($_POST['ctr'],PASSWORD_DEFAULT)
-    if(isset($_POST['foto'])){
-      $foto = $_POST['foto'];
-    }else{
-      $foto = '1'; //porque es un int
-    }
-    $tarjeta = "1234";  //IMPORTANTE: poner campo tarjeta, cifrar tarjeta
-    
+  public function register($nombre, $apellidos, $dni, $mail, $nacionalidad, $tipo, $passwd, $foto, $tarjeta){ //IMPORTANTE pasar los elementos del posts saneados en el index
     $q = $this->db->query("INSERT INTO Usuario (nombre, apellidos, DNI, mail, nacionalidad, tipo, passwd, foto, tarjeta) VALUES ('$nombre', '$apellidos', '$dni', '$mail', '$nacionalidad', '$tipo', '$passwd', '$foto', '$tarjeta')");        
-    
     //guardar variables de sesión del ingresado
     if($q){
       $_SESSION['tipo'] = $tipo;
@@ -152,7 +127,6 @@ class CRUD {
     }else{
       echo "No se ha podido registrar el usuario";
     }
-
     return $q;
   }
 }

@@ -4,28 +4,59 @@ require_once('conexion.php');
 
 session_start();
 if($_SERVER["REQUEST_METHOD"] == "POST"){
+  //inicio de sesion
   if(isset($_POST['submit']) && $_POST['submit'] == "Iniciar sesión"){  
-    $db = new CRUD();
-    $q = $db->login();
-    $db->__destruct();
-
-    /*Perdon Alvaro es que me estoy liando con los debug */
-    /*if($q){
-      echo "El tipo de usuario es: " . $_SESSION['tipo'];
-    }*/
+    if(empty($_POST['email']) || empty($_POST['password'])){
+      echo "No se han introducido todos los datos";
+    }else{
+      $email = strip_tags($_POST['email']);
+      $password = strip_tags($_POST['password']);
+      $db = new CRUD();
+      $q = $db->login($email, $password);
+      $db->__destruct();
+    }
   }
-  if(isset($_POST['submit']) && $_POST['submit'] == "Confirmar datos"){ //he cambiado los botones enviar por submit
+  //registro de usuario
+  if(isset($_POST['submit']) && $_POST['submit'] == "Confirmar datos"){
+    $nombre = strip_tags($_POST['nombre']);
+    if(isset($_POST['apellidos'])){
+      $apellidos = strip_tags($_POST['apellidos']);
+    }else{
+        $apellidos = '';
+    }
+    $dni = strip_tags($_POST['dni']);
+    $mail = strip_tags($_POST['mail']);
+    $nacionalidad = strip_tags($_POST['nacionalidad']);
+    if(isset($_POST['tipo'])){
+      $tipo = strip_tags($_POST['tipo']);
+    }else{
+      $tipo = 'cliente';
+    }
+    $passwd = password_hash($_POST['passwd'],PASSWORD_DEFAULT);
+    if(isset($_POST['foto'])){
+      $foto = $_POST['foto'];
+    }else{
+      $foto = '1'; //porque es un int
+    }
+    if(isset($_POST['tarjeta'])){
+      $tarjeta = $_POST['tarjeta'];
+    }else{
+      $tarjeta = '1'; //porque es un int también codificar
+    }
+
     echo "Registrando datos";
     $db = new CRUD();
-    $q = $db->register();
+    $q = $db->register($nombre, $apellidos, $dni, $mail, $nacionalidad, $tipo, $passwd, $foto, $tarjeta);
     $db->__destruct();
     if($q){
       echo "Registrado correctamente";
     }
   }
+  //cerrar sesión
   if(isset($_POST['submit']) && $_POST['submit'] == "Cerrar sesión"){
     echo "Sesión cerrada correctamente";
     unset($_SESSION['tipo']);
+    unset($_SESSION['nombre']);
   }
   echo <<<HTML
     <p>Que se ha pulsado: {$_POST['submit']}</p>

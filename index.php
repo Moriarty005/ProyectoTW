@@ -85,14 +85,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   echo <<<HTML
     <p>Que se ha pulsado: {$_POST['submit']}</p>
   HTML;
-
-  /*Aqui controlamos si se ha eliminado un usuario desde la lista del administrador*/
-  if(isset($_POST['submit']) && $_POST['submit'] == "Borrar Usuario"){
-    echo "Vamos a borrar un usuario";
-    $db = new CRUD();
-    $db->deleteUser($_POST['id']);
-    $db->__destruct();
-  }
 }
 
 $data = getAction($_GET);

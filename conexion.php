@@ -89,15 +89,7 @@ class CRUD {
       return null;
     }
   }
-
-  public function deleteUser($dni) {
-    try {
-      $this->db->query("DELETE FROM Usuario WHERE DNI='$dni'");
-    } catch (PDOException $e) {
-      throw $e;
-    }
-  }
-
+  
   public function deleteUser($dni) {
     try {
       $this->db->query("DELETE FROM Usuario WHERE DNI='$dni'");

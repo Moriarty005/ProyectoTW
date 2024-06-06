@@ -17,10 +17,10 @@ echo HTMLrenderWeb($data);
 //Metodo que va a meter la informacion en el vector que le pasamos a renderHTLM
 function getAction($p) {
 
-  //Creamos el vector con el destino de la pagina la que vamos (se calcula en base al boton del navegador que se ha pulsado)
-  $destino = obtenerDestinoPagina($p);
   //Creamos el vector con la accion que se va a reliazar (se hace comprobando que datos han llegado desde el POST)
   $accion = obtenerSiguienteAccion();
+  //Creamos el vector con el destino de la pagina la que vamos (se calcula en base al boton del navegador que se ha pulsado)
+  $destino = obtenerDestinoPagina($p);
 
   //Creamos el vector donde almacenaremos el tipo de usuario que esta visitando la pagina en este momento
   if(!isset($_SESSION['tipo'])){
@@ -58,6 +58,14 @@ function obtenerSiguienteAccion(){
       //Borramos el usuario de la base de datos
       $db = new CRUD();
       $db->deleteUser($_POST['id']);
+      $db->__destruct();
+    }
+
+    //Si es verdad que se ha pulsado algun boton de submit y que es el de borrar habitacion
+    if(isset($_POST['submit']) && $_POST['submit'] == "Borrar Habitación"){
+      //Borramos el usuario de la base de datos
+      $db = new CRUD();
+      $db->deleteRoom($_POST['id']);
       $db->__destruct();
     }
 

@@ -137,6 +137,7 @@ class CRUD {
       $fields .= "$key = '$value', ";
     $fields = substr($fields, 0, -2);
     $sql = "UPDATE Usuario SET $fields WHERE DNI='{$data['DNI']}'";
+    $this->log("Se modifica el usuario " .$data['DNI']);
     try {
       $this->db->query($sql);
     }catch (\mysql_xdevapi\Exception $exception){
@@ -150,6 +151,7 @@ class CRUD {
       $fields .= "$key = '$value', ";
     $fields = substr($fields, 0, -2);
     $sql = "UPDATE Habitacion SET $fields WHERE id='{$data['id']}'";
+    $this->log("Se modifica la habitación " .$data['id']);
     try {
       $this->db->query($sql);
     }catch (\mysql_xdevapi\Exception $exception){
@@ -171,7 +173,18 @@ class CRUD {
       $this->db->query("DELETE FROM Usuario WHERE DNI='$dni'");
       //esto es una nota para que si está esto funcionando pongas los siguientes logs (poniendo un comentario tipo "usuario borrado" y tal)
       //inserción en la tabla de logs
-      //      $this->log("Registro del usuario " .$email);
+      $this->log("Se elimina el usuario " .$dni);
+    } catch (PDOException $e) {
+      throw $e;
+    }
+  }
+
+  public function deleteRoom($id) {
+    try {
+      $this->db->query("DELETE FROM Habitacion WHERE id='$id'");
+      //esto es una nota para que si está esto funcionando pongas los siguientes logs (poniendo un comentario tipo "usuario borrado" y tal)
+      //inserción en la tabla de logs
+      $this->log("Se elimina la habitación " .$id);
     } catch (PDOException $e) {
       throw $e;
     }

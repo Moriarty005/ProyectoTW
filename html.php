@@ -9,27 +9,50 @@ function HTMLrenderWeb($data) {
   $ret = '';
   $header = renderHeader($data);
 
-    //TODO: cambiar la barra de navegación en base al usuario
     $nav = nav($data['tipo']);
 
   if($data['controlador'] == null){
-    $main = bienvenida();
+    $main = bienvenida($data);
   }else{
     switch ($data['controlador']) {
-        case 'bienvenida': $main = bienvenida(); break;
+        case 'bienvenida': $main = bienvenida($data); break;
         case 'habitaciones': $main = habitaciones(); break;
         case 'servicios': $main = servicios(); break;
-        case 'reservas': $main = reservas(); break;
         case 'registro': $main = registro($data['tipo']); break;
         case 'usuarios-list':
-          $main = listadoUsuarios($data['tipo'], $data['usuarios'],
+          $main = listadoUsuarios($data['tipo'],
+              $data['usuarios'],
               (isset($data['accionUsuario'])?$data['accionUsuario']:null),
               (isset($data['accionUsuario'])&&$data['accionUsuario']=='modificarUSuario' ? $data['infoUsuarioEditable'] : null),
               (isset($data['mensajeError'])?$data['mensajeError']:null));
             break;
-        case 'habitaciones-list': $main = listadoHabitaciones($data['tipo'], $data['habitaciones'], (isset($data['infoHabEditable']) ? $data['infoHabEditable'] : null)); break;
-        case 'backup': $main = backup(); break;
-        default: $main = '<main><h1>Por implementar</h1></main>'; break;
+        case 'habitaciones-list':
+            $main = listadoHabitaciones($data['tipo'],
+            $data['habitaciones'],
+            (isset($data['accionHabitacion'])?$data['accionHabitacion']:null),
+            (isset($data['accionHabitacion'])&&$data['accionHabitacion']=='modificarHabitacion' ? $data['infoHabEditable'] : null),
+            (isset($data['mensajeError'])?$data['mensajeError']:null));
+            break;
+      case 'reservas-list':
+        $main = listadoReservas($data['tipo'],
+            $data['reservas'],
+            (isset($data['accionReserva'])?$data['accionReserva']:null),
+            (isset($data['accionReserva'])&&$data['accionReserva']=='modificarReserva' ? $data['infoReservaEditable'] : null),
+            (isset($data['mensajeError'])?$data['mensajeError']:null),
+            (isset($data['infoNuevaReservaUsusarios'])? $data['infoNuevaReservaUsusarios'] : null),
+            (isset($data['infoNuevaReservaHabitaciones'])? $data['infoNuevaReservaHabitaciones'] : null));
+            break;
+      case 'ed-perf':
+        $main = editarPerfil($data['perfilUsuario']);
+        break;
+      case 'backup':
+        $main = backup();
+        break;
+      case 'logs':
+        $main = logs($data);
+        break;
+      default:
+        $main = '<main><h1>Por implementar</h1></main>'; break;
     }
   }
 
@@ -53,6 +76,7 @@ function HTMLrenderWeb($data) {
             <form action="{$_SERVER['PHP_SELF']}" method="post">
                 <input  type="submit" name="submit" value="Reseteo BD">
             </form>
+            <p>Proyecto realizado por Alejandro Muñoz Gutiérrez y Álvaro González Luque.</p>
         </footer>
     </body>
     </html>
@@ -130,34 +154,56 @@ function nav($tipo_usuario){
     <a href="index.php?p=bienvenida">Bienvenida</a>
     <a href="index.php?p=servicios">Nuestros servicios</a>
     <a href="index.php?p=habitaciones">Habitaciones</a>
-  HTML;
+HTML;
   if($tipo_usuario == 'cliente'){
     $ret .= <<<HTML
-      <a href="index.php?p=consultar-reservas">Consultar reservas</a>
-    HTML;
+      <a href="index.php?p=reservas-list">Consultar reservas</a>
+HTML;
   }
   if($tipo_usuario == 'recepcionista'){
     $ret .= <<<HTML
-      <a href="index.php?p=consultar-reservas">Consultar reservas(para recepcionistas)</a>
+      <a href="index.php?p=reservas-list">Consultar reservas(para recepcionistas)</a>
       <a href="index.php?p=habitaciones-list">Consultar habitaciones (para recepcionistas)</a>
       <a href="index.php?p=usuarios-list">Administrar clientes (para recepcionistas)</a>
-    HTML;
+HTML;
   }else if($tipo_usuario == 'admin'){
     $ret .= <<<HTML
       <a href="index.php?p=usuarios-list">Administrar usuarios (solo admins)</a>
       <a href="index.php?p=backup">Control de backups (solo admins)</a>
-    HTML;
+      <a href="index.php?p=logs">Ver logs</a>
+HTML;
   }
   $ret .= <<<HTML
   </nav>
-  HTML;
+HTML;
   
   return $ret;
 
 }
 
-function bienvenida(){
-  
+
+
+function editarPerfil($perfilUsuario){
+  $ret = <<<HTML
+  <div class="editar">
+       <h2>Editar Usuario</h2>
+      <form action="index.php?p=ed-perf" method="POST" novalidate class="editar">
+        <label>Nombre:<input type="text" name="nombre" value="{$perfilUsuario["nombre"]}"></label>
+        <label>Apellidos:<input type="text" name="apellidos" value="{$perfilUsuario["apellidos"]}"></label>
+        <label>DNI (no editable):<input type="text" name="DNI" value="{$perfilUsuario["DNI"]}" readonly></label>
+        <label>E-mail:<input type="email" name="mail" value="{$perfilUsuario["mail"]}"></label>
+        <label>Nacionalidad:<input type="text" name="nacionalidad" value="{$perfilUsuario["nacionalidad"]}"></label>
+        <label>Tarjeta:<input type="text" name="tarjeta" value="{$perfilUsuario["tarjeta"]}"></label>
+        <input type="submit" name="submit" value="Confirmar Edición Usuario">
+      </form>
+  </div>
+  HTML;
+  return $ret;
+}
+
+function bienvenida($data){
+  $aside = aside($data);
+
   $ret = <<<HTML
   <main>
     <menu>
@@ -167,17 +213,36 @@ function bienvenida(){
             simplemente despejarte de la rutina del día a día.
         </p>
     </menu>
-    <aside>
-        <p class="remarcar">Enlaces de interés: </p>
-            <p><a href="https://japonismo.com/blog/sapporo-yuki-matsuri-festival-de-la-nieve-de-sapporo">Festival de nieve de Sapporo</a></p>
-            <p><a href="https://www.japan.travel/es/spot/1466/">Festival de Ciruelos en Flor de Mito</a></p>
-            <p><a href="https://es.wikipedia.org/wiki/Tanabata">Festival de las estrellas (tanabata)</a></p>
-            <p><a href="https://youtu.be/OIAUBYb3ET4?si=F7qBS8sP0TstGY67&t=843">Más...</a></p>
         
-    </aside>
+    $aside
+       
   </main>
   HTML;
   
+  return $ret;
+}
+
+function aside($data){
+  //Número total de habitaciones del hotel.
+  //Número de habitaciones libres.
+  //Capacidad (nº de huéspedes) total del hotel.
+  //Número de huéspedes alojados en el hotel*/.
+  $ret = <<<HTML
+  <aside>
+    <section class="ocupacion">
+      <p>Total de habitaciones: {$data['ocupacion']['hab_tot']}</p>
+      <p>Habitaciones libres: {$data['ocupacion']['hab_lib']}</p>
+      <p>Capacidad total: {$data['ocupacion']['capacidad_tot']}</p>
+      <p>Huéspedes alojados: {$data['ocupacion']['ocupacion']}</p>
+    </section>
+      <p class="remarcar">Enlaces de interés: </p>
+      <p><a href="https://japonismo.com/blog/sapporo-yuki-matsuri-festival-de-la-nieve-de-sapporo">Festival de nieve de Sapporo</a></p>
+      <p><a href="https://www.japan.travel/es/spot/1466/">Festival de Ciruelos en Flor de Mito</a></p>
+      <p><a href="https://es.wikipedia.org/wiki/Tanabata">Festival de las estrellas (tanabata)</a></p>
+      <p><a href="https://youtu.be/OIAUBYb3ET4?si=F7qBS8sP0TstGY67&t=843">Más...</a></p>
+  </aside>
+  HTML;
+
   return $ret;
 }
 
@@ -216,7 +281,7 @@ function habitaciones(){
     <div>
         <p class="remarcar">Modelo de habitación suite:</p>
         <p>Capacidad: 2 personas</p>
-        <p>Descripción: una habitación única. Cuenta con las mejores estancias y acceso a servicios esoeciales.</p>
+        <p>Descripción: una habitación única. Cuenta con las mejores estancias y acceso a servicios especiales.</p>
         <figure class="imagen">
             <img class="galeria" src="./img/suite.jpeg" alt="Habitación suite">
             <figcaption>Habitación parejas</figcaption>
@@ -242,8 +307,17 @@ function servicios(){
       </div>
       <div>
           <h2>Excursiones, venta de entradas</h2>
-          <p>En hotel O también promocionamos las actividades culturales más indispensables de la zona y alrededores. Ofrecemos ofertas
+          <p>En Hotel O también promocionamos las actividades culturales más indispensables de la zona y alrededores. Ofrecemos ofertas
           en entradas a diversos centros y recorridos por los parajes que pueden ser de mayor interés para todo tipo de turistas.</p>
+      </div>
+      <div>
+          <h2>Transporte</h2>
+          <p>Si no te gusta tanto el viaje guiado y tienes otros destinos en mente, en Hotel O disponemos de servicio de taxi ininterrumpido
+          todo el día. Una llamada y estarán a tu disposición en pocos minutos.</p>
+      </div>
+      <div>
+          <h2>Lavandería</h2>
+          <p>Entre nuestras instalaciones podrás encontrar provechosa nuestra sala de lavandería con lavadora, secadora y plancha.</p>
       </div>
   </main>
   HTML;
@@ -262,166 +336,152 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios, $accion, $usuarioModifi
             </main>
         HTML;
     }else{
-        if($lista_usuarios == null){
 
-            $ret = <<<HTML
-                <main>
-                    <p>Actualmente no hay usuarios en la base de datos</p>
-                </main>
-            HTML;
-        }else{
-          $ret = <<<HTML
-            <main class="lista">
-          HTML;
-          if($accion == 'modificarUSuario'){
-            if($usuarioModificar != null){
-
-              $ret .= <<<HTML
-                <div class="editar">
-                     <h2>Editar Usuario</h2>
-                    <form action="index.php?p=usuarios-list" method="POST" novalidate class="editar">
-                      <label>Nombre:<input type="text" name="nombre" value="{$usuarioModificar["nombre"]}"></label>
-                      <label>Apellidos:<input type="text" name="apellidos" value="{$usuarioModificar["apellidos"]}"></label>
-                      <label>DNI (no editable):<input type="text" name="DNI" value="{$usuarioModificar["DNI"]}" readonly></label>
-                      <label>E-mail:<input type="email" name="mail" value="{$usuarioModificar["mail"]}"></label>
-                      <label>Nacionalidad:<input type="text" name="nacionalidad" value="{$usuarioModificar["nacionalidad"]}"></label>
-                      <label>Tarjeta:<input type="text" name="tarjeta" value="{$usuarioModificar["tarjeta"]}"></label>
-                      <input type="submit" name="submit" value="Confirmar Edición Usuario">
-                    </form>
-                </div>
-              HTML;
-            }
-          }else if($accion == 'aniadirUsuario'){
+        $ret = <<<HTML
+          <main class="lista">
+        HTML;
+        if($accion == 'modificarUSuario'){
+          if($usuarioModificar != null){
             $ret .= <<<HTML
-                <div class="editar">
-                     <h2>Editar Usuario</h2>
-                    <form action="index.php?p=usuarios-list" method="POST" novalidate class="editar">
-                      <label>Nombre:<input type="text" name="nombre"></label>
-                      <label>Apellidos:<input type="text" name="apellidos"></label>
-                      <label>DNI:<input type="text" name="DNI"></label>
-                      <label>E-mail:<input type="email" name="mail"></label>
-                      <label>Nacionalidad:<input type="text" name="nacionalidad"></label>
-                      <label>Contraseña:<input type="text" name="passwd"></label>
-            HTML;
-            //En caso de que el que el que añade al usuario sea un admin le permitimos determinar que tipo de usuario va a ser
-            if($tipo_usuario == 'admin'){
-              $ret .= <<<HTML
-                    <label>Tipo:<select name="tipo" id="tipo">
-                          <option value="cliente" selected>Cliente</option>
-                          <option value="recepcionista">Recepcionista</option>
-                          <option value="admin">Administrador</option>
-                          </select></label>
-              HTML;
-            }
-
-            $ret .= <<<HTML
-                      <label>Tarjeta:<input type="text" name="tarjeta"></label>
-                      <input type="submit" name="submit" value="Confirmar Nuevo Usuario">
-                    </form>
-                </div>  
-            HTML;
-          }else{
-            $ret = <<<HTML
-            <main class="lista">
-            <h2>Usuarios</h2>
-            <form action="" method="POST" novalidate>
-                <input type="submit" name="submit" value="Añadir usuario">
-            </form>
-            HTML;
-          }
-          if($errores != null){
-              $ret .= <<<HTML
-                <p>Error: {$errores}</p>
-              HTML;
-          }
-
-
-          $ret .= <<<HTML
-              <div>
-                  <table>
-                      <tr>
-                          <th>Nombre</th>
-                          <th>Apellidos</th>
-                          <th>DNI</th>
-                          <th>Email</th>
-                          <th>Nacionalidad</th>
-                          <th>Tarjeta</th>
-                          <th>Acción</th>
-                      </tr>
-          HTML;
-    
-          if($tipo_usuario == 'recepcionista'){
-              foreach ($lista_usuarios as $tupla){
-                  if($tupla['tipo'] == 'cliente'){
-                      $ret .= <<<HTML
-                          <tr><td>{$tupla['nombre']}</td>
-                              <td>{$tupla['apellidos']}</td>
-                              <td>{$tupla['DNI']}</td>
-                              <td>{$tupla['mail']}</td>
-                              <td>{$tupla['nacionalidad']}</td>
-                              <td>{$tupla['tarjeta']}</td>
-                              <td><form action="" method="POST">
-                                      <input type="hidden" name="id" value="{$tupla['DNI']}">
-                                      <input type="submit" name="submit" value="Editar Usuario">
-                                      <input type="submit" name="submit" value="Borrar Usuario">
-                                  </form>
-                              </td>
-                          </tr>
-                      HTML;
-                  }
-              }
-          }else if($tipo_usuario == 'admin'){
-              foreach ($lista_usuarios as $tupla){
-                  $ret .= <<<HTML
-                      <tr><td>{$tupla['nombre']}</td>
-                          <td>{$tupla['apellidos']}</td>
-                          <td>{$tupla['DNI']}</td>
-                          <td>{$tupla['mail']}</td>
-                          <td>{$tupla['nacionalidad']}</td>
-                          <td>{$tupla['tarjeta']}</td>
-                          <td><form action="" method="POST">
-                                  <input type="hidden" name="id" value="{$tupla['DNI']}">
-                                  <input type="submit" name="submit" value="Editar Usuario">
-                                  <input type="submit" name="submit" value="Borrar Usuario">
-                              </form>
-                          </td>
-                      </tr>
-                  HTML;
-              }
-          }
-        
-          $ret .= <<<HTML
-                  </table>
-              </div>
-          HTML;
-
-          if($tipo_usuario == 'admin'){
-              $ret .= <<<HTML
-                  <form method="post" action="">
-                      <div>
-                          <label> <input type="checkbox" name="userType[]" value="cliente"> Cliente </label>
-                          <label> <input type="checkbox" name="userType[]" value="recepcionista"> Recepcionista </label>
-                          <label> <input type="checkbox" name="userType[]" value="admin"> Administrador </label>
-                      </div>
-                      <input type="submit" name='userFilterListApply' value="Aplicar filtro">
+              <div class="editar">
+                   <h2>Editar Usuario</h2>
+                  <form action="index.php?p=usuarios-list" method="POST" novalidate class="editar">
+                    <label>Nombre:<input type="text" name="nombre" value="{$usuarioModificar["nombre"]}"></label>
+                    <label>Apellidos:<input type="text" name="apellidos" value="{$usuarioModificar["apellidos"]}"></label>
+                    <label>DNI (no editable):<input type="text" name="DNI" value="{$usuarioModificar["DNI"]}" readonly></label>
+                    <label>E-mail:<input type="email" name="mail" value="{$usuarioModificar["mail"]}"></label>
+                    <label>Nacionalidad:<input type="text" name="nacionalidad" value="{$usuarioModificar["nacionalidad"]}"></label>
+                    <label>Tarjeta:<input type="text" name="tarjeta" value="{$usuarioModificar["tarjeta"]}"></label>
+                    <input type="submit" name="submit" value="Confirmar Edición Usuario">
                   </form>
-              HTML;
+              </div>
+            HTML;
+          }
+        }else if($accion == 'aniadirUsuario'){
+          $ret .= <<<HTML
+              <div class="editar">
+                 <h2>Editar Usuario</h2>
+                  <form action="index.php?p=usuarios-list" method="POST" novalidate class="editar">
+                    <label>Nombre:<input type="text" name="nombre"></label>
+                    <label>Apellidos:<input type="text" name="apellidos"></label>
+                    <label>DNI:<input type="text" name="DNI"></label>
+                    <label>E-mail:<input type="email" name="mail"></label>
+                    <label>Nacionalidad:<input type="text" name="nacionalidad"></label>
+                    <label>Contraseña:<input type="text" name="passwd"></label>
+          HTML;
+          //En caso de que el que el que añade al usuario sea un admin le permitimos determinar que tipo de usuario va a ser
+          if($tipo_usuario == 'admin'){
+            $ret .= <<<HTML
+                  <label>Tipo:<select name="tipo" id="tipo">
+                        <option value="cliente" selected>Cliente</option>
+                        <option value="recepcionista">Recepcionista</option>
+                        <option value="admin">Administrador</option>
+                        </select></label>
+            HTML;
           }
 
           $ret .= <<<HTML
-              </main>
+                    <label>Tarjeta:<input type="text" name="tarjeta"></label>
+                    <input type="submit" name="submit" value="Confirmar Nuevo Usuario">
+                  </form>
+              </div>  
+          HTML;
+        }else{
+          $ret .= <<<HTML
+          <form action="" method="POST" novalidate>
+              <input type="submit" name="submit" value="Añadir usuario">
+          </form>
           HTML;
         }
+        if($errores != null){
+            $ret .= <<<HTML
+              <p>Error: {$errores}</p>
+            HTML;
+        }
+
+
+        $ret .= <<<HTML
+            <div>
+                <table>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>DNI</th>
+                        <th>Email</th>
+                        <th>Nacionalidad</th>
+                        <th>Tarjeta</th>
+                        <th>Acción</th>
+                    </tr>
+        HTML;
+
+        if($tipo_usuario == 'recepcionista'){
+            foreach ($lista_usuarios as $tupla){
+                if($tupla['tipo'] == 'cliente'){
+                    $ret .= <<<HTML
+                        <tr><td>{$tupla['nombre']}</td>
+                            <td>{$tupla['apellidos']}</td>
+                            <td>{$tupla['DNI']}</td>
+                            <td>{$tupla['mail']}</td>
+                            <td>{$tupla['nacionalidad']}</td>
+                            <td>{$tupla['tarjeta']}</td>
+                            <td><form action="" method="POST">
+                                    <input type="hidden" name="id" value="{$tupla['DNI']}">
+                                    <input type="submit" name="submit" value="Editar Usuario">
+                                    <input type="submit" name="submit" value="Borrar Usuario">
+                                </form>
+                            </td>
+                        </tr>
+                    HTML;
+                }
+            }
+        }else if($tipo_usuario == 'admin'){
+            foreach ($lista_usuarios as $tupla){
+                $ret .= <<<HTML
+                    <tr><td>{$tupla['nombre']}</td>
+                        <td>{$tupla['apellidos']}</td>
+                        <td>{$tupla['DNI']}</td>
+                        <td>{$tupla['mail']}</td>
+                        <td>{$tupla['nacionalidad']}</td>
+                        <td>{$tupla['tarjeta']}</td>
+                        <td><form action="" method="POST">
+                                <input type="hidden" name="id" value="{$tupla['DNI']}">
+                                <input type="submit" name="submit" value="Editar Usuario">
+                                <input type="submit" name="submit" value="Borrar Usuario">
+                            </form>
+                        </td>
+                    </tr>
+                HTML;
+            }
+        }
+
+        $ret .= <<<HTML
+                </table>
+            </div>
+        HTML;
+
+        if($tipo_usuario == 'admin'){
+            $ret .= <<<HTML
+                <form method="post" action="">
+                    <div>
+                        <label> <input type="checkbox" name="userType[]" value="cliente"> Cliente </label>
+                        <label> <input type="checkbox" name="userType[]" value="recepcionista"> Recepcionista </label>
+                        <label> <input type="checkbox" name="userType[]" value="admin"> Administrador </label>
+                    </div>
+                    <input type="submit" name='userFilterListApply' value="Aplicar filtro">
+                </form>
+            HTML;
+        }
+
+        $ret .= <<<HTML
+            </main>
+        HTML;
     }
 
     return $ret;
 }
 
-function listadoHabitaciones($tipo_usuario, $lista_habitaciones, $habitacionModificar){
+function listadoHabitaciones($tipo_usuario, $lista_habitaciones, $accion, $habitacionModificar, $errores){
 
-  $ret = '';
-  echo "DEBUG:: cuales son las habitaciones que nos traemos de la BD: ";
-  var_dump($lista_habitaciones);
   if($tipo_usuario != 'recepcionista'){
     $ret = <<<HTML
             <main>
@@ -429,237 +489,422 @@ function listadoHabitaciones($tipo_usuario, $lista_habitaciones, $habitacionModi
             </main>
         HTML;
   }else{
-    if($lista_habitaciones == null && !isset($lista_habitaciones)){
+
+    $ret = <<<HTML
+      <main class="lista">
+    HTML;
+
+    if($accion == 'modificarHabitacion'){
+      $fotos = isset($habitacionModificar["fotos"])?$habitacionModificar["fotos"]:0;
+      $ret .= <<<HTML
+              <div class="editar">
+                   <h2>Editar habitación</h2>
+                  <form action="index.php?p=habitaciones-list" method="POST" novalidate class="editar">
+                    <label>Número de habitación (no editable):<input type="text" name="id" value="{$habitacionModificar["id"]}" readonly></label>
+                    <label>Estado:<select name="estado" id="estado">
+                              <option value="libre" selected>Libre</option>
+                              <option value="reservada">Reservada</option>
+                              <option selected value="en proceso">En proceso</option>
+                              </select></label>
+                    <label>Capacidad:<input type="number" name="capacidad" value="{$habitacionModificar["capacidad"]}"></label>
+                    <label>Precio:<input type="number" name="precio" value="{$habitacionModificar["precio"]}"></label>
+                    <label>Numero de fotos:<input type="number" name="numero_fotografias" value="{$fotos}"></label>
+                    <label>Descripción:<input type="text" name="descripcion" value="{$habitacionModificar["descripcion"]}"></label>
+                    
+                    <input type="submit" name="submit" value="Confirmar Edición Habitación">
+                  </form>
+              </div>
+      HTML;
+    }else if($accion == 'aniadirHabitacion'){
+      $ret .= <<<HTML
+              <div class="editar">
+                   <h2>Añadir habitación</h2>
+                  <form action="index.php?p=habitaciones-list" method="POST" novalidate class="editar">
+                    <label>Número de habitación:<input type="text" name="id"></label>
+                    <label>Estado:<select name="estado" id="estado">
+                              <option value="libre" selected>Libre</option>
+                              <option value="reservada">Reservada</option>
+                              <option value="en proceso">En proceso</option>
+                              </select></label>
+                    <label>Capacidad:<input type="number" name="capacidad"></label>
+                    <label>Precio:<input type="number" name="precio"></label>
+                    <label>Numero de fotos:<input type="number" name="numero_fotografias"></label>
+                    <label>Descripción:<input type="text" name="descripcion"></label>
+                    
+                    <input type="submit" name="submit" value="Confirmar Nueva Habitación">
+                  </form>
+              </div>
+      HTML;
+    }else{
+      $ret .= <<<HTML
+          <form action="" method="POST" novalidate>
+              <input type="submit" name="submit" value="Añadir habitación">
+          </form>
+          HTML;
+    }
+    //En caso de que haya errores  los muestro
+    if($errores != null){
+      $ret .= <<<HTML
+              <p>Error: {$errores}</p>
+            HTML;
+    }
+
+    //Headers de la lista
+    $ret .= <<<HTML
+              <div>
+                  <table>
+                      <tr>
+                          <th>Número de habitacion</th>
+                          <th>Estado</th>
+                          <th>Capacidad</th>
+                          <th>Precio</th>
+                          <th>Número de fotos</th>
+                          <th>Descripción</th>
+                          <th>Acción</th>
+                      </tr>
+          HTML;
+    //Elementos de la lista
+    foreach ($lista_habitaciones as $tupla){
+      $ret .= <<<HTML
+                    <tr><td>{$tupla['id']}</td>
+                        <td>{$tupla['estado']}</td>
+                        <td>{$tupla['capacidad']}</td>
+                        <td>{$tupla['precio']}</td>
+                        <td>{$tupla['numero_fotografias']}</td>
+                        <td>{$tupla['descripcion']}</td>
+                        <td><form action="" method="POST">
+                                <input type="hidden" name="id" value="{$tupla['id']}">
+                                <input type="submit" name="submit" value="Editar Habitación">
+                                <input type="submit" name="submit" value="Borrar Habitación">
+                            </form>
+                        </td>
+                    </tr>
+    HTML;
+    }
+    //Formulario del filtro de habitaciones
+    $ret .= <<<HTML
+                  </table>
+                  <form method="post" action="">
+                      <div>
+                          <label> <input type="checkbox" name="roomType[]" value="libre"> Libre </label>
+                          <label> <input type="checkbox" name="roomType[]" value="reservada"> Reservada </label>
+                          <label> <input type="checkbox" name="roomType[]" value="en proceso"> En proceso </label>
+                      </div>
+                      <input type="submit" name='roomFilterListApply' value="Aplicar filtro">
+                  </form>
+              </div>
+          HTML;
+
+    $ret .= <<<HTML
+      </main>
+    HTML;
+  }
+
+  return $ret;
+}
+
+function listadoReservas($tipo_usuario, $lista_reservas, $accion, $reservaModificar, $errores, $userIds, $roomIds){
+  if($tipo_usuario == 'cliente'){
+    //Headers de la lista
+    $ret = <<<HTML
+            <main class="lista">
+    HTML;
+    if($accion == 'aniadirReserva'){
+      $ret .= <<<HTML
+                <div class="editar">
+                     <h2>Añadir reserva</h2>
+                     <form action="index.php?p=reservas-list" method="POST" novalidate class="editar">
+                        <label>Número de habitación:<select name="id_habitacion" id="id_habitacion">
+      HTML;
+      if($roomIds != null){
+        while ($row = $roomIds->fetch_assoc()) {
+          $ret .= <<<HTML
+                <option value="{$row['id']}" selected>{$row['id']}</option>
+            HTML;
+        }
+      }
+      $ret .= <<<HTML
+                        </select></label>
+                        <label>Ocupación:<input type="number" name="ocupacion"></label>
+                        <label>Comentario:<input type="text" name="comentario"></label>
+                        <label>Fecha de inicio:<input type="date" name="fecha_inicio"></label>
+                        <label>Fecha de fin:<input type="date" name="fecha_fin"></label>
+                        <input type="hidden" name="dni_usuario" value="{$_SESSION['dni']}">
+                        <input type="submit" name="submit" value="Confirmar Nueva Reserva">
+                      </form>
+                  </div>
+        HTML;
+    }else{
+      $ret .= <<<HTML
+                    <form action="" method="POST" novalidate>
+                        <input type="submit" name="submit" value="Añadir Reserva">
+                    </form>
+      HTML;
+    }
+    $ret .= <<<HTML
+                    <table>
+                        <tr>
+                            <th>DNI usuario</th>
+                            <th>Habitación</th>
+                            <th>Número de clientes</th>
+                            <th>Comentario</th>
+                            <th>Fecha de inicio</th>
+                            <th>Fecha de fin</th>
+                        </tr>
+            HTML;
+    //Elementos de la lista
+    foreach ($lista_reservas as $tupla) {
+      if($tupla['dni_usuario']==$_SESSION['dni']){
+        $ret .= <<<HTML
+                      <tr><td>{$tupla['dni_usuario']}</td>
+                          <td>{$tupla['id_habitacion']}</td>
+                          <td>{$tupla['ocupacion']}</td>
+                          <td>{$tupla['comentario']}</td>
+                          <td>{$tupla['fecha_inicio']}</td>
+                          <td>{$tupla['fecha_fin']}</td>
+                      </tr>
+        HTML;
+      }
+    }
+    $ret .= <<<HTML
+            </table>
+        </main>
+      HTML;
+  }else if($tipo_usuario == 'recepcionista'){
+    if($lista_reservas == null && !isset($lista_reservas)){
 
       $ret = <<<HTML
                 <main>
-                    <p>Actualmente no hay habitaciones en la base de datos</p>
+                    <p>Actualmente no hay reservas en la base de datos</p>
                 </main>
             HTML;
     }else{
+
       $ret = <<<HTML
-            <main class="lista">
-            <h2>Habitaciones</h2>
-            <form action="" method="POST" novalidate>
-                <input type="submit" name="submit" value="Añadir habitación">
-            </form>
-            HTML;
+        <main class="lista">
+      HTML;
 
-      if($habitacionModificar != null){
-
+      if($accion == 'modificarReserva'){
         $ret .= <<<HTML
                 <div class="editar">
-                     <h2>Editar Habitación</h2>
-                    <form action="index.php?p=habitaciones-list" method="POST" novalidate class="editar">
-                      <label>Número de habitación (no editable):<input type="text" name="id" value="{$habitacionModificar["id"]}" readonly></label>
-                      <label>Estado:<select name="estado" id="estado">
-                                <option value="libre" selected>Libre</option>
-                                <option value="reservada">Reservada</option>
-                                <option selected value="en proceso">En proceso</option>
-                                </select></label>
-                      <label>Capacidad:<input type="number" name="capacidad" value="{$habitacionModificar["capacidad"]}"></label>
-                      <label>Precio:<input type="number" name="precio" value="{$habitacionModificar["precio"]}"></label>
-                      <label>Numero de fotos:<input type="number" name="numero_fotografias" value="{$habitacionModificar["fotos"]}"></label>
-                      <label>Descripción:<input type="text" name="descripcion" value="{$habitacionModificar["descripcion"]}"></label>
-                      
-                      <input type="submit" name="submit" value="Confirmar Edición Habitación">
+                     <h2>Editar reserva</h2>
+                    <form action="index.php?p=reservas-list" method="POST" novalidate class="editar">
+                      <label>Cliente:<select name="dni_usuario" id="dni_usuario">
+        HTML;
+        if($userIds != null){
+          while ($row = $userIds->fetch_assoc()) {
+            //echo "DEBUG:: fila ";
+            //var_dump($row);
+            if($reservaModificar['dni_usuario'] == $row['DNI']){
+              $ret .= <<<HTML
+                
+                <option value="{$row['DNI']}" selected>{$row['DNI']} </option>
+            HTML;
+            }else{
+              $ret .= <<<HTML
+                
+                <option value="{$row['DNI']}">{$row['DNI']}</option>
+            HTML;
+            }
+          }
+        }
+        $ret.= <<<HTML
+                      </select></label>
+                      <label>Número de habitación:<select name="id_habitacion" id="id_habitacion">
+                      HTML;
+        if($roomIds != null){
+          while ($row = $roomIds->fetch_assoc()) {
+            //echo "DEBUG:: fila ";
+            //var_dump($row);
+            if($reservaModificar['id_habitacion'] == $row['id']){
+              $ret .= <<<HTML
+                
+                <option value="{$row['id']}" selected>{$row['id']} </option>
+            HTML;
+            }else{
+              $ret .= <<<HTML
+                
+                <option value="{$row['id']}">{$row['id']}</option>
+            HTML;
+            }
+
+          }
+        }
+        $fecha_ini = DateTime::createFromFormat('Y-m-d H:i:s', $reservaModificar['fecha_inicio'])->format('Y-m-d');
+        $fecha_fin = DateTime::createFromFormat('Y-m-d H:i:s', $reservaModificar['fecha_fin'])->format('Y-m-d');
+        $ret .= <<<HTML
+                      </select></label>
+                      <label>Fecha de inicio:<input type="date" name="fecha_inicio" value="{$fecha_ini}"></label>
+                      <label>Fecha de fin:<input type="date" name="fecha_fin" value="{$fecha_fin}"></label>
+                      <input type="hidden" name="id_reserva" value="{$reservaModificar['id_reserva']}">
+                      <input type="submit" name="submit" value="Confirmar Edición Reserva">
                     </form>
                 </div>
         HTML;
       }
+      else if($accion == 'aniadirReserva'){
+        $ret .= <<<HTML
+                <div class="editar">
+                     <h2>Añadir reserva</h2>
+                    <form action="index.php?p=reservas-list" method="POST" novalidate class="editar">
+                      <label>Cliente:<select name="dni_usuario" id="dni_usuario">
+        HTML;
+        if($userIds != null){
+          while ($row = $userIds->fetch_assoc()) {
+            $ret .= <<<HTML
+                <option value="{$row['DNI']}" selected>{$row['DNI']}</option>
+            HTML;
+          }
+        }
+        $ret.= <<<HTML
+                      </select></label>
+                      <label>Número de habitación:<select name="id_habitacion" id="id_habitacion">
+                      HTML;
+        if($roomIds != null){
+          while ($row = $roomIds->fetch_assoc()) {
+            $ret .= <<<HTML
+                <option value="{$row['id']}" selected>{$row['id']}</option>
+            HTML;
+          }
+        }
+        $ret .= <<<HTML
+                      </select></label>
+                      <label>Ocupación:<input type="number" name="ocupacion"></label>
+                      <label>Comentario:<input type="text" name="comentario"></label>
+                      <label>Fecha de inicio:<input type="date" name="fecha_inicio"></label>
+                      <label>Fecha de fin:<input type="date" name="fecha_fin"></label>
+                      
+                      <input type="submit" name="submit" value="Confirmar Nueva Reserva">
+                    </form>
+                </div>
+        HTML;
+      }
+      else{
+        $ret .= <<<HTML
+            <form action="" method="POST" novalidate>
+                <input type="submit" name="submit" value="Añadir Reserva">
+            </form>
+            HTML;
+      }
+      //En caso de que haya errores  los muestro
+      if($errores != null){
+        $ret .= <<<HTML
+                <p>Error: {$errores}</p>
+              HTML;
+      }
 
+      //Headers de la lista
       $ret .= <<<HTML
                 <div>
                     <table>
                         <tr>
-                            <th>Número de habitacion</th>
-                            <th>Estado</th>
-                            <th>Capacidad</th>
-                            <th>Precio</th>
-                            <th>Número de fotos</th>
-                            <th>Descripción</th>
+                            <th>DNI usuario</th>
+                            <th>Habitación</th>
+                            <th>Número de clientes</th>
+                            <th>Comentario</th>
+                            <th>Fecha de inicio</th>
+                            <th>Fecha de fin</th>
                             <th>Acción</th>
                         </tr>
             HTML;
-
-      foreach ($lista_habitaciones as $tupla){
+      //Elementos de la lista
+      foreach ($lista_reservas as $tupla){
         $ret .= <<<HTML
-                      <tr><td>{$tupla['id']}</td>
-                          <td>{$tupla['estado']}</td>
-                          <td>{$tupla['capacidad']}</td>
-                          <td>{$tupla['precio']}</td>
-                          <td>{$tupla['numero_fotografias']}</td>
-                          <td>{$tupla['descripcion']}</td>
+                      <tr><td>{$tupla['dni_usuario']}</td>
+                          <td>{$tupla['id_habitacion']}</td>
+                          <td>{$tupla['ocupacion']}</td>
+                          <td>{$tupla['comentario']}</td>
+                          <td>{$tupla['fecha_inicio']}</td>
+                          <td>{$tupla['fecha_fin']}</td>
                           <td><form action="" method="POST">
-                                  <input type="hidden" name="id" value="{$tupla['id']}">
-                                  <input type="submit" name="submit" value="Editar Habitación">
-                                  <input type="submit" name="submit" value="Borrar Habitación">
+                                  <input type="hidden" name="id_reserva" value="{$tupla['id_reserva']}">
+                                  <input type="submit" name="submit" value="Editar Reserva">
+                                  <input type="submit" name="submit" value="Borrar Reserva">
                               </form>
                           </td>
                       </tr>
-      HTML;
+        HTML;
       }
-
-
+      //Formulario del filtro de reservas
       $ret .= <<<HTML
                     </table>
-                    <form method="post" action="">
-                        <div>
-                            <label> <input type="checkbox" name="roomType[]" value="libre"> Libre </label>
-                            <label> <input type="checkbox" name="roomType[]" value="reservada"> Reservada </label>
-                            <label> <input type="checkbox" name="roomType[]" value="en proceso"> En proceso </label>
-                        </div>
-                        <input type="submit" name='roomFilterListApply' value="Aplicar filtro">
+                    <form method="post" action="" >
+                        <label> DNI de usuario a buscar:<input type="text" name="userIdFilter" >  </label>
+                        <label> Número de habitación a buscar:<input type="text" name="roomNameFilter" >  </label>
+                        <input type="submit" name='reservationFilterListApply' value="Aplicar filtro">
                     </form>
                 </div>
-            </main>
             HTML;
+
+      $ret .= <<<HTML
+        </main>
+      HTML;
     }
+  }else{
+    $ret = <<<HTML
+            <main>
+                <p>No tienes permisos para acceder a esta página.</p>
+            </main>
+        HTML;
+  }
 
   return $ret;
-  }
 }
 
 function backup(){
+  $errorArchivo = '';
+  if(isset($_POST['backup_file']) && empty($_POST['backup_file'])){$errorArchivo = "<p class='errorNombre'>Suba un archivo de backup (.sql)</p>";}
   $ret = <<<HTML
   <main>
+    <form class="backup" method="post" enctype="multipart/form-data" novalidate>
+    <div>
+        <label> Descargar en tu carpeta "Descargas" el archivo .sql backup: </label><input type="submit" name="submit" value="Descargar backup">
+    </div>
+    <div>
+        <label> Utilizar un archivo .sql para recuperar la base de datos: </label><input type="file" name="file" accept=".sql">
+        $errorArchivo
+        <input type="submit" name="submit" value="Cargar backup">
+    </div>
+    </form>
   </main>
   HTML;
   return $ret;
 }
 
-
-function reservas(){
-  $ret = <<<HTML
-  <main>
-      <div class="table">
-      
-          <span> Habitaciones </span>
-          <span> Reservas </span> 
-          <span> Nº Hab.</span> 
-              <span>Cap.</span>
-              <span>Hoy</span>
-              <span>-1d</span>
-              <span>+1d</span>
-              <span>+2d</span>
-              <span>+3d</span>
-              <span>+4d</span>
-              <span>+5d</span>
-              <span>+6d</span>
-              <span>+1d</span>
-          <span>101</span> 
-              <span>2</span>
-              <span>R</span>
-              <span>R</span>
-              <span>R</span>
-              <span> </span>
-              <span> </span>
-              <span> </span>
-              <span> </span>
-          <span>102</span> 
-              <span>2</span>
-              <span>R</span>
-              <span>R</span>
-              <span> </span>
-              <span> </span>
-              <span>P</span>
-              <span>P</span>
-              <span></span>
-          <span>103</span> 
-              <span>3</span>
-              <span>M</span>
-              <span>M</span>
-              <span>M</span>
-              <span>M</span>
-              <span>M</span>
-              <span> </span>
-              <span> </span>
-          <span>201</span> 
-              <span>2</span>
-              <span> </span>
-              <span> </span>
-              <span> </span>
-              <span>R</span>
-              <span>R</span>
-              <span> </span>
-              <span> </span>
-          <span>202</span> 
-              <span>4</span>
-              <span>R</span>
-              <span> </span>
-              <span> </span>
-              <span> </span>
-              <span> </span>
-              <span> </span>
-              <span> </span>
-          <span>203</span> 
-              <span>2</span>
-              <span> </span>
-              <span> </span>
-              <span>R</span>
-              <span>R</span>
-              <span>R</span>
-              <span>R</span>
-              <span> </span>
-          <span>204</span> 
-              <span>4</span>
-              <span>R</span>
-              <span> </span>
-              <span>M</span>
-              <span>M</span>
-              <span>M</span>
-              <span>M</span>
-              <span>M</span>
-          <span>301</span> 
-              <span>3</span>
-              <span> </span>
-              <span>R</span>
-              <span>P</span>
-              <span>P</span>
-              <span>R</span>
-              <span>R</span>
-              <span> </span>
-          <span>302</span> 
-              <span>6</span>
-              <span> </span>
-              <span>M</span>
-              <span>M</span>
-              <span> </span>
-              <span>R</span>
-              <span>R</span>
-              <span>R</span>
-          <span> Plazas </span> 
-          <span>Total</span> 
-              <span> 25 </span>
-              <span> </span>
-              <span>19</span>
-              <span>15</span>
-              <span>21</span>
-              <span>21</span>
-              <span>24</span>
-              <span>24</span>
-              <span > </span>
-          <span >Usadas</span> 
-              <span> 12 </span> </span>
-              <span>7</span>
-              <span>4</span>
-              <span>4</span>
-              <span>13</span>
-              <span>11</span>
-              <span>6</span> </span>
-          <span>Libres</span> 
-              <span> 13 </span>
-              <span>12</span>
-              <span>8</span>
-              <span>14</span>
-              <span>6</span>
-              <span>11</span>
-              <span>18</span>
-      </div>
-  </main>
-  HTML;
-
-  return $ret;
+function logs($data){
+  $lista = $data['logs'];
+  if($_SESSION['tipo'] == 'admin'){
+    //Headers de la lista
+    $ret = <<<HTML
+            <main>
+                <table>
+                    <tr>
+                        <th>Id</th>
+                        <th>Fecha</th>
+                        <th>Acción</th>
+                    </tr>
+            HTML;
+    //Elementos de la lista
+    foreach ($lista as $tupla) {
+      $ret .= <<<HTML
+                  <tr><td>{$tupla['id']}</td>
+                      <td>{$tupla['fecha']}</td>
+                      <td>{$tupla['accion']}</td>
+                  </tr>
+      HTML;
+    }
+    $ret .= <<<HTML
+            </table>
+        </main>
+      HTML;
+  }else{
+    $ret = <<<HTML
+        <main>
+          <p>Acceso restringido</p>
+        </main>
+    HTML;
+  }
+    return $ret;
 }
 
 ?>

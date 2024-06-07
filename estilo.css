@@ -114,6 +114,16 @@ form{
     display: flex;
     flex-direction: column;
 }
+form.backup{
+    background-color: antiquewhite;
+    border: black solid 1px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 20px;
+    width: 90%;
+}
 menu{
     display: flex;
     flex-wrap: wrap;
@@ -221,6 +231,7 @@ div{
     background-color: gainsboro ;
     width: 30%;
     text-align: center;
+    align-self: center;
     margin: 10px;
 }
 @media (max-width: 900px) {
@@ -244,6 +255,11 @@ div.table{
 span{
     border: 1px solid black;
 }
+aside>section{
+    background-color: rgba(255, 0, 0, 0.5);
+    width: 90%;
+    margin: 5px;
+}
 section>div{
     background-color: rgb(207, 25, 25);
     border-radius: 10px;
@@ -264,6 +280,7 @@ input[type="submit"]{
     background-color: tomato;
     font-size: medium;
     padding: 10px;
+    margin: 10px;
     align-self: center;
 }
 figure{
@@ -304,6 +321,7 @@ img{
 label{
     width: 200px;
     padding: 5px;
+    text-align: center;
 }
 a.in{
     background-color: chocolate;
@@ -567,6 +585,7 @@ div.pers-cont div.lower-cont .left-cont div {
 div.pers-cont div.lower-cont .left-cont #dni {
     display: inline-block;
     width: 100%;
+    margin-top: 6%;
 }
 div.pers-cont div.lower-cont .left-cont #dni div.uno {
     width: 40%;

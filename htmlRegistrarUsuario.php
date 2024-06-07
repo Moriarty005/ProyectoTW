@@ -91,12 +91,12 @@ function popErrores(){
             
         comprobarNombre();
         comprobarDNI();
-        comprobarFecha();
+        //comprobarFecha();
         comprobarNacionalidad();
         comprobarTarjeta();
 
         #Si los tres campos de la seccion de datos personales estan correctos indicamos que esta seccion al completo esta correcta
-        if($todo_correcto[0] && $todo_correcto[1] && $todo_correcto[2]){
+        if($todo_correcto[0] && $todo_correcto[1]){
             $todo_correcto[3] = true;
         }
         
@@ -123,9 +123,9 @@ function defaultHTML(){
     $errores[1] = <<< HTML
         <input type="text" name="dni">
     HTML;
-    $errores[2] = <<< HTML
+    /*$errores[2] = <<< HTML
         <input type="date" name="fecha-nacimiento">
-    HTML;
+    HTML;*/
     $errores[3] = <<< HTML
     <input type="email" id="mail" name='mail'>
     HTML;
@@ -189,7 +189,7 @@ function comprobarDNI(){
     }
 }
 
-function comprobarFecha(){
+/*function comprobarFecha(){
 
     global $errores;
     global $todo_correcto;
@@ -214,7 +214,7 @@ function comprobarFecha(){
             $todo_correcto[2] = true;
         }
     }
-}
+}*/
 
 function comprobarMail(){
 
@@ -335,7 +335,7 @@ function esDniValido($dni) {
     return $letraCalculada === $letra;
 }
 
-function esMayorDeEdad($fechaNacimiento) {
+/*function esMayorDeEdad($fechaNacimiento) {
 
     $ret = false;
 
@@ -348,7 +348,7 @@ function esMayorDeEdad($fechaNacimiento) {
     }
 
     return $ret;
-}
+}*/
 
 function HTMLdatosPersonales() {
     global $errores;
@@ -387,7 +387,7 @@ function HTMLdatosPersonales() {
     if (isset($errores[1])) {
         $ret .= $errores[1];
     }
-    $ret .= <<<HTML
+    /*$ret .= <<<HTML
                             </div>
                         </div>
                         <div id="fnac">
@@ -396,7 +396,7 @@ function HTMLdatosPersonales() {
     HTML;
     if (isset($errores[2])) {
         $ret .= $errores[2];
-    }
+    }*/
     $ret .= <<<HTML
                             </div>
                         </div>

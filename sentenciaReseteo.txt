@@ -1,7 +1,7 @@
-DROP TABLE Reserva;
-DROP TABLE Usuario;
-DROP TABLE Habitacion;
-DROP TABLE logs;
+DROP TABLE IF EXISTS `Reserva`;
+DROP TABLE IF EXISTS `Usuario`;
+DROP TABLE IF EXISTS `Habitacion`;
+DROP TABLE IF EXISTS `logs`;
 
 CREATE TABLE Usuario (
     DNI VARCHAR(9) PRIMARY KEY,
@@ -28,7 +28,7 @@ CREATE TABLE Reserva (
     id_reserva INT PRIMARY KEY AUTO_INCREMENT,
     dni_usuario VARCHAR(9),
     id_habitacion VARCHAR(20),
-    ocupación INT,
+    ocupacion INT,
     comentario VARCHAR(280),
     fecha_inicio DATETIME,
     fecha_fin DATETIME,
@@ -45,16 +45,40 @@ CREATE TABLE logs (
 );
 
 INSERT INTO Usuario (mail, DNI, nombre, tipo, passwd) VALUES
-("cliente@cliente.com", '00000001S', "cliente", "cliente", "$2y$10$BopAwNb7bXf/fT0Qcq9fre2maeANpH0tQM0LGtVx2AcfGRWb6T31q"),
-("recepcionista@recepcionista.com", '00000002D', "recepcionista", "recepcionista", "$2y$10$4htvO9B.0eNZcsJ1.yW2XOzt9.WzCIT/v0OkK8mfqbFZNrfDOdqEK"),
-("admin@admin.com", '00000000A', "admin", "admin", "$2y$10$Hi/5CW3EXm3UrUk0Rh0nMOfV3nu2qkXoUHqQNvgwSadFno2pt/9zK");
+("admin@admin.com", '99999999G', "admin", "admin", "$2y$10$BLsTuCIk4SX7oCBBFBhD.ustLDipjsNI04yjT.LCHpfHkkVV0r5qq"),
+("recepcionista@recepcionista.com", '77777777M', "recepcionista", "recepcionista", "$2y$10$FA9hm9bsRNfX96l78RDlfegrf3RvlTe7K3i9gCAYIp5W3MVYT6YmO"),
+("cliente@cliente.com", '33333333I', "cliente", "cliente", "$2y$10$c0Onthx07zI2MZfSI7kW6err.fo2iN4GA7YA.snoqQ7VpIZZXD12u"),
+("tia@void.ugr.es", '00000001S', "María", "admin", "$2y$10$xB8va0cwIM3Bf.JFGRd3fOCUzA/y6V.8nVvfctCmsCocpGxEKJ1VC"),
+("abuela@void.ugr.es", '00000001F', "Marta", "admin", "$2y$10$sTZyaxGZL.TjA9tFJfjaVuvICXDk0dY6vTuel9NwO5MDpIGf7B5xK"),
+("director@void.ugr.es", '00000002D', "Juan", "recepcionista", "$2y$10$0vuP6ByqQBudPyGCLYFLWektCN9MSn.wQDRtk50dVLg3nyyg7r9iK"),
+("elsuper@void.ugr.es", '00000000A', "Carlos", "recepcionista", "$2y$10$DKAN9kb6sIOwtL4f39TPaum1OUgesF6hVR3gFoBLjzhaXXBUJffFK"),
+("director@void.ugr.es", '00000002S', "Juan", "recepcionista", "$2y$10$7gZxILDNXN6KhIBMUN.g5uFWhrZmohW21Mo/jmzT5Cio7esZEO2mG"),
+("mortadelo@void.ugr.es", '00000002I', "Mortadelo", "cliente", "$2y$10$jnWqkxie72wnB6TepSxvy.4Hu6tnfm49dpJMOzFPCSFu8u5q086RS"),
+("filemon@void.ugr.es", '00000002P', "Filemon", "cliente", "$2y$10$0nuzly9z2Gpahft3TNB5W.FL82o1w4qWd7Cszt3A5BMxiyf8tWcL6"),
+("bacterio@void.ugr.es", '00000002W', "Profesor Bacterio", "cliente", "$2y$10$Jv5RSP/4RS8.sy9e0KOE6ebfawx9hiCRjMkHf7b3c3.biZb6BRdkq"),
+("ofelia@void.ugr.es", '00000002X', "Ofelia", "cliente", "$2y$10$p47MzYYPJ1JdM.xbhAD19.KqIdca5LifLJiDYbyLel3fwPRsHDRp2"),
+("irma@void.ugr.es", '00000002Q', "Irma", "cliente", "$2y$10$4mcD6JoT65ovQTKDVqmTDuhNQyQZ.k..lvRsS7Ndzj/j/VvsWG1qG");
 
 INSERT INTO Habitacion (id, capacidad, numero_fotografias, estado, precio) VALUES
-('101', 2, 0, "libre", 100),
+('101', 2, 0, "reservada", 100),
 ('102', 2, 0, "libre", 100),
-('103', 2, 0, "libre", 100);
+('103', 2, 1, "libre", 100),
+('104', 2, 1, "libre", 100),
+('105', 2, 2, "libre", 100),
+('201', 3, 2, "libre", 100),
+('202', 3, 3, "libre", 100),
+('203', 3, 3, "libre", 100),
+('204', 3, 4, "libre", 100),
+('301', 4, 4, "libre", 100),
+('302', 4, NULL, "libre", 100),
+('Suite nupcial', 4, NULL, "libre", 400),
+('Suite presidencial', 4, NULL, "libre", 400),
+('Sanrio', 4, 1, "libre", 200),
+('Tradicional', 6, 1, "libre", 250),
+('Parejas', 2, 1, "libre", 200),
+('Suite', 2, 1, "libre", 400);
 
-INSERT INTO Reserva (dni_usuario, id_habitacion, ocupación, comentario, fecha_inicio, fecha_fin, estado, instante) VALUES
-('00000001S', 101, 2, "mu bien", '2024-12-20 14:00:00', '2024-12-30 12:00:00', 'confirmada', '2024-06-06 12:00:00');
+INSERT INTO Reserva (dni_usuario, id_habitacion, ocupacion, comentario, fecha_inicio, fecha_fin, estado, instante) VALUES
+('00000001S', 101, 2, "Genial", '2024-12-20 14:00:00', '2024-12-30 12:00:00', 'confirmada', '2024-06-06 12:00:00');
 
 INSERT INTO logs (fecha, accion) VALUES (NOW(), 'Se ha reseteado la base de datos');

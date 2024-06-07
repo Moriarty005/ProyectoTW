@@ -3,7 +3,7 @@
   <component name="SshConfigs">
     <configs>
       <sshConfig authType="PASSWORD" host="void.ugr.es" id="00089dc3-7e1b-4b84-b94f-4b7ed7650351" port="22" nameFormat="DESCRIPTIVE" username="alvarogonluq2324" useOpenSSHConfig="true" />
-      <sshConfig authType="PASSWORD" host="void.ugr.es" id="3eec449f-fb18-410f-9a8b-b182f7144355" port="22" nameFormat="DESCRIPTIVE" username="alejandromg002324" useOpenSSHConfig="true" />
+      <sshConfig authType="PASSWORD" host="void.ugr.es" id="3eec449f-fb18-410f-9a8b-b182f7144355" port="22" nameFormat="DESCRIPTIVE" username="alejandroalvaro2324" useOpenSSHConfig="true" />
     </configs>
   </component>
 </project>

@@ -52,6 +52,33 @@ class CRUD {
     $this->db = null;
   }
 
+  public function addUser($data){
+
+    $fields = "(";
+    $values = "(";
+    foreach ($data as $key => $value) {
+      if($value != null){
+        $values .= "'$value', ";
+      }else{
+        $values .= "NULL, ";
+      }
+
+      $fields .= "$key, ";
+    }
+    $fields = substr($fields, 0, -2);
+    $fields .= ")";
+    $values = substr($values, 0, -2);
+    $values .= ")";
+    $sql = "INSERT INTO `Usuario` $fields VALUES $values;";
+    echo "DEBUG:: query que enviamos para añadir usuario: ".$sql;
+    $this->log("Se añade el usuario " .$data['DNI']);
+    try {
+      $this->db->query($sql);
+    }catch (\mysql_xdevapi\Exception $exception){
+      echo "Exception: ".$exception->getMessage();
+    }
+  }
+
   public function requestUser($dni) {
 
     if($dni === null){
@@ -140,8 +167,8 @@ class CRUD {
     $this->log("Se modifica el usuario " .$data['DNI']);
     try {
       $this->db->query($sql);
-    }catch (\mysql_xdevapi\Exception $exception){
-      echo "Exception: ".$exception->getMessage();
+    }catch (mysqli_sql_exception $e){
+      echo "Exception: ".$e->getMessage();
     }
   }
 
@@ -154,8 +181,8 @@ class CRUD {
     $this->log("Se modifica la habitación " .$data['id']);
     try {
       $this->db->query($sql);
-    }catch (\mysql_xdevapi\Exception $exception){
-      echo "Exception: ".$exception->getMessage();
+    }catch (mysqli_sql_exception $e){
+      echo "Exception: ".$e->getMessage();
     }
   }
 
@@ -174,8 +201,8 @@ class CRUD {
       //esto es una nota para que si está esto funcionando pongas los siguientes logs (poniendo un comentario tipo "usuario borrado" y tal)
       //inserción en la tabla de logs
       $this->log("Se elimina el usuario " .$dni);
-    } catch (PDOException $e) {
-      throw $e;
+    } catch (mysqli_sql_exception $e) {
+      echo "Exception: ".$e->getMessage();
     }
   }
 
@@ -185,33 +212,34 @@ class CRUD {
       //esto es una nota para que si está esto funcionando pongas los siguientes logs (poniendo un comentario tipo "usuario borrado" y tal)
       //inserción en la tabla de logs
       $this->log("Se elimina la habitación " .$id);
-    } catch (PDOException $e) {
-      throw $e;
+    } catch (mysqli_sql_exception $e) {
+      echo "Exception: ".$e->getMessage();
     }
   }
 
   public function login($email, $password){ //IMPORTANTE pasar los elementos del posts saneados en el index
     try{
-      $q = $this->db->query("SELECT tipo, nombre, passwd FROM Usuario WHERE mail = '$email'"); //revisar que en la base de datos email sea unique
+      $q = $this->db->query("SELECT tipo, nombre, passwd, DNI FROM Usuario WHERE mail = '$email'"); //revisar que en la base de datos email sea unique
       if ($q) {
         $row = mysqli_fetch_assoc($q);
-        //if(password_verify($password, $row['passwd'])){ //para cuando esté cifrada la contraseña
-        if ($password == $row['passwd']) {
+        if(password_verify($password, $row['passwd'])){ //para cuando esté cifrada la contraseña
+        //if ($password == $row['passwd']) {
           $_SESSION['tipo'] = $row['tipo'];
           $_SESSION['nombre'] = $row['nombre'];
+          $_SESSION['dni'] = $row['DNI'];
           //inserción en la tabla de logs
-          $this->log("Inicio sesión del usuario " . $email);
+          $this->log("Inicio sesión del usuario " . $_SESSION['dni']);
         } else {
           echo "La contraseña es incorrecta";
-          $this->log("Fallo al ingresar clave de " . $email);
+          $this->log("Fallo al ingresar clave de " . $row['DNI']);
         }
       } else {
         echo "El email es incorrecto o no existe en la base de datos";
-        $this->log("Fallo al iniciar sesión, " . $email . "no reconocido");
+        $this->log("Fallo al iniciar sesión, " . $row['DNI'] . "no reconocido");
       }
       return $q;
     }catch(mysqli_sql_exception $e){
-      echo "Error: ".$e->getMessage();
+      echo "Exception: ".$e->getMessage();
       return $q;
     }
   }
@@ -223,14 +251,15 @@ class CRUD {
       if ($q) {
         $_SESSION['tipo'] = $tipo;
         $_SESSION['nombre'] = $nombre;
+        $_SESSION['dni'] = $dni;
         //inserción en la tabla de logs
-        $this->log("Registro del usuario " . $email);
+        $this->log("Registro del usuario " . $_SESSION['dni']);
       } else {
         echo "No se ha podido registrar el usuario";
       }
       return $q;
     }catch(mysqli_sql_exception $e){
-      echo "Error: ".$e->getMessage();
+      echo "Exception: ".$e->getMessage();
       return $q;
     }
   }
@@ -239,6 +268,24 @@ class CRUD {
     $fecha = date('Y-m-d H:i:s');
     $q = $this->db->query("INSERT INTO logs (fecha, accion) VALUES ('$fecha', '$comentario')");
     return $q;
+  }
+
+  // Esta función nos sirve tanto para resetear de cero, como para hacerlo a partir de un backup
+  public function reset($archivoReseteo){
+    //$sentenciaReseteo = 'sentenciaReseteo.txt';
+    $query = file_get_contents($archivoReseteo);
+
+    // Verificar si se pudo leer el archivo
+    if ($query === false) {
+      die("Error al leer el archivo.");
+    }
+
+    try{
+      $this->db->multi_query($query);
+      echo "Reseteo exitoso.";
+    }catch(mysqli_sql_exception $e){
+      echo "Exception: ".$e->getMessage();
+    }
   }
 
 }

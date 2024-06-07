@@ -284,6 +284,10 @@ li{
 }
 h1{
     padding: 10px;
+    font-size: xxx-large;
+}
+h2{
+    margin: 5px;
 }
 form h2{
     display: inline-block;
@@ -402,9 +406,10 @@ div.lower-cont{
 }
 
 section.pers-cont {
-    margin: 3% 1%;
-    padding: 0% 0.5%;
+    margin: 3% 0 0 0;
+    padding: 0 0.5%;
     width: 95%;
+    align-self: center;
 }
 
 section.pers-cont div{
@@ -412,22 +417,13 @@ section.pers-cont div{
 }
 
 section.access {
-    margin: 3% 1%;
-    padding: 0% 0.5%;
+    margin: 3% 0 0 0;
+    padding: 0 0.5%;
     width: 95%;
+    align-self: center;
 }
 
 section.access div{
-    background-color: rgb(129, 0, 0);
-}
-
-section.prefs {
-    margin: 3% 1%;
-    padding: 0% 0.5%;
-    width: 95%;
-}
-
-section.prefs div{
     background-color: rgb(129, 0, 0);
 }
 
@@ -441,24 +437,6 @@ h2.registro {
 }
 
 /*Propiedades concretar de elementos*/
-div.prefs div {
-    display: block;
-    width: 40%;
-    float: left;
-    padding: 1% 1% 0% 1%;
-    margin-bottom: 1%;
-}
-div.prefs div label {
-    display: block;
-}
-div.prefs div.right-cont {
-    border-left: 2px solid rgb(23, 177, 197);
-}
-div.prefs::after {
-    content: "";
-    display: table;
-    clear: both;
-}
 
 div.access div {
     padding: 0.5% 0.5%;
@@ -621,21 +599,46 @@ div.pers-cont div.lower-cont .left-cont #fnac div.dos {
     float: left;
     text-align: left;
 }
+
+div.pers-cont div.lower-cont .left-cont #nacionalidad {
+    display: inline-block;
+    width: 100%;
+}
+div.pers-cont div.lower-cont .left-cont #nacionalidad div.uno {
+    width: 40%;
+    float: left;
+    text-align: right;
+}
+div.pers-cont div.lower-cont .left-cont #nacionalidad div.dos {
+    margin-left: 1%;
+    width: 40%;
+    float: left;
+    text-align: left;
+}
+div.pers-cont div.lower-cont .left-cont p {
+    margin-left: 6%;
+    margin: 0;
+}
+div.pers-cont div.lower-cont .left-cont #tarjeta {
+    display: inline-block;
+    margin-left: 1%;
+    width: 100%;
+}
+div.pers-cont div.lower-cont .left-cont #tarjeta div.uno {
+    width: 40%;
+    float: left;
+    text-align: right;
+}
+div.pers-cont div.lower-cont .left-cont #tarjeta div.dos {
+    margin-left: 1%;
+    width: 50%;
+    float: left;
+    text-align: left;
+}
 div.pers-cont div.lower-cont .right-cont {
     margin-left: 6%;
     width: 40%;
     float: left;
-}
-div.pers-cont div.lower-cont .right-cont #etiquetas {
-    float: left;
-    width: 40%;
-    text-align: right;
-}
-div.pers-cont div.lower-cont .right-cont #entradas {
-    margin-left: 1%;
-    float: left;
-    width: 40%;
-    text-align: left;
 }
 
 .agreedments {
@@ -653,6 +656,7 @@ div.boton {
 input.boton-enviar {
     text-align: center;
     padding: 2% 10%;
+    margin: 10px;
 }
 
 p.errorNombre{
@@ -675,12 +679,13 @@ p.errorMail{
     color: red;
     margin: 0;
 }
-p.errorPasswd{
+
+p.errorTarjeta{
     display: block;
     color: red;
     margin: 0;
 }
-p.errorPrefs{
+p.errorPasswd{
     display: block;
     color: red;
     margin: 0;

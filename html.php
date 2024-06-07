@@ -16,30 +16,20 @@ function HTMLrenderWeb($data) {
     $main = bienvenida();
   }else{
     switch ($data['controlador']) {
-        case 'bienvenida':
-            $main = bienvenida();
-            break;
-        case 'habitaciones':
-            $main = habitaciones();
-            break;
-        case 'servicios':
-            $main = servicios();
-            break;
-        case 'reservas':
-            $main = reservas();
-            break;
-        case 'registro':
-            $main = registro($data['tipo']);
-            break;
+        case 'bienvenida': $main = bienvenida(); break;
+        case 'habitaciones': $main = habitaciones(); break;
+        case 'servicios': $main = servicios(); break;
+        case 'reservas': $main = reservas(); break;
+        case 'registro': $main = registro($data['tipo']); break;
         case 'usuarios-list':
-          $main = listadoUsuarios($data['tipo'], $data['usuarios'], (isset($data['infoUsuarioEditable']) ? $data['infoUsuarioEditable'] : null));
+          $main = listadoUsuarios($data['tipo'], $data['usuarios'],
+              (isset($data['accionUsuario'])?$data['accionUsuario']:null),
+              (isset($data['accionUsuario'])&&$data['accionUsuario']=='modificarUSuario' ? $data['infoUsuarioEditable'] : null),
+              (isset($data['mensajeError'])?$data['mensajeError']:null));
             break;
-        case 'habitaciones-list':
-          $main = listadoHabitaciones($data['tipo'], $data['habitaciones'], (isset($data['infoHabEditable']) ? $data['infoHabEditable'] : null));
-          break;
-        default:
-            $main = '<main><h1>Por implementar</h1></main>';
-            break;
+        case 'habitaciones-list': $main = listadoHabitaciones($data['tipo'], $data['habitaciones'], (isset($data['infoHabEditable']) ? $data['infoHabEditable'] : null)); break;
+        case 'backup': $main = backup(); break;
+        default: $main = '<main><h1>Por implementar</h1></main>'; break;
     }
   }
 
@@ -60,6 +50,9 @@ function HTMLrenderWeb($data) {
         <footer>
             <p>Tel:957333333 Correo:hotelo@o.com Cabra,Córdoba(España)Av/Góngora</p>
             <a href="documentacion.php">Documentación</a>
+            <form action="{$_SERVER['PHP_SELF']}" method="post">
+                <input  type="submit" name="submit" value="Reseteo BD">
+            </form>
         </footer>
     </body>
     </html>
@@ -89,7 +82,7 @@ function renderHeader($data){
             //necesita decir el nombre del usuario y permitir abrir una ventana de edición de sus datos 
             $dev .= <<<HTML
             <div class="contenedor-sesion">
-              <form action="{$_SERVER['PHP_SELF']}" id="logout-form" method="post" novalidate>
+              <form action="{$_SERVER['PHP_SELF']}" method="post">
                   <p> Bienvenido, {$data['nombre']}</p>
                   <a href="index.php?p=ed-perf">Editar perfil</a>
                   <input  type="submit" name="submit" value="Cerrar sesión">
@@ -152,6 +145,7 @@ function nav($tipo_usuario){
   }else if($tipo_usuario == 'admin'){
     $ret .= <<<HTML
       <a href="index.php?p=usuarios-list">Administrar usuarios (solo admins)</a>
+      <a href="index.php?p=backup">Control de backups (solo admins)</a>
     HTML;
   }
   $ret .= <<<HTML
@@ -257,14 +251,14 @@ function servicios(){
   return $ret;
 }
 
-function listadoUsuarios($tipo_usuario, $lista_usuarios, $usuarioModificar){
+function listadoUsuarios($tipo_usuario, $lista_usuarios, $accion, $usuarioModificar, $errores){
 
     $ret = '';
 
     if($tipo_usuario != 'admin' && $tipo_usuario != 'recepcionista'){
         $ret = <<<HTML
             <main>
-                <p>Esta sección no debería de aparecer. En este caso porque el usuario no es un recepcionista</p>
+                <p>Esta sección no debería de aparecer. En este caso porque el usuario no es un recepcionista o admin</p>
             </main>
         HTML;
     }else{
@@ -272,15 +266,14 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios, $usuarioModificar){
 
             $ret = <<<HTML
                 <main>
-                    <p>Actualmente no hay habitaciones en la base de datos</p>
+                    <p>Actualmente no hay usuarios en la base de datos</p>
                 </main>
             HTML;
         }else{
-            $ret = <<<HTML
+          $ret = <<<HTML
             <main class="lista">
-            <h2>Usuarios del sistema</h2>
-            HTML;
-
+          HTML;
+          if($accion == 'modificarUSuario'){
             if($usuarioModificar != null){
 
               $ret .= <<<HTML
@@ -297,84 +290,127 @@ function listadoUsuarios($tipo_usuario, $lista_usuarios, $usuarioModificar){
                     </form>
                 </div>
               HTML;
-
             }
-
+          }else if($accion == 'aniadirUsuario'){
             $ret .= <<<HTML
-                <div>
-                    <table>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Apellidos</th>
-                            <th>DNI</th>
-                            <th>Email</th>
-                            <th>Nacionalidad</th>
-                            <th>Tarjeta</th>
-                            <th>Acción</th>
-                        </tr>
+                <div class="editar">
+                     <h2>Editar Usuario</h2>
+                    <form action="index.php?p=usuarios-list" method="POST" novalidate class="editar">
+                      <label>Nombre:<input type="text" name="nombre"></label>
+                      <label>Apellidos:<input type="text" name="apellidos"></label>
+                      <label>DNI:<input type="text" name="DNI"></label>
+                      <label>E-mail:<input type="email" name="mail"></label>
+                      <label>Nacionalidad:<input type="text" name="nacionalidad"></label>
+                      <label>Contraseña:<input type="text" name="passwd"></label>
             HTML;
-    
-            if($tipo_usuario == 'recepcionista'){
-                foreach ($lista_usuarios as $tupla){ 
-                    if($tupla['tipo'] == 'cliente'){
-                        $ret .= <<<HTML
-                            <tr><td>{$tupla['nombre']}</td>
-                                <td>{$tupla['apellidos']}</td>
-                                <td>{$tupla['DNI']}</td>
-                                <td>{$tupla['mail']}</td>
-                                <td>{$tupla['nacionalidad']}</td>
-                                <td>{$tupla['tarjeta']}</td>
-                                <td><form action="" method="POST">
-                                        <input type="hidden" name="id" value="{$tupla['DNI']}">
-                                        <input type="submit" name="submit" value="Editar Usuario">
-                                        <input type="submit" name="submit" value="Borrar Usuario">
-                                    </form>
-                                </td>
-                            </tr>
-                        HTML;
-                    }
-                }
-            }else if($tipo_usuario == 'admin'){
-                foreach ($lista_usuarios as $tupla){ 
-                    $ret .= <<<HTML
-                        <tr><td>{$tupla['nombre']}</td>
-                            <td>{$tupla['apellidos']}</td>
-                            <td>{$tupla['DNI']}</td>
-                            <td>{$tupla['mail']}</td>
-                            <td>{$tupla['nacionalidad']}</td>
-                            <td>{$tupla['tarjeta']}</td>
-                            <td><form action="" method="POST">
-                                    <input type="hidden" name="id" value="{$tupla['DNI']}">
-                                    <input type="submit" name="submit" value="Editar Usuario">
-                                    <input type="submit" name="submit" value="Borrar Usuario">
-                                </form>
-                            </td>
-                        </tr>
-                    HTML;
-                }
-            }
-        
-            $ret .= <<<HTML
-                    </table>
-                </div>
-            HTML;
-        
+            //En caso de que el que el que añade al usuario sea un admin le permitimos determinar que tipo de usuario va a ser
             if($tipo_usuario == 'admin'){
-                $ret .= <<<HTML
-                    <form method="post" action="">
-                        <div>
-                            <label> <input type="checkbox" name="userType[]" value="cliente"> Cliente </label>
-                            <label> <input type="checkbox" name="userType[]" value="recepcionista"> Recepcionista </label>
-                            <label> <input type="checkbox" name="userType[]" value="admin"> Administrador </label>
-                        </div>
-                        <input type="submit" name='userFilterListApply' value="Aplicar filtro">
-                    </form>
-                HTML;
+              $ret .= <<<HTML
+                    <label>Tipo:<select name="tipo" id="tipo">
+                          <option value="cliente" selected>Cliente</option>
+                          <option value="recepcionista">Recepcionista</option>
+                          <option value="admin">Administrador</option>
+                          </select></label>
+              HTML;
             }
-        
+
             $ret .= <<<HTML
-                </main>
+                      <label>Tarjeta:<input type="text" name="tarjeta"></label>
+                      <input type="submit" name="submit" value="Confirmar Nuevo Usuario">
+                    </form>
+                </div>  
             HTML;
+          }else{
+            $ret = <<<HTML
+            <main class="lista">
+            <h2>Usuarios</h2>
+            <form action="" method="POST" novalidate>
+                <input type="submit" name="submit" value="Añadir usuario">
+            </form>
+            HTML;
+          }
+          if($errores != null){
+              $ret .= <<<HTML
+                <p>Error: {$errores}</p>
+              HTML;
+          }
+
+
+          $ret .= <<<HTML
+              <div>
+                  <table>
+                      <tr>
+                          <th>Nombre</th>
+                          <th>Apellidos</th>
+                          <th>DNI</th>
+                          <th>Email</th>
+                          <th>Nacionalidad</th>
+                          <th>Tarjeta</th>
+                          <th>Acción</th>
+                      </tr>
+          HTML;
+    
+          if($tipo_usuario == 'recepcionista'){
+              foreach ($lista_usuarios as $tupla){
+                  if($tupla['tipo'] == 'cliente'){
+                      $ret .= <<<HTML
+                          <tr><td>{$tupla['nombre']}</td>
+                              <td>{$tupla['apellidos']}</td>
+                              <td>{$tupla['DNI']}</td>
+                              <td>{$tupla['mail']}</td>
+                              <td>{$tupla['nacionalidad']}</td>
+                              <td>{$tupla['tarjeta']}</td>
+                              <td><form action="" method="POST">
+                                      <input type="hidden" name="id" value="{$tupla['DNI']}">
+                                      <input type="submit" name="submit" value="Editar Usuario">
+                                      <input type="submit" name="submit" value="Borrar Usuario">
+                                  </form>
+                              </td>
+                          </tr>
+                      HTML;
+                  }
+              }
+          }else if($tipo_usuario == 'admin'){
+              foreach ($lista_usuarios as $tupla){
+                  $ret .= <<<HTML
+                      <tr><td>{$tupla['nombre']}</td>
+                          <td>{$tupla['apellidos']}</td>
+                          <td>{$tupla['DNI']}</td>
+                          <td>{$tupla['mail']}</td>
+                          <td>{$tupla['nacionalidad']}</td>
+                          <td>{$tupla['tarjeta']}</td>
+                          <td><form action="" method="POST">
+                                  <input type="hidden" name="id" value="{$tupla['DNI']}">
+                                  <input type="submit" name="submit" value="Editar Usuario">
+                                  <input type="submit" name="submit" value="Borrar Usuario">
+                              </form>
+                          </td>
+                      </tr>
+                  HTML;
+              }
+          }
+        
+          $ret .= <<<HTML
+                  </table>
+              </div>
+          HTML;
+
+          if($tipo_usuario == 'admin'){
+              $ret .= <<<HTML
+                  <form method="post" action="">
+                      <div>
+                          <label> <input type="checkbox" name="userType[]" value="cliente"> Cliente </label>
+                          <label> <input type="checkbox" name="userType[]" value="recepcionista"> Recepcionista </label>
+                          <label> <input type="checkbox" name="userType[]" value="admin"> Administrador </label>
+                      </div>
+                      <input type="submit" name='userFilterListApply' value="Aplicar filtro">
+                  </form>
+              HTML;
+          }
+
+          $ret .= <<<HTML
+              </main>
+          HTML;
         }
     }
 
@@ -389,7 +425,7 @@ function listadoHabitaciones($tipo_usuario, $lista_habitaciones, $habitacionModi
   if($tipo_usuario != 'recepcionista'){
     $ret = <<<HTML
             <main>
-                <p>Esta sección no debería de aparecer. En este caso porque el usuario es un cliente o un usuario anónimo</p>
+                <p>Esta sección no debería de aparecer. En este caso porque el usuario no es recepcionista</p>
             </main>
         HTML;
   }else{
@@ -404,6 +440,9 @@ function listadoHabitaciones($tipo_usuario, $lista_habitaciones, $habitacionModi
       $ret = <<<HTML
             <main class="lista">
             <h2>Habitaciones</h2>
+            <form action="" method="POST" novalidate>
+                <input type="submit" name="submit" value="Añadir habitación">
+            </form>
             HTML;
 
       if($habitacionModificar != null){
@@ -427,7 +466,6 @@ function listadoHabitaciones($tipo_usuario, $lista_habitaciones, $habitacionModi
                     </form>
                 </div>
         HTML;
-
       }
 
       $ret .= <<<HTML
@@ -480,6 +518,14 @@ function listadoHabitaciones($tipo_usuario, $lista_habitaciones, $habitacionModi
 
   return $ret;
   }
+}
+
+function backup(){
+  $ret = <<<HTML
+  <main>
+  </main>
+  HTML;
+  return $ret;
 }
 
 

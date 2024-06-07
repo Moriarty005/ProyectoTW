@@ -54,6 +54,47 @@ function obtenerSiguienteAccion(){
     }
 
     //Si es verdad que se ha pulsado algun boton de submit y que es el de borrar usuario
+    if(isset($_POST['submit']) && $_POST['submit'] == "Añadir usuario"){
+      //Añadimos el usuario de la base de datos
+      $aux['accionUsuario']='aniadirUsuario';
+    }
+
+    if(isset($_POST['submit']) && $_POST['submit'] == "Confirmar Nuevo Usuario"){
+
+      $error = comprobarUsuarioCorrecto();
+
+      if($error != null){
+        $aux['accionUsuario']='aniadirUsuario';
+        $aux['mensajeError'] = $error;
+      }else{
+
+        $formData = array(
+            "nombre"=> isset($_POST['nombre']) ? strip_tags($_POST['nombre']) : null,
+            "apellidos"   => isset($_POST['apellidos']) ? strip_tags($_POST['apellidos']) : null,
+            "DNI"   => isset($_POST['DNI']) ? strip_tags($_POST['DNI']) : null,
+            "mail"  => isset($_POST['mail']) ? strip_tags($_POST['mail']) : null,
+            "nacionalidad"   => isset($_POST['nacionalidad']) ? strip_tags($_POST['nacionalidad']) : null,
+            "tipo"   => isset($_POST['tipo']) ? strip_tags($_POST['tipo']) : "cliente",
+            "passwd"   => isset($_POST['passwd']) ? password_hash($_POST['passwd'], PASSWORD_DEFAULT) : null,
+            "foto"   => null,
+            "tarjeta"   => isset($_POST['tarjeta']) ? strip_tags($_POST['tarjeta']) : null
+        );
+        echo "DEBUG:: lo que enviamos a la base de datos para añadir usuario: ";
+        var_dump($formData);
+        $db = new CRUD();
+        $db->addUser($formData);
+        $db->__destruct();
+      }
+      /*echo <<<HTML
+        <p>DEBUG::: Que llevamos en aux/data</p>
+HTML;
+      var_dump($aux);
+      echo <<<HTML
+        <p>DEBUG::: fin del debug</p>
+HTML;*/
+    }
+
+    //Si es verdad que se ha pulsado algun boton de submit y que es el de borrar usuario
     if(isset($_POST['submit']) && $_POST['submit'] == "Borrar Usuario"){
       //Borramos el usuario de la base de datos
       $db = new CRUD();
@@ -63,7 +104,7 @@ function obtenerSiguienteAccion(){
 
     //Si es verdad que se ha pulsado algun boton de submit y que es el de borrar habitacion
     if(isset($_POST['submit']) && $_POST['submit'] == "Borrar Habitación"){
-      //Borramos el usuario de la base de datos
+      //Borramos la habiacion de la base de datos
       $db = new CRUD();
       $db->deleteRoom($_POST['id']);
       $db->__destruct();
@@ -73,27 +114,46 @@ function obtenerSiguienteAccion(){
     if(isset($_POST['submit']) && $_POST['submit'] == "Editar Usuario"){
       //Le indicamos que nos traiga la informacion del usuario para mostrarlo en el formulario
       $db = new CRUD();
+      $aux['accionUsuario']='modificarUSuario';
       $aux['infoUsuarioEditable'] = $db->requestUser($_POST['id'])->fetch_assoc();
-      //echo "DEBUG:: Valor del usuario que vamos a editar: {$aux['infoUsuarioEditable']}";
       $db->__destruct();
     }
 
     if(isset($_POST['submit']) && $_POST['submit'] == "Confirmar Edición Usuario"){
-      $db = new CRUD();
-      $formData = array(
-          'nombre' => isset($_POST['nombre']) ? $_POST['nombre'] : null,
-          'apellidos'   => isset($_POST['apellidos']) ? $_POST['apellidos'] : null,
-          'DNI'   => isset($_POST['DNI']) ? $_POST['DNI'] : null,
-          'mail'  => isset($_POST['mail']) ? $_POST['mail'] : null,
-          'nacionalidad'   => isset($_POST['nacionalidad']) ? $_POST['nacionalidad'] : null,
-          'tarjeta'   => isset($_POST['tarjeta']) ? $_POST['tarjeta'] : null
-      );
-      echo "DEBUG:: lo que enviamos a la base de datos para modificar el usuario: ";
-      var_dump($formData);
-      $db->updateUser($formData);
-      //echo "DEBUG:: Valor del usuario que vamos a editar: {$aux['infoUsuarioEditable']}";
-      $db->__destruct();
 
+      $error = comprobarUsuarioCorrecto();
+
+      if($error != null){
+        $db = new CRUD();
+        $aux['accionUsuario']='modificarUSuario';
+        $aux['infoUsuarioEditable'] = $db->requestUser($_POST['DNI'])->fetch_assoc();
+        $aux['mensajeError'] = $error;
+        $db->__destruct();
+
+      }else{
+
+        $formData = array(
+            'nombre' => isset($_POST['nombre']) ? strip_tags($_POST['nombre']) : null,
+            'apellidos'   => isset($_POST['apellidos']) ? strip_tags($_POST['apellidos']) : null,
+            'DNI'   => isset($_POST['DNI']) ? strip_tags($_POST['DNI']) : null,
+            'mail'  => isset($_POST['mail']) ? strip_tags($_POST['mail']) : null,
+            'nacionalidad'   => isset($_POST['nacionalidad']) ? strip_tags($_POST['nacionalidad']) : null,
+            'tarjeta'   => isset($_POST['tarjeta']) ? strip_tags($_POST['tarjeta']) : null
+        );
+        echo "DEBUG:: lo que enviamos a la base de datos para modificar el usuario: ";
+        var_dump($formData);
+        $db = new CRUD();
+        $db->updateUser($formData);
+        //echo "DEBUG:: Valor del usuario que vamos a editar: {$aux['infoUsuarioEditable']}";
+        $db->__destruct();
+      }
+      /*echo <<<HTML
+        <p>DEBUG::: Que llevamos en aux/data</p>
+HTML;
+      var_dump($aux);
+      echo <<<HTML
+        <p>DEBUG::: fin del debug</p>
+HTML;*/
     }
 
     if(isset($_POST['submit']) && $_POST['submit'] == "Editar Habitación"){
@@ -126,6 +186,24 @@ function obtenerSiguienteAccion(){
   return $aux;
 }
 
+function comprobarUsuarioCorrecto(){
+  $ret = null;
+  if(!isset($_POST['nombre']) || empty($_POST['nombre'])){
+    $ret.="Error con el nombre del usuario, no puede estar vacío\n";
+  }
+  if(!isset($_POST['DNI']) || empty($_POST['DNI'])){
+    $ret.="Error con el DNI del usuario, no puede estar vacío\n";
+  }
+  if(!isset($_POST['mail']) || empty($_POST['mail'])){
+    $ret.="Error con el Email del usuario, no puede estar vacío\n";
+  }
+  if(!isset($_POST['passwd']) || empty($_POST['passwd'])){
+    $ret.="Error con la contraseña del usuario, no puede estar vacío\n";
+  }
+
+  return $ret;
+}
+
 //Metodo que maneja el inicio y cierre de sesion
 function manejarSesion(){
   //Si el metodo que se ha utilizado para enviar datos es POST
@@ -146,31 +224,23 @@ function manejarSesion(){
     }
     //control de registro
     if(isset($_POST['submit']) && $_POST['submit'] == "Confirmar datos"){
-      $nombre = strip_tags($_POST['nombre']);
-      //apellido no es obligatorio, por lo que tenemos que revisar que exista
-      if(isset($_POST['apellidos'])){
-        $apellidos = strip_tags($_POST['apellidos']);
-      }else{
-        $apellidos = '';
-      }
-      $dni = strip_tags($_POST['dni']);
-      $email = strip_tags($_POST['mail']);
-      $nacionalidad = strip_tags($_POST['nacionalidad']);
-      if(isset($_POST['tipo'])){
-        $tipo = strip_tags($_POST['tipo']);
-      }else{
-        $tipo = 'cliente';
-      }
-      $passwd = $_POST['passwd'];//password_hash($_POST['passwd'],PASSWORD_DEFAULT); //cifrar contraseña
-      if(isset($_POST['foto'])){
-        $foto = $_POST['foto'];
-      }else{
-        $foto = '1'; //porque es un int
-      }
-      $tarjeta = "1234";  //IMPORTANTE: poner campo tarjeta, cifrar tarjeta
-
+      $formData = array(
+          "nombre"=> isset($_POST['nombre']) ? strip_tags($_POST['nombre']) : null,
+          "apellidos"   => isset($_POST['apellidos']) ? strip_tags($_POST['apellidos']) : null,
+          "DNI"   => isset($_POST['DNI']) ? strip_tags($_POST['DNI']) : null,
+          "mail"  => isset($_POST['mail']) ? strip_tags($_POST['mail']) : null,
+          "nacionalidad"   => isset($_POST['nacionalidad']) ? strip_tags($_POST['nacionalidad']) : null,
+          "tipo"   => isset($_POST['tipo']) ? strip_tags($_POST['tipo']) : "cliente",
+          "passwd"   => isset($_POST['passwd']) ? password_hash($_POST['passwd'], PASSWORD_DEFAULT) : null,
+          "foto"   => null,
+          "tarjeta"   => isset($_POST['tarjeta']) ? strip_tags($_POST['tarjeta']) : null
+      );
+      echo "DEBUG:: lo que enviamos a la base de datos para añadir usuario: ";
+      var_dump($formData);
       $db = new CRUD();
-      $q = $db->register($nombre, $apellidos, $dni, $email, $nacionalidad, $tipo, $passwd, $foto, $tarjeta);
+      $db->addUser($formData);
+      //echo "DEBUG:: Valor del usuario que vamos a editar: {$aux['infoUsuarioEditable']}";
+      $db->__destruct();
       if($q){
         echo "El registrado es" . $_SESSION['tipo'];
       }
@@ -181,7 +251,13 @@ function manejarSesion(){
       $usr = ($_SESSION['nombre']);
       unset($_SESSION['nombre']);
       $db = new CRUD();
-      $db->log("Cierre sesión de" .$usr);
+      $db->log("Cierre sesión de: " .$_SESSION['dni']);
+      unset($_SESSION['nombre']);
+    }
+    //CUIDADO: reseteo de la base de datos
+    if(isset($_POST['submit']) && $_POST['submit'] == "Reseteo BD"){
+      $db = new CRUD();
+      $db->reset('sentenciaReseteo.txt');
     }
   }
   //DEBUG::
@@ -207,33 +283,19 @@ function obtenerDestinoPagina($p){
   if (!isset($p['p'])) {
     //Indicamos que el destino es la pagina de bienvenida
     $r['controlador'] = 'bienvenida';
-
   } else{ //En caso contrario
     //Indicamos hacia donde ir en base al boton que se ha pulsado
     switch ($p['p']) {
-      case 'bienvenida': $r['controlador'] = 'bienvenida';
-        //$r['metodo'] = 'hello';
-        break;
-      case 'habitaciones': $r['controlador'] = 'habitaciones';
-        //$r['metodo'] = 'hello';
-        break;
-      case 'servicios': $r['controlador'] = 'servicios';
-        //$r['metodo'] = 'hello';
-        break;
-      case 'reservas': $r['controlador'] = 'reservas';
-        //$r['metodo'] = 'hello';
-        break;
-      case 'registro': $r['controlador'] = 'registro';
-        //$r['metodo'] = 'hello';
-        break;
-      case 'usuarios-list': $r['controlador'] = 'usuarios-list'; $r['usuarios'] = requestUserListFiltered();
-        //$r['metodo'] = 'hello';
-        break;
-      case 'habitaciones-list': $r['controlador'] = 'habitaciones-list'; $r['habitaciones'] = requestRoomsListFiltered();
-        //$r['metodo'] = 'hello';
-        break;
-      default: $r['controlador'] = 'error';
-      //$r['metodo']='hello';
+      case 'bienvenida': $r['controlador'] = 'bienvenida'; break;
+      case 'habitaciones': $r['controlador'] = 'habitaciones'; break;
+      case 'servicios': $r['controlador'] = 'servicios'; break;
+      case 'reservas': $r['controlador'] = 'reservas'; break;
+      case 'registro': $r['controlador'] = 'registro'; break;
+      case 'usuarios-list': $r['controlador'] = 'usuarios-list'; $r['usuarios'] = requestUserListFiltered(); break;
+      case 'habitaciones-list': $r['controlador'] = 'habitaciones-list'; $r['habitaciones'] = requestRoomsListFiltered(); break;
+      case 'habitaciones-list': $r['controlador'] = 'habitaciones-list'; $r['habitaciones'] = requestRoomsListFiltered(); break;
+      case 'backup': $r['controlador'] = 'backup'; break;
+      default: $r['controlador'] = 'error'; break;
     }
   }
 

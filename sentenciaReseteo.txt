@@ -1,1 +1,60 @@
-//esta es la sentencia que hará falta escribir para resetear la base de datos, recordar borrar del servidor tras ser subida
+DROP TABLE Reserva;
+DROP TABLE Usuario;
+DROP TABLE Habitacion;
+DROP TABLE logs;
+
+CREATE TABLE Usuario (
+    DNI VARCHAR(9) PRIMARY KEY,
+    nombre VARCHAR(45),
+    apellidos VARCHAR(80),
+    mail VARCHAR(100),
+    nacionalidad VARCHAR(50),
+    tipo ENUM('cliente','recepcionista','admin'),
+    passwd VARCHAR(500),
+    foto INT,
+    tarjeta VARCHAR(20)
+);
+
+CREATE TABLE Habitacion (
+    id VARCHAR(20) PRIMARY KEY,
+    capacidad INT,
+    numero_fotografias INT,
+    estado ENUM('reservada', 'libre', 'en proceso'),
+    descripcion TEXT,
+    precio INT
+);
+
+CREATE TABLE Reserva (
+    id_reserva INT PRIMARY KEY AUTO_INCREMENT,
+    dni_usuario VARCHAR(9),
+    id_habitacion VARCHAR(20),
+    ocupación INT,
+    comentario VARCHAR(280),
+    fecha_inicio DATETIME,
+    fecha_fin DATETIME,
+    estado ENUM('pendiente', 'confirmada'),
+    instante DATETIME,
+    FOREIGN KEY (dni_usuario) REFERENCES Usuario(dni),
+    FOREIGN KEY (id_habitacion) REFERENCES Habitacion(id)
+);
+
+CREATE TABLE logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATETIME NOT NULL,
+    accion VARCHAR(255) NOT NULL
+);
+
+INSERT INTO Usuario (mail, DNI, nombre, tipo, passwd) VALUES
+("cliente@cliente.com", '00000001S', "cliente", "cliente", "$2y$10$BopAwNb7bXf/fT0Qcq9fre2maeANpH0tQM0LGtVx2AcfGRWb6T31q"),
+("recepcionista@recepcionista.com", '00000002D', "recepcionista", "recepcionista", "$2y$10$4htvO9B.0eNZcsJ1.yW2XOzt9.WzCIT/v0OkK8mfqbFZNrfDOdqEK"),
+("admin@admin.com", '00000000A', "admin", "admin", "$2y$10$Hi/5CW3EXm3UrUk0Rh0nMOfV3nu2qkXoUHqQNvgwSadFno2pt/9zK");
+
+INSERT INTO Habitacion (id, capacidad, numero_fotografias, estado, precio) VALUES
+('101', 2, 0, "libre", 100),
+('102', 2, 0, "libre", 100),
+('103', 2, 0, "libre", 100);
+
+INSERT INTO Reserva (dni_usuario, id_habitacion, ocupación, comentario, fecha_inicio, fecha_fin, estado, instante) VALUES
+('00000001S', 101, 2, "mu bien", '2024-12-20 14:00:00', '2024-12-30 12:00:00', 'confirmada', '2024-06-06 12:00:00');
+
+INSERT INTO logs (fecha, accion) VALUES (NOW(), 'Se ha reseteado la base de datos');

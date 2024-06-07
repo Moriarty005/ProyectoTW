@@ -1,8 +1,8 @@
 <?php
 
-$errores = array(null, null, null, null, null, null, null);
+$errores = array(null, null, null, null, null, null, null, null);
 
-$todo_correcto = array(false, false, false, false, false, false, false, false, false);
+$todo_correcto = array(false, false, false, false, false, false, false, false);
 
 $idiomas = array("es" => "Español", "en" => "Inglés", "de" => "Alemán");
 
@@ -42,7 +42,7 @@ function registro($tipo_usuario){
         HTML;
     }
 
-    if($todo_correcto[8]){
+    if($todo_correcto[7]){
 
         $ret .= <<<HTML
             <div class="boton">
@@ -74,19 +74,17 @@ function HTMLmain(){
 
     $dp = HTMLdatosPersonales();
     $da = HTMLdatosAcceso();
-    $prefs = HTMLpreferencias();
 
-    if($todo_correcto[3] && $todo_correcto[6] && $todo_correcto[7]){
-        $todo_correcto[9] = true;
+    if($todo_correcto[3] && $todo_correcto[6]){
+        $todo_correcto[7] = true;
     }
 
-    $ret = $dp . $da . $prefs;
+    $ret = $dp . $da;
 
     return $ret;
 }
 
 function popErrores(){
-    global $errores;
     global $todo_correcto;
 
     if($_SERVER['REQUEST_METHOD'] == 'POST'){ #Si se ha pulsado el boton de enviar
@@ -94,6 +92,8 @@ function popErrores(){
         comprobarNombre();
         comprobarDNI();
         comprobarFecha();
+        comprobarNacionalidad();
+        comprobarTarjeta();
 
         #Si los tres campos de la seccion de datos personales estan correctos indicamos que esta seccion al completo esta correcta
         if($todo_correcto[0] && $todo_correcto[1] && $todo_correcto[2]){
@@ -107,75 +107,15 @@ function popErrores(){
         if($todo_correcto[4] && $todo_correcto[5]){
             $todo_correcto[6] = true;
         }
-
-        #Esta funcion calcula internamente si el bloque del idioma esta corrrecto
-        comprobarPrefs();
-
-        #En caso de que los tres bloques esten correctos cambiamos lo que habíamos almacenado en la variable global errores 
-        #por sentencias HTML que no sean modificables
-        if($todo_correcto[3] && $todo_correcto[6] && $todo_correcto[7]){
-            $todo_correcto[8] = true;
-            todo_correctoHTML();
-        }
         
     }else{ #en caso de que se acabe de acceder a la pagina
         defaultHTML();
     }
 }
 
-function todo_correctoHTML(){
-
-    global $errores;
-    global $idiomas;
-
-    $valor = $_POST['nombre'];
-    $errores[0] = <<< HTML
-        <input type="text" name="nombre" value="$valor" readonly>
-    HTML;
-
-    $valor = $_POST['dni'];
-    $errores[1] = <<< HTML
-        <input type="text" name="dni" value="$valor" readonly>
-    HTML;
-
-    $valor = $_POST['fecha-nacimiento'];
-    $errores[2] = <<< HTML
-        <input type="date" name="fecha-nacimiento" value="$valor" readonly>
-    HTML;
-
-    $valor = $_POST['mail'];
-    $errores[3] = <<< HTML
-        <input type="email" name='mail' value="$valor" readonly>
-    HTML;
-
-    $valor = $_POST['passwd'];
-    $errores[4] = <<< HTML
-        <input type="password" value="$valor" name='passwd' readonly>
-    HTML;
-    $errores[5] = <<< HTML
-        <input type="password" value="$valor" name='passwdRepeat' readonly>
-    HTML;
-
-    $post = $_POST['language'];
-    $errores[6] = <<< HTML
-HTML;
-    foreach ($idiomas as $clave => $valor) {
-        if($post == $clave){
-            $errores[6] .= <<< HTML
-                <label><input type="radio" name="language" value="$clave" checked>$valor</label>
-            HTML;
-        }else{
-            $errores[6] .= <<< HTML
-                <label><input type="radio" name="language" value="$clave">$valor</label>
-            HTML;
-        }
-    }
-}
-
 function defaultHTML(){
 
     global $errores;
-    global $idiomas;
 
     $errores[0] = <<< HTML
         <input type="text" name="nombre">
@@ -195,11 +135,13 @@ function defaultHTML(){
     $errores[5] = <<< HTML
     <input type="password" placeholder="Escriba la misma clave" name='passwdRepeat'>
     HTML;
-    foreach ($idiomas as $clave => $valor) {
-        $errores[6] .= <<< HTML
-        <label><input type="radio" name="language" value="$clave">$valor</label>
-        HTML;
-    }
+
+    $errores[6] = <<< HTML
+          <input type="text" name="nacionalidad">
+    HTML;
+    $errores[7] = <<< HTML
+          <input type="text" name="tarjeta">
+    HTML;
 }
 
 function comprobarNombre(){
@@ -302,6 +244,45 @@ function comprobarMail(){
     }
 }
 
+function comprobarNacionalidad(){
+
+  global $errores;
+  global $todo_correcto;
+
+  if(empty($_POST['nacionalidad'])){
+    $errores[6] = <<< HTML
+            <input type="text" name="nacionalidad">
+        HTML;
+  }else{
+    $valor = $_POST['nacionalidad'];
+    $errores[6] = <<< HTML
+            <input type="text" name="nacionalidad" value="$valor">
+        HTML;
+  }
+}
+function comprobarTarjeta(){
+
+  global $errores;
+
+  if(empty($_POST['tarjeta'])){
+    $errores[7] = <<< HTML
+            <input type="text" name="tarjeta">
+        HTML;
+  }else{
+    if(count_chars($_POST['tarjeta']) > 16){
+      $errores[7] = <<< HTML
+            <input type="text" name="tarjeta">
+            <p class="errorTarjeta">La tarjeta no puede tener mas de 16 digitos</p>
+        HTML;
+    }else{
+      $valor = $_POST['tarjeta'];
+      $errores[7] = <<< HTML
+            <input type="text" name="tarjeta" value="$valor">
+        HTML;
+    }
+  }
+}
+
 function comprobarPasswd(){
 
     global $errores;
@@ -335,41 +316,6 @@ function comprobarPasswd(){
             HTML;
             $todo_correcto[5] = true;
         }
-    }
-}
-
-function comprobarPrefs(){
-
-    global $idiomas;
-    global $errores;
-    global $todo_correcto;
-
-    if(!isset($_POST['language'])){
-        foreach ($idiomas as $clave => $valor) {
-            
-            $errores[6] .= <<< HTML
-            <label><input type="radio" name="language" value="$clave">$valor</label>
-            HTML;
-        }
-        $errores[6] .= <<< HTML
-        <p class="errorPrefs">Error en el idioma</p>
-        HTML;
-    }else{
-        $post = $_POST['language'];
-        $errores[6] = <<< HTML
-HTML;
-        foreach ($idiomas as $clave => $valor) {
-            if($post == $clave){
-                $errores[6] .= <<< HTML
-                <label><input type="radio" name="language" value="$clave" checked>$valor</label>
-                HTML;
-            }else{
-                $errores[6] .= <<< HTML
-                <label><input type="radio" name="language" value="$clave">$valor</label>
-                HTML;
-            }
-        }
-        $todo_correcto[7] = true;
     }
 }
 
@@ -455,12 +401,26 @@ function HTMLdatosPersonales() {
                             </div>
                         </div>
                     </div>
-                    <div class="right-cont">
-                        <div id="etiquetas">
-                            <p><label>Nacionalidad:</label></p>
+                    <div class="left-cont">
+                        <div id="nacionalidad">
+                            <div class="uno"><label>Nacionalidad:</label></div>
+                            <div class="dos">
+    HTML;
+  if (isset($errores[6])) {
+    $ret .= $errores[6];
+  }
+  $ret .= <<<HTML
+                            </div>
                         </div>
-                        <div id="entradas">
-                            <p><input type="text" name="nacionalidad" value="España"></p>
+                        <div id="tarjeta">
+                            <div class="uno"><label>Tarjeta de crédito:</label></div>
+                            <div class="dos">
+    HTML;
+  if (isset($errores[7])) {
+    $ret .= $errores[7];
+  }
+  $ret .= <<<HTML
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -511,37 +471,6 @@ function HTMLdatosAcceso() {
     $ret .= <<<HTML
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-    HTML;
-
-    return $ret;
-}
-
-function HTMLpreferencias() {
-
-    global $errores;
-
-    $ret = <<<HTML
-    <section class="prefs">
-        <h2 class="registro">Preferencias</h2>
-        <div class="prefs">
-            <div class="left-cont">
-                <label>Idioma para comunicaciones:</label>
-    HTML;
-        
-    if (isset($errores[6])) {
-        $ret .= $errores[6];
-    }
-    $ret .= <<<HTML
-            </div>
-            <div class="right-cont">
-                <label>Preferencias de habitación:</label>
-                <label><input type="checkbox" name="preference[]" value="smoking">Para fumadores</label>
-                <label><input type="checkbox" name="preference[]" value="pets">Que permita mascotas</label>
-                <label><input type="checkbox" name="preference[]" value="view">Con vistas</label>
-                <label><input type="checkbox" name="preference[]" value="carpet">Con moqueta</label>
             </div>
         </div>
     </section>

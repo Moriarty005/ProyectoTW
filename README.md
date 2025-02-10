@@ -10,3 +10,5 @@ Este proyecto consiste en el desarrollo de una página web de un hotel que incor
   * Más funcionalidades básicas
 
 Todo el proyecto ha sido desarrollado en PHP junto con CSS.
+
+Proyecto desarrollado por Álvaro G.L. y Alejandro M.G.

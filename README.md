@@ -1,4 +1,12 @@
-COMMITS
+<h1 align="center"> PROYECTO FINAL DE LA ASGINATURA TECNOLOGÍAS WEB </h1>
 
-"Botones configurados" (alvaro): he configurado los botones del navegador para que se envíe en una variable "p" la request de página (habitaciones, servicios...) a través del get (aplicado saneamiento) 
-"Comienzo de la implementacion del listado de usuario desde la BD" (alex y alvaro): se maneja el inicio de sesión (tanto funcionamiento como maquetado) y ventana de registro (todavía no funcional), a desarrollar el CRUD de la tabla Usuarios de la base de datos.
+Este proyecto consiste en el desarrollo de una página web de un hotel que incorpore mútiples funcionalidades como:
+
+*Creación y gestión de cuentas de usuario
+*Diferenciación entre los distintos posibles perfiles, tales como: cliente, recepcionista o administrador
+*Listado y gestión de las habitaciones libres
+*Crear y gestionar los backups de la base de datos
+*Distintos mecanismos de protección
+*Más funcionalidades básicas
+
+Todo el proyecto ha sido desarrollado en PHP junto con CSS.
